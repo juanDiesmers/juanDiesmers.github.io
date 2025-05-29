@@ -1,55 +1,112 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Juan Diesmers | Portafolio</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Portafolio de Juan Diesmers, desarrollador web y diseñador.">
-        <link rel="stylesheet" href="assets/css/style.css">
-        <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
-    </head>
-    <body>
-        <header>
-            <h1 id="main-title">Juan Diesmers</h1>
-            <p class="subtitle" id="subtitle">Desarrollador Web & Diseñador</p>
-            <button id="lang-toggle" class="btn lang-btn" aria-label="Cambiar idioma">EN</button>
-        </header>
-        <section class="about">
-            <img src="assets/images/profile.jpg" alt="Foto de Juan Diesmers" class="profile-img">
-            <p id="about-text"><strong>Sobre mí:</strong><br>Apasionado por la tecnología, el desarrollo web y el diseño digital. Me especializo en crear soluciones creativas y funcionales, con atención al detalle y enfoque en la experiencia de usuario.</p>
-        </section>
-        <section class="links">
-            <a href="mailto:juan@email.com" class="btn" id="contact-btn">Contáctame</a>
-            <a href="https://github.com/juanDiesmers" class="btn" target="_blank">GitHub</a>
-            <a href="https://linkedin.com/in/juanDiesmers" class="btn" target="_blank">LinkedIn</a>
-        </section>
-        <section class="cv-section">
-            <h2 id="exp-title">Experiencia</h2>
-            <ul id="exp-list">
-                <li><strong>Desarrollador Web Freelance</strong> (2022 - Actualidad)<br>Desarrollo de sitios web y aplicaciones para clientes independientes.</li>
-                <li><strong>Diseñador Gráfico</strong> (2020 - 2022)<br>Creación de identidades visuales y material digital para pequeñas empresas.</li>
-            </ul>
-            <h2 id="skills-title">Habilidades</h2>
-            <ul id="skills-list">
-                <li>HTML5, CSS3, JavaScript, React</li>
-                <li>Diseño UI/UX</li>
-                <li>Responsive Design</li>
-                <li>Photoshop, Figma</li>
-            </ul>
-        </section>
-        <section class="projects">
-            <h2 id="projects-title">Proyectos Destacados</h2>
-            <div id="projects-slider" class="projects-slider">
-                <button class="slider-btn" id="slider-prev" aria-label="Anterior">&#8592;</button>
-                <div id="projects-list" class="projects-list slider-list"></div>
-                <button class="slider-btn" id="slider-next" aria-label="Siguiente">&#8594;</button>
-            </div>
-        </section>
-        <footer>
-            <p id="footer-text">&copy; 2025 Juan Diesmers. Todos los derechos reservados.</p>
-        </footer>
-        <script src="assets/js/projects.js"></script>
-        <script src="assets/js/lang.js"></script>
-        <script src="assets/js/slider.js"></script>
-    </body>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portafolio de Juan Diesmers, desarrollador web y diseñador.">
+  <title>Juan Diesmers | Portafolio</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Tailwind CSS CDN para responsividad y utilidades modernas -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+  <!-- Botón menú hamburguesa para móvil -->
+  <button id="sidebar-toggle" class="fixed top-4 left-4 z-50 md:hidden bg-[#232a36] text-[#7fd7ff] p-2 rounded-lg shadow-lg focus:outline-none" aria-label="Abrir menú">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+  </button>
+  <div class="main-layout flex flex-col md:flex-row min-h-screen w-full">
+    <aside class="sidebar w-full max-w-xs md:w-64 md:max-w-xs bg-[#232a36] flex-shrink-0 shadow-lg md:rounded-tr-2xl md:rounded-br-2xl md:ml-3 mb-4 md:mb-0 transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full md:static fixed top-0 left-0 h-full z-40" id="sidebar">
+      <header>
+        <img src="assets/images/profile.jpg" alt="Foto de Juan Diesmers" class="profile-img">
+        <h1 id="main-title">Juan Diesmers</h1>
+        <p class="subtitle" id="subtitle">Desarrollador Web & Diseñador</p>
+        <div class="main-langs-section">
+          <h3 class="main-langs-title">Lenguajes principales</h3>
+          <div id="main-langs" class="main-langs"></div>
+        </div>
+        <div class="main-tools-section">
+          <h3 class="main-tools-title">Herramientas y frameworks</h3>
+          <div id="main-tools" class="main-tools"></div>
+        </div>
+      </header>
+      <div class="skills-list" id="skills-list"></div>
+      <div class="links">
+        <a href="mailto:juan@email.com" class="btn" id="contact-btn">Contáctame</a>
+        <a href="https://github.com/juanDiesmers" class="btn" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/juanDiesmers" class="btn" target="_blank">LinkedIn</a>
+      </div>
+      <button id="lang-toggle" class="btn lang-btn" aria-label="Cambiar idioma">EN</button>
+    </aside>
+    <main class="main-content flex-1 px-2 md:px-8 py-4 md:py-8">
+      <nav class="hidden md:flex gap-6 mb-6" id="main-nav">
+        <a href="#projects-title" class="hover:underline text-[#4e6fae] font-semibold">Proyectos</a>
+        <a href="#cv-title" class="hover:underline text-[#4e6fae] font-semibold">Hoja de Vida</a>
+        <a href="#testimonials" class="hover:underline text-[#4e6fae] font-semibold">Testimonios</a>
+        <a href="#certificates" class="hover:underline text-[#4e6fae] font-semibold">Logros</a>
+        <a href="#contact-section" class="hover:underline text-[#4e6fae] font-semibold">Contacto</a>
+      </nav>
+      <section class="projects">
+        <h2 id="projects-title" class="text-2xl font-bold mb-4">Proyectos Destacados</h2>
+        <div id="projects-list" class="projects-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+      <section id="project-detail-section" class="project-detail-section mt-6"></section>
+      <!-- Sección de contacto mejorada -->
+      <section id="contact-section" class="my-12 flex flex-col items-center">
+        <h2 class="text-2xl font-bold mb-4 text-[#4e6fae] dark:text-[#7fd7ff]">Contacto</h2>
+        <form id="contact-form" class="w-full max-w-md bg-white dark:bg-[#232a36] rounded-2xl shadow-2xl p-8 flex flex-col gap-5 border border-[#4e6fae22] dark:border-[#7fd7ff22]">
+          <input type="text" name="name" placeholder="Nombre" required class="rounded-lg p-3 border border-[#4e6fae33] dark:border-[#7fd7ff33] focus:ring-2 focus:ring-[#4e6fae] dark:focus:ring-[#7fd7ff] bg-[#f4f6fa] dark:bg-[#181c22] text-[#232a36] dark:text-[#e6eaf3] placeholder-[#4e6fae99] dark:placeholder-[#7fd7ff99]">
+          <input type="email" name="email" placeholder="Correo electrónico" required class="rounded-lg p-3 border border-[#4e6fae33] dark:border-[#7fd7ff33] focus:ring-2 focus:ring-[#4e6fae] dark:focus:ring-[#7fd7ff] bg-[#f4f6fa] dark:bg-[#181c22] text-[#232a36] dark:text-[#e6eaf3] placeholder-[#4e6fae99] dark:placeholder-[#7fd7ff99]">
+          <textarea name="message" placeholder="Mensaje" required class="rounded-lg p-3 border border-[#4e6fae33] dark:border-[#7fd7ff33] focus:ring-2 focus:ring-[#4e6fae] dark:focus:ring-[#7fd7ff] bg-[#f4f6fa] dark:bg-[#181c22] text-[#232a36] dark:text-[#e6eaf3] placeholder-[#4e6fae99] dark:placeholder-[#7fd7ff99] min-h-[120px]"></textarea>
+          <button type="submit" class="bg-[#4e6fae] dark:bg-[#7fd7ff] text-white dark:text-[#232a36] font-bold py-3 rounded-lg hover:bg-[#7fd7ff] hover:text-[#232a36] dark:hover:bg-[#4e6fae] dark:hover:text-white transition">Enviar</button>
+          <div id="contact-success" class="hidden text-green-600 font-semibold mt-2">¡Mensaje enviado!</div>
+        </form>
+      </section>
+      <!-- Botón ir arriba -->
+      <button id="scroll-top-btn" class="hidden fixed bottom-8 right-8 z-50 bg-[#4e6fae] dark:bg-[#7fd7ff] text-white dark:text-[#232a36] p-3 rounded-full shadow-lg hover:bg-[#7fd7ff] hover:text-[#232a36] dark:hover:bg-[#4e6fae] dark:hover:text-white transition"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg></button>
+    </main>
+  </div>
+  <section class="cv-section-extended" id="cv-section">
+    <h2 id="cv-title">Hoja de Vida</h2>
+    <div class="cv-content">
+      <div class="cv-block">
+        <h3>Perfil Profesional</h3>
+        <p id="about-text"><strong>Sobre mí:</strong><br>Apasionado por la tecnología, el desarrollo web y el diseño digital. Me especializo en crear soluciones creativas y funcionales, con atención al detalle y enfoque en la experiencia de usuario.</p>
+      </div>
+      <div class="cv-block">
+        <h3 id="exp-title">Experiencia</h3>
+        <div class="timeline" id="exp-list"></div>
+      </div>
+      <div class="cv-block">
+        <h3>Educación</h3>
+        <ul class="cv-edu">
+          <li><strong>Pontificia Universidad Javeriana</strong> (2021 - Actualidad)<br>Ingeniería de Sistemas</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-content">
+      <div class="footer-social">
+        <a href="https://github.com/juanDiesmers" target="_blank" aria-label="GitHub"><img src="assets/images/github-mark.svg" alt="GitHub" /></a>
+        <a href="https://linkedin.com/in/juanDiesmers" target="_blank" aria-label="LinkedIn"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" /></a>
+        <a href="mailto:juan@email.com" aria-label="Email"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Email" /></a>
+      </div>
+      <p id="footer-text">&copy; 2025 Juan Diesmers. Todos los derechos reservados.<br><span class="footer-made">Hecho con ❤️ y código.</span></p>
+    </div>
+  </footer>
+  <!-- Modal para mostrar código y explicación de proyectos -->
+  <div id="project-modal" class="project-modal" style="display:none;">
+    <div class="project-modal-content">
+      <span class="project-modal-close" id="project-modal-close">&times;</span>
+      <h2 id="modal-project-title"></h2>
+      <pre class="modal-code-block" id="modal-project-code"></pre>
+      <div class="modal-code-explanation" id="modal-project-explanation"></div>
+    </div>
+  </div>
+  <script src="assets/js/projects.js"></script>
+  <script src="assets/js/lang.js"></script>
+  <script src="assets/js/highlight-init.js"></script>
+  <script src="assets/js/ui-extras.js"></script>
+</body>
 </html>

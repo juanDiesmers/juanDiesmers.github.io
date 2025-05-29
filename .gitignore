@@ -24,7 +24,7 @@ System Volume Information/
 .env
 .env.*
 
-# Node/npm (por si usas en el futuro)
+# Node/npm (por si usa en el futuro)
 node_modules/
 
 # Archivos de marcador vacíos
