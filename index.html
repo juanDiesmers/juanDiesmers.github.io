@@ -1,15 +1,34 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Mejora de página</title>
+        <title>Juan Diesmers | Portafolio</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Portafolio de Juan Diesmers, desarrollador web y diseñador.">
         <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
     </head>
     <body>
-        <h1>Hello Word</h1>
-        <p>I'm  hosted with Github pages.</p>
-        <img srd="imagern" alt="Imagen relevante">
+        <header>
+            <h1>Juan Diesmers</h1>
+            <p class="subtitle">Desarrollador Web & Diseñador</p>
+        </header>
+        <section class="about">
+            <img src="profile.jpg" alt="Foto de Juan Diesmers" class="profile-img">
+            <p>¡Hola! Soy Juan Diesmers, apasionado por la tecnología, el desarrollo web y el diseño digital. Bienvenido a mi portafolio personal donde comparto mis proyectos y habilidades.</p>
+        </section>
+        <section class="links">
+            <a href="mailto:juan@email.com" class="btn">Contáctame</a>
+            <a href="https://github.com/juanDiesmers" class="btn" target="_blank">GitHub</a>
+            <a href="https://linkedin.com/in/juanDiesmers" class="btn" target="_blank">LinkedIn</a>
+        </section>
+        <section class="projects">
+            <h2>Proyectos Destacados</h2>
+            <div id="projects-list" class="projects-list"></div>
+        </section>
         <footer>
-            <a href="#">Volver a la pagina de inicio</a>
+            <p>&copy; 2025 Juan Diesmers. Todos los derechos reservados.</p>
         </footer>
+        <script src="projects.js"></script>
     </body>
 </html>

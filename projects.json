@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Sitio Web Personal",
+    "description": "Mi portafolio personal desarrollado con HTML, CSS y JavaScript.",
+    "image": "project1.jpg",
+    "url": "https://juanDiesmers.github.io"
+  },
+  {
+    "title": "App de Tareas",
+    "description": "Aplicación web para gestionar tareas diarias, construida con React.",
+    "image": "project2.jpg",
+    "url": "https://github.com/juanDiesmers/todo-app"
+  }
+]
