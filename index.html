@@ -5,30 +5,51 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Portafolio de Juan Diesmers, desarrollador web y diseñador.">
-        <link rel="stylesheet" href="style.css">
-        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
     </head>
     <body>
         <header>
-            <h1>Juan Diesmers</h1>
-            <p class="subtitle">Desarrollador Web & Diseñador</p>
+            <h1 id="main-title">Juan Diesmers</h1>
+            <p class="subtitle" id="subtitle">Desarrollador Web & Diseñador</p>
+            <button id="lang-toggle" class="btn lang-btn" aria-label="Cambiar idioma">EN</button>
         </header>
         <section class="about">
-            <img src="profile.jpg" alt="Foto de Juan Diesmers" class="profile-img">
-            <p>¡Hola! Soy Juan Diesmers, apasionado por la tecnología, el desarrollo web y el diseño digital. Bienvenido a mi portafolio personal donde comparto mis proyectos y habilidades.</p>
+            <img src="assets/images/profile.jpg" alt="Foto de Juan Diesmers" class="profile-img">
+            <p id="about-text"><strong>Sobre mí:</strong><br>Apasionado por la tecnología, el desarrollo web y el diseño digital. Me especializo en crear soluciones creativas y funcionales, con atención al detalle y enfoque en la experiencia de usuario.</p>
         </section>
         <section class="links">
-            <a href="mailto:juan@email.com" class="btn">Contáctame</a>
+            <a href="mailto:juan@email.com" class="btn" id="contact-btn">Contáctame</a>
             <a href="https://github.com/juanDiesmers" class="btn" target="_blank">GitHub</a>
             <a href="https://linkedin.com/in/juanDiesmers" class="btn" target="_blank">LinkedIn</a>
         </section>
+        <section class="cv-section">
+            <h2 id="exp-title">Experiencia</h2>
+            <ul id="exp-list">
+                <li><strong>Desarrollador Web Freelance</strong> (2022 - Actualidad)<br>Desarrollo de sitios web y aplicaciones para clientes independientes.</li>
+                <li><strong>Diseñador Gráfico</strong> (2020 - 2022)<br>Creación de identidades visuales y material digital para pequeñas empresas.</li>
+            </ul>
+            <h2 id="skills-title">Habilidades</h2>
+            <ul id="skills-list">
+                <li>HTML5, CSS3, JavaScript, React</li>
+                <li>Diseño UI/UX</li>
+                <li>Responsive Design</li>
+                <li>Photoshop, Figma</li>
+            </ul>
+        </section>
         <section class="projects">
-            <h2>Proyectos Destacados</h2>
-            <div id="projects-list" class="projects-list"></div>
+            <h2 id="projects-title">Proyectos Destacados</h2>
+            <div id="projects-slider" class="projects-slider">
+                <button class="slider-btn" id="slider-prev" aria-label="Anterior">&#8592;</button>
+                <div id="projects-list" class="projects-list slider-list"></div>
+                <button class="slider-btn" id="slider-next" aria-label="Siguiente">&#8594;</button>
+            </div>
         </section>
         <footer>
-            <p>&copy; 2025 Juan Diesmers. Todos los derechos reservados.</p>
+            <p id="footer-text">&copy; 2025 Juan Diesmers. Todos los derechos reservados.</p>
         </footer>
-        <script src="projects.js"></script>
+        <script src="assets/js/projects.js"></script>
+        <script src="assets/js/lang.js"></script>
+        <script src="assets/js/slider.js"></script>
     </body>
 </html>

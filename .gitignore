@@ -1,0 +1,43 @@
+# Archivos y carpetas que GitHub no necesita
+# Archivos temporales de sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Archivos temporales de editores
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.swn
+*.sublime-workspace
+*.sublime-project
+.vscode/
+.idea/
+
+# Archivos de sistema Windows
+$RECYCLE.BIN/
+System Volume Information/
+
+# Archivos de entorno
+.env
+.env.*
+
+# Node/npm (por si usas en el futuro)
+node_modules/
+
+# Archivos de marcador vacíos
+.gitkeep
+
+# Otros
+*.orig
+*.old
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.psd
+*.ai
+*.xcf
