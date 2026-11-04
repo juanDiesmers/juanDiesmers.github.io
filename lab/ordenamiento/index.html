@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algoritmos de ordenamiento | Laboratorio de Juan Diesmers</title>
+  <meta name="description" content="Visualizador de algoritmos de ordenamiento: burbuja, selección, inserción, merge sort, quicksort y heapsort, con conteo de comparaciones y escrituras.">
+  <meta name="theme-color" content="#0d1626">
+  <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    #bars { display: block; width: 100%; height: clamp(16rem, 42vh, 24rem); }
+    .legend { display: flex; gap: 1.25rem; flex-wrap: wrap; font: 500 .72rem/1 var(--mono); color: var(--muted); padding: 0 1rem .9rem; }
+    .legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; margin-right: .4rem; vertical-align: -1px; }
+    .runs { margin-top: 2rem; }
+    .runs h2 { font: 600 1.05rem/1.3 var(--mono); margin-bottom: .4rem; }
+    .runs > p { color: var(--muted); font-size: .98rem; margin-bottom: 1rem; max-width: 44rem; }
+    .runs .empty { color: var(--muted); font: 400 .8rem/1.5 var(--mono); padding: 1rem 0; }
+    .table-wrap { overflow-x: auto; }
+    table.cx td.best { color: var(--sage); }
+  </style>
+</head>
+<body class="lab-page">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../../">juan@<span>diesmers</span>:~/laboratorio</a>
+      <a class="back" href="../../#laboratorio">← volver al portafolio</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <span class="status">en proceso</span>
+      <h1>Algoritmos de ordenamiento</h1>
+      <p class="lede">Elige un algoritmo y una forma de arreglo, y mira cuántas comparaciones y escrituras necesita. Corre varios con el mismo tipo de arreglo y compara en la tabla de abajo.</p>
+
+      <div class="panel" style="margin-top:2rem">
+        <div class="controls">
+          <label>algoritmo
+            <select id="algo">
+              <option value="bubble">Burbuja</option>
+              <option value="selection">Selección</option>
+              <option value="insertion" selected>Inserción</option>
+              <option value="merge">Merge sort</option>
+              <option value="quick">Quicksort (Lomuto)</option>
+              <option value="heap">Heapsort</option>
+            </select>
+          </label>
+          <label>arreglo
+            <select id="dist">
+              <option value="random">aleatorio</option>
+              <option value="nearly">casi ordenado</option>
+              <option value="reversed">invertido</option>
+              <option value="few">pocos valores distintos</option>
+            </select>
+          </label>
+          <label>tamaño <input type="range" id="size" min="8" max="160" value="48"> <span id="size-v">48</span></label>
+          <label>velocidad <input type="range" id="speed" min="1" max="100" value="55"></label>
+          <span style="flex:1"></span>
+          <button class="ctl" id="shuffle">Generar arreglo</button>
+          <button class="ctl" id="step">Un paso</button>
+          <button class="ctl primary" id="run">Ordenar</button>
+        </div>
+        <canvas id="bars" aria-label="Barras del arreglo que se está ordenando" role="img"></canvas>
+        <div class="legend">
+          <span><i style="background:#7cc4f5"></i>comparando</span>
+          <span><i style="background:#ffb454"></i>escribiendo / intercambiando</span>
+          <span><i style="background:#8fd19e"></i>ordenado</span>
+        </div>
+        <div class="stats">
+          <span>comparaciones <b id="s-cmp">0</b></span>
+          <span>escrituras <b id="s-wr">0</b></span>
+          <span>estado <b id="s-state">listo</b></span>
+        </div>
+      </div>
+
+      <section class="runs">
+        <h2>Resultados de esta sesión</h2>
+        <p>Cada vez que un algoritmo termina, queda aquí. En verde el que menos operaciones usó para ese mismo tipo y tamaño de arreglo.</p>
+        <div class="table-wrap">
+          <table class="cx">
+            <thead><tr><th>algoritmo</th><th>arreglo</th><th>n</th><th>comparaciones</th><th>escrituras</th><th>total</th></tr></thead>
+            <tbody id="runs"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="runs-empty">Todavía no hay corridas. Dale a Ordenar.</p>
+      </section>
+
+      <div class="notes">
+        <div>
+          <h2>Complejidad</h2>
+          <table class="cx">
+            <thead><tr><th>algoritmo</th><th>mejor</th><th>promedio</th><th>peor</th><th>estable</th></tr></thead>
+            <tbody>
+              <tr><td>Burbuja</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>sí</td></tr>
+              <tr><td>Selección</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>no</td></tr>
+              <tr><td>Inserción</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>sí</td></tr>
+              <tr><td>Merge sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>sí</td></tr>
+              <tr><td>Quicksort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>no</td></tr>
+              <tr><td>Heapsort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>no</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h2>Lo que voy encontrando</h2>
+          <ul>
+            <li>Con un arreglo <code>casi ordenado</code>, inserción hace muy pocas operaciones y le gana a merge sort y a heapsort. Por eso implementaciones reales como Timsort la usan para los tramos pequeños.</li>
+            <li>Quicksort con pivote Lomuto (el último elemento) se degrada a O(n²) con un arreglo <code>invertido</code>: cada partición deja un lado vacío.</li>
+            <li>Selección siempre hace las mismas comparaciones sin importar el arreglo, pero es la que menos escrituras hace.</li>
+          </ul>
+          <h2 style="margin-top:2rem">Pendiente</h2>
+          <ul>
+            <li>Quicksort con pivote aleatorio y con mediana de tres.</li>
+            <li>Counting sort y radix sort, que no comparan.</li>
+            <li>Medir tiempo real con arreglos de miles de elementos, no solo operaciones.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer><div class="wrap"><span>&copy; Juan Diesmers</span><a href="../../#laboratorio">volver al laboratorio</a></div></footer>
+
+  <script>
+  (function () {
+    const $ = id => document.getElementById(id);
+    const canvas = $('bars'), ctx = canvas.getContext('2d');
+    const C = { bar: '#3a4f78', cmp: '#7cc4f5', wr: '#ffb454', done: '#8fd19e' };
+    const NAMES = { bubble: 'Burbuja', selection: 'Selección', insertion: 'Inserción', merge: 'Merge sort', quick: 'Quicksort', heap: 'Heapsort' };
+    const DISTS = { random: 'aleatorio', nearly: 'casi ordenado', reversed: 'invertido', few: 'pocos distintos' };
+
+    let arr = [], gen = null, running = false, timer = null;
+    let cmp = 0, wr = 0, hl = {}, sortedFrom = Infinity, finished = false;
+    const runs = [];
+
+    // ---------- Generadores: cada uno "anuncia" lo que hace con yield ----------
+    function* bubble(a) {
+      const n = a.length;
+      for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - 1 - i; j++) {
+          yield { cmp: [j, j + 1] };
+          if (a[j] > a[j + 1]) { [a[j], a[j + 1]] = [a[j + 1], a[j]]; yield { wr: [j, j + 1], n: 2 }; swapped = true; }
+        }
+        yield { sorted: n - 1 - i };
+        if (!swapped) break;
+      }
+    }
+    function* selection(a) {
+      const n = a.length;
+      for (let i = 0; i < n - 1; i++) {
+        let m = i;
+        for (let j = i + 1; j < n; j++) { yield { cmp: [m, j] }; if (a[j] < a[m]) m = j; }
+        if (m !== i) { [a[i], a[m]] = [a[m], a[i]]; yield { wr: [i, m], n: 2 }; }
+      }
+    }
+    function* insertion(a) {
+      for (let i = 1; i < a.length; i++) {
+        const key = a[i]; let j = i - 1;
+        while (j >= 0) {
+          yield { cmp: [j, j + 1] };
+          if (a[j] <= key) break;
+          a[j + 1] = a[j]; yield { wr: [j + 1], n: 1 }; j--;
+        }
+        if (j + 1 !== i) { a[j + 1] = key; yield { wr: [j + 1], n: 1 }; }
+      }
+    }
+    function* merge(a) {
+      const tmp = a.slice();
+      function* ms(lo, hi) {
+        if (hi - lo < 1) return;
+        const mid = (lo + hi) >> 1;
+        yield* ms(lo, mid); yield* ms(mid + 1, hi);
+        for (let k = lo; k <= hi; k++) tmp[k] = a[k];
+        let i = lo, j = mid + 1;
+        for (let k = lo; k <= hi; k++) {
+          if (i > mid) a[k] = tmp[j++];
+          else if (j > hi) a[k] = tmp[i++];
+          else { yield { cmp: [i, j] }; a[k] = tmp[j] < tmp[i] ? tmp[j++] : tmp[i++]; }
+          yield { wr: [k], n: 1 };
+        }
+      }
+      yield* ms(0, a.length - 1);
+    }
+    function* quick(a) {
+      function* qs(lo, hi) {
+        if (lo >= hi) return;
+        const p = a[hi]; let i = lo;
+        for (let j = lo; j < hi; j++) {
+          yield { cmp: [j, hi] };
+          if (a[j] < p) { if (i !== j) { [a[i], a[j]] = [a[j], a[i]]; yield { wr: [i, j], n: 2 }; } i++; }
+        }
+        if (i !== hi) { [a[i], a[hi]] = [a[hi], a[i]]; yield { wr: [i, hi], n: 2 }; }
+        yield* qs(lo, i - 1); yield* qs(i + 1, hi);
+      }
+      yield* qs(0, a.length - 1);
+    }
+    function* heap(a) {
+      const n = a.length;
+      function* sift(i, size) {
+        while (true) {
+          const l = 2 * i + 1, r = l + 1; let m = i;
+          if (l < size) { yield { cmp: [l, m] }; if (a[l] > a[m]) m = l; }
+          if (r < size) { yield { cmp: [r, m] }; if (a[r] > a[m]) m = r; }
+          if (m === i) return;
+          [a[i], a[m]] = [a[m], a[i]]; yield { wr: [i, m], n: 2 }; i = m;
+        }
+      }
+      for (let i = (n >> 1) - 1; i >= 0; i--) yield* sift(i, n);
+      for (let end = n - 1; end > 0; end--) {
+        [a[0], a[end]] = [a[end], a[0]]; yield { wr: [0, end], n: 2 };
+        yield { sorted: end };
+        yield* sift(0, end);
+      }
+    }
+    const ALGOS = { bubble, selection, insertion, merge, quick, heap };
+
+    // ---------- Arreglos ----------
+    function makeArray() {
+      const n = +$('size').value, d = $('dist').value;
+      let a = Array.from({ length: n }, (_, i) => i + 1);
+      if (d === 'few') a = Array.from({ length: n }, () => 1 + Math.floor(Math.random() * 5) * Math.ceil(n / 5));
+      if (d === 'random' || d === 'few') for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      if (d === 'reversed') a.reverse();
+      if (d === 'nearly') for (let k = 0; k < Math.max(1, Math.round(n * 0.06)); k++) { const i = Math.floor(Math.random() * (n - 1)); [a[i], a[i + 1]] = [a[i + 1], a[i]]; }
+      return a;
+    }
+    let base = [];
+    function reset(newArray) {
+      stop();
+      if (newArray || !base.length) base = makeArray();
+      arr = base.slice(); gen = null; cmp = 0; wr = 0; hl = {}; sortedFrom = Infinity; finished = false;
+      setState('listo'); updateStats(); draw();
+    }
+
+    // ---------- Dibujo ----------
+    function fit() {
+      const r = canvas.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = r.width * dpr; canvas.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    }
+    function draw() {
+      const w = canvas.width / (Math.min(devicePixelRatio || 1, 2)), h = canvas.height / (Math.min(devicePixelRatio || 1, 2));
+      ctx.clearRect(0, 0, w, h);
+      const n = arr.length; if (!n) return;
+      const pad = 16, bw = (w - pad * 2) / n, max = Math.max(...arr), gap = bw > 5 ? 2 : bw > 2.5 ? 1 : 0;
+      for (let i = 0; i < n; i++) {
+        const bh = (arr[i] / max) * (h - pad * 2);
+        ctx.fillStyle = finished || i >= sortedFrom ? C.done : hl.wr && hl.wr.includes(i) ? C.wr : hl.cmp && hl.cmp.includes(i) ? C.cmp : C.bar;
+        ctx.fillRect(pad + i * bw, h - pad - bh, Math.max(1, bw - gap), bh);
+      }
+    }
+
+    // ---------- Ejecución ----------
+    function setState(s) { $('s-state').textContent = s; }
+    function updateStats() { $('s-cmp').textContent = cmp.toLocaleString('es-CO'); $('s-wr').textContent = wr.toLocaleString('es-CO'); }
+    function tick() {
+      if (finished) return false;
+      if (!gen) gen = ALGOS[$('algo').value](arr);
+      const r = gen.next();
+      if (r.done) { finish(); return false; }
+      const op = r.value; hl = {};
+      if (op.cmp) { cmp++; hl.cmp = op.cmp; }
+      if (op.wr) { wr += op.n; hl.wr = op.wr; }
+      if (op.sorted != null) sortedFrom = Math.min(sortedFrom, op.sorted);
+      return true;
+    }
+    function finish() {
+      finished = true; hl = {}; stop(); setState('ordenado'); updateStats(); draw();
+      runs.unshift({ algo: $('algo').value, dist: $('dist').value, n: arr.length, cmp, wr });
+      renderRuns();
+    }
+    function loop() {
+      const sp = +$('speed').value;
+      // A más velocidad, más operaciones por cuadro
+      const ops = sp < 40 ? 1 : Math.ceil(Math.pow(1.09, sp - 40));
+      const delay = sp < 40 ? (40 - sp) * 9 : 0;
+      for (let k = 0; k < ops; k++) if (!tick()) break;
+      updateStats(); draw();
+      if (running) timer = setTimeout(() => requestAnimationFrame(loop), delay);
+    }
+    function start() {
+      if (finished) reset(false);
+      running = true; $('run').textContent = 'Pausar'; setState('ordenando');
+      ['algo', 'dist', 'size'].forEach(id => $(id).disabled = true);
+      loop();
+    }
+    function stop() {
+      running = false; clearTimeout(timer); $('run').textContent = finished ? 'Ordenar de nuevo' : (gen ? 'Continuar' : 'Ordenar');
+      ['algo', 'dist', 'size'].forEach(id => $(id).disabled = false);
+      if (gen && !finished) setState('en pausa');
+    }
+    function renderRuns() {
+      const body = $('runs');
+      $('runs-empty').hidden = runs.length > 0;
+      const best = {};
+      runs.forEach(r => { const k = r.dist + r.n, t = r.cmp + r.wr; if (best[k] == null || t < best[k]) best[k] = t; });
+      body.innerHTML = runs.map(r => {
+        const t = r.cmp + r.wr, isBest = t === best[r.dist + r.n] && runs.filter(x => x.dist === r.dist && x.n === r.n).length > 1;
+        return `<tr><td>${NAMES[r.algo]}</td><td>${DISTS[r.dist]}</td><td>${r.n}</td><td>${r.cmp.toLocaleString('es-CO')}</td><td>${r.wr.toLocaleString('es-CO')}</td><td class="${isBest ? 'best' : ''}">${t.toLocaleString('es-CO')}</td></tr>`;
+      }).join('');
+    }
+
+    $('run').addEventListener('click', () => running ? stop() : start());
+    $('step').addEventListener('click', () => { if (running) stop(); if (finished) reset(false); tick(); updateStats(); draw(); if (!finished) setState('en pausa'); $('run').textContent = 'Continuar'; });
+    $('shuffle').addEventListener('click', () => reset(true));
+    $('dist').addEventListener('change', () => reset(true));
+    $('algo').addEventListener('change', () => reset(false));
+    $('size').addEventListener('input', () => { $('size-v').textContent = $('size').value; reset(true); });
+    addEventListener('resize', fit);
+    reset(true); fit();
+  })();
+  </script>
+</body>
+</html>

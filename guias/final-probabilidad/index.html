@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Final de Proba: guía de estudio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Plan: cuaderno de laboratorio frío. Barra lateral fija con las 9 vistas; contenido en una columna de lectura; números en mono. */
+:root{
+  --paper:#f4f6f9; --card:#ffffff; --ink:#152036; --muted:#5b6578; --line:#d9dee7;
+  --accent:#1f4fd6; --accent-soft:#e6edff; --mark:#c27a00; --mark-soft:#fff3dc;
+  --good:#1d7a46; --good-soft:#e3f4ea; --bad:#b4232a; --bad-soft:#fde8e8;
+  --f-display:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1522; --card:#171f30; --ink:#e7ecf5; --muted:#9aa5ba; --line:#2a3550;
+    --accent:#7ea2ff; --accent-soft:#1d2a4d; --mark:#f0b24a; --mark-soft:#3a2c12;
+    --good:#5ccf8d; --good-soft:#163526; --bad:#ff7b7b; --bad-soft:#3d1a1d; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1522; --card:#171f30; --ink:#e7ecf5; --muted:#9aa5ba; --line:#2a3550;
+  --accent:#7ea2ff; --accent-soft:#1d2a4d; --mark:#f0b24a; --mark-soft:#3a2c12;
+  --good:#5ccf8d; --good-soft:#163526; --bad:#ff7b7b; --bad-soft:#3d1a1d; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55}
+a{color:var(--accent)}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.5rem;font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+h4{font-size:1rem;font-weight:700}
+p{margin:0}
+sub,sup{font-size:.72em;line-height:0}
+code,.mono,.num{font-family:var(--f-mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100%}
+.side{position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:18px;background:var(--card)}
+.brand{display:flex;flex-direction:column;gap:4px}
+.brand b{font-family:var(--f-display);font-size:1.2rem;font-weight:800}
+.brand span{color:var(--muted);font-size:.9rem}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;text-decoration:none;color:var(--ink);font-weight:600}
+.nav a .k{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);width:22px}
+.nav a:hover{background:var(--accent-soft)}
+.nav a[aria-current="page"]{background:var(--accent);color:#fff}
+.nav a[aria-current="page"] .k{color:#fff}
+.side .prog{font-size:.88rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--good);width:0}
+main{padding:32px clamp(16px,4vw,48px) 80px;min-width:0}
+.view{display:none;flex-direction:column;gap:22px;max-width:980px}
+.view.on{display:flex}
+.lead{color:var(--muted);max-width:68ch;font-size:1.05rem}
+.prose{max-width:70ch;display:flex;flex-direction:column;gap:10px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:700;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.m{background:var(--mark-soft);color:var(--mark)}
+.pill.g{background:var(--good-soft);color:var(--good)}
+.pill.b{background:var(--bad-soft);color:var(--bad)}
+.callout{border-left:4px solid var(--mark);background:var(--mark-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.callout.blue{border-color:var(--accent);background:var(--accent-soft)}
+.callout.red{border-color:var(--bad);background:var(--bad-soft)}
+ul.clean{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.btn{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.small{padding:4px 10px;font-size:.88rem}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:5px 12px;cursor:pointer;font-weight:600;font-size:.9rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+input[type=text],input[type=number],input[type=search],select{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 10px;min-width:0}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:.9rem;font-weight:600}
+
+/* formulas */
+.fx{font-family:var(--f-mono);font-size:.95rem;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:nowrap}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 3px}
+.frac>span:last-child{padding:0 3px}
+.rt{border-top:1.5px solid currentColor;padding:0 2px}
+table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.tbl{font-family:var(--f-mono);font-size:.8rem;width:100%}
+.tbl th,.tbl td{padding:4px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.tbl thead th{position:sticky;top:0;background:var(--accent-soft);color:var(--ink)}
+.tbl tbody th{background:var(--paper);text-align:center}
+.tbl tr:hover td{background:var(--mark-soft)}
+.tbl td.hl,.tbl th.hl{background:var(--mark-soft)!important;color:var(--mark);font-weight:700}
+.dt{width:100%;font-size:.95rem}
+.dt th,.dt td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.dt th{font-family:var(--f-display);font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+
+/* decision tree */
+.tree{display:flex;flex-direction:column;gap:14px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;font-size:.88rem}
+.crumbs span{background:var(--paper);border:1px solid var(--line);border-radius:99px;padding:2px 10px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.opt:hover{border-color:var(--accent)}
+.opt b{font-family:var(--f-display)}
+.opt small{color:var(--muted)}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+
+/* exercises */
+.ex{background:var(--card);border:1px solid var(--line);border-radius:var(--r);border-left:5px solid var(--line)}
+.ex.done{border-left-color:var(--good)}
+.ex summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.ex summary::-webkit-details-marker{display:none}
+.ex summary .id{font-family:var(--f-mono);font-weight:700;color:var(--accent);min-width:34px}
+.ex summary .tt{font-weight:700;flex:1 1 260px}
+.ex .body{padding:0 18px 18px;display:flex;flex-direction:column;gap:12px}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.steps li{padding-left:4px}
+.steps li.hid{display:none}
+.ans{background:var(--good-soft);border-radius:8px;padding:10px 14px}
+.docnote{background:var(--bad-soft);border-radius:8px;padding:10px 14px;font-size:.95rem}
+.docnote b{color:var(--bad)}
+
+/* simulator */
+.sim-q{font-size:1.05rem}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.fields .f input,.fields .f select{width:100%}
+.fields .f.ok input,.fields .f.ok select{border-color:var(--good);background:var(--good-soft)}
+.fields .f.no input,.fields .f.no select{border-color:var(--bad);background:var(--bad-soft)}
+.fields .f .exp{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-weight:400}
+.score{font-family:var(--f-display);font-size:1.1rem}
+.kbd{font-family:var(--f-mono);font-size:.82rem;border:1px solid var(--line);border-radius:4px;padding:0 5px;background:var(--paper)}
+
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .side{position:sticky;top:0;height:auto;z-index:5;padding:10px 12px;flex-direction:row;align-items:center;gap:10px;border-right:0;border-bottom:1px solid var(--line)}
+  .brand span,.side .prog{display:none}
+  .brand b{font-size:1rem;white-space:nowrap}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px}
+  .nav a{white-space:nowrap;padding:6px 10px}
+  .nav a .k{display:none}
+  main{padding-top:20px}
+}
+</style>
+</head>
+<body>
+<a href="../../#guias" class="jd-back" style="position:fixed;left:12px;bottom:12px;z-index:2147483000;font:600 13px/1 'IBM Plex Sans',system-ui,sans-serif;background:#0d1626;color:#ffb454;border:1px solid #24324d;padding:9px 12px;border-radius:6px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35)">&larr; Volver al portafolio</a>
+<div class="shell">
+<aside class="side">
+  <div class="brand"><b>Final de Proba</b><span>Inferencia · examen a mano con tablas</span></div>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#inicio"><span class="k">01</span>Plan</a>
+    <a href="#arbol"><span class="k">02</span>¿Qué uso?</a>
+    <a href="#formulario"><span class="k">03</span>Formulario</a>
+    <a href="#hipotesis"><span class="k">04</span>Hipótesis</a>
+    <a href="#tablas"><span class="k">05</span>Tablas</a>
+    <a href="#ejercicios"><span class="k">06</span>Ejercicios</a>
+    <a href="#simulador"><span class="k">07</span>Simulador</a>
+    <a href="#quiz"><span class="k">08</span>Quiz</a>
+    <a href="#errores"><span class="k">09</span>Errores</a>
+  </nav>
+  <div class="prog"><span id="progTxt">0 de 111 ejercicios repasados</span><div class="bar"><i id="progBar"></i></div></div>
+</aside>
+<main>
+
+<!-- ================= 01 INICIO ================= -->
+<section class="view" id="v-inicio">
+  <div class="prose">
+    <h1>Guía para el examen final de Probabilidad e Inferencia</h1>
+    <p class="lead">Construida con los 111 ejercicios de repaso del documento de mayo. Todos los resultados fueron recalculados; donde el documento tiene un error, la guía te lo marca. En el examen no hay apps, así que todo está pensado para resolver a mano con tablas.</p>
+  </div>
+
+  <div class="grid3" id="topicTiles"></div>
+
+  <div class="card">
+    <h2>Ruta de estudio</h2>
+    <ol class="steps">
+      <li><b>¿Qué uso?</b> Recorre el árbol hasta que puedas elegir el estadístico sin mirarlo. Es lo que más puntos cuesta cuando sale mal.</li>
+      <li><b>Formulario.</b> Copia a mano las 11 tarjetas una vez. Fíjate en los supuestos de cada una: la rúbrica los califica.</li>
+      <li><b>Hipótesis.</b> Haz el quiz de frases hasta sacar 14/14. Dónde va el igual y la cola deciden todo el ejercicio.</li>
+      <li><b>Tablas.</b> Practica con las tablas de la guía la lectura de t, χ² y F, en especial F<sub>α/2</sub> = 1/F<sub>1−α/2</sub> con los g.l. invertidos.</li>
+      <li><b>Ejercicios.</b> Resuelve en papel y revela los pasos uno a uno. Prioriza los de rúbrica (78 en adelante): se parecen más al examen escrito.</li>
+      <li><b>Simulador y Quiz.</b> Problemas nuevos con números aleatorios para comprobar que no te los aprendiste de memoria.</li>
+    </ol>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Lo que la rúbrica premia</h3>
+      <p>Resumen de las rúbricas de los ejercicios 78–112 (sobre ≈12.5 puntos):</p>
+      <ul class="clean">
+        <li><b>Declarar la variable</b> con unidades y su distribución (1–2 pts).</li>
+        <li><b>Calcular x̄, s o p̂</b> de la muestra cuando te dan datos crudos (1–3 pts).</li>
+        <li><b>Justificar el estadístico</b>: normalidad, σ conocida o no, tamaño de n, independencia (1–3 pts).</li>
+        <li><b>Plantear H₀ y H₁</b> correctamente (2–3 pts).</li>
+        <li><b>Calcular</b> estadístico, percentil e IC (3–5 pts).</li>
+        <li><b>Concluir en el contexto</b> del problema, no solo "se rechaza H₀" (1.5–2.5 pts).</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Responder en el formulario (V1, V2)</h3>
+      <p>Los ejercicios 1–12 tienen datos variables y una regla de respuesta. Lee la regla antes de calcular:</p>
+      <ul class="clean">
+        <li>"Si hay evidencia → estadístico; si no → p-valor": primero decide y luego escoge qué número escribes.</li>
+        <li>"Valor absoluto del estadístico": quita el signo negativo.</li>
+        <li>"Límite inferior × 2" o "x̄ − límite inferior": haz la operación extra.</li>
+        <li>Usa 4 decimales; el sistema tolera pequeñas diferencias de tabla.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout blue"><b>Convención de esta guía (y de casi todo el documento):</b> el subíndice de un percentil es el área a su izquierda. t<sub>0.975; 9</sub> = 2.262 deja 0.975 a la izquierda; χ²<sub>0.05; 9</sub> = 3.325 deja 0.05 a la izquierda. Algunos ejercicios del documento (57, 63) usan la notación de cola superior t<sub>(0.025, 8)</sub>: es el mismo número.</div>
+</section>
+
+<!-- ================= 02 ÁRBOL ================= -->
+<section class="view" id="v-arbol">
+  <div class="prose">
+    <h1>¿Qué estadístico uso?</h1>
+    <p class="lead">Responde las preguntas como lo harías leyendo el enunciado. Al final verás la fórmula, los grados de libertad y qué escribir para justificarlo.</p>
+  </div>
+  <div class="card tree" id="tree"></div>
+  <div class="card">
+    <h3>Pistas del enunciado</h3>
+    <table class="dt">
+      <thead><tr><th>Si el enunciado dice…</th><th>Entonces…</th></tr></thead>
+      <tbody>
+        <tr><td>"desviación poblacional", "se sabe que σ =", "históricamente la desviación es", "según el fabricante la desviación"</td><td>σ conocida ⇒ Z</td></tr>
+        <tr><td>"en la muestra se obtuvo una desviación de", te dan los datos crudos</td><td>s muestral ⇒ t (si la población es normal y n &lt; 30)</td></tr>
+        <tr><td>"variabilidad", "dispersión", "precisión", "homogéneo", "la desviación supera"</td><td>Parámetro σ² ⇒ χ² (una población) o F (dos)</td></tr>
+        <tr><td>"porcentaje", "proporción", "de los n, x cumplen"</td><td>Proporción ⇒ Z con p̂</td></tr>
+        <tr><td>"calcule la probabilidad de que la varianza/desviación muestral…"</td><td>No es una prueba: distribución muestral de S² con χ²</td></tr>
+        <tr><td>Dos grupos independientes y no se dice si las varianzas son iguales</td><td>Primero prueba F (o IC de la razón), después caso 2 o caso 3</td></tr>
+        <tr><td>"distribución desconocida" o "exponencial" pero n ≥ 30</td><td>TLC ⇒ Z para la media</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 03 FORMULARIO ================= -->
+<section class="view" id="v-formulario">
+  <div class="prose">
+    <h1>Formulario</h1>
+    <p class="lead">Las 11 situaciones que aparecen en el documento. Cada tarjeta trae cuándo se usa, el estadístico, el intervalo y qué escribir para justificarlo.</p>
+  </div>
+  <div class="row" id="fxNav"></div>
+  <div class="grid2" id="fxCards" style="grid-template-columns:repeat(auto-fit,minmax(360px,1fr))"></div>
+</section>
+
+<!-- ================= 04 HIPÓTESIS ================= -->
+<section class="view" id="v-hipotesis">
+  <div class="prose">
+    <h1>Plantear y decidir</h1>
+    <p class="lead">Aquí se pierden más puntos que en las cuentas. Tres reglas: el igual siempre va en H₀; lo que quieren probar (la sospecha, la afirmación nueva) va en H₁; el signo de H₁ define la cola.</p>
+  </div>
+
+  <div class="card">
+    <h3>Los 5 pasos que pide el profe</h3>
+    <ol class="steps">
+      <li><b>Planteamiento:</b> H₀ y H₁ sobre el parámetro (μ, σ², π, μ₁−μ₂, σ₁²/σ₂², π₁−π₂), en símbolos y en palabras.</li>
+      <li><b>Nivel de significancia:</b> α = P(rechazar H₀ | H₀ es cierta) = error tipo I.</li>
+      <li><b>Estadístico de prueba</b> y su distribución, con la justificación de supuestos.</li>
+      <li><b>Regla de decisión:</b> valor(es) crítico(s) según la cola, o comparación del p-valor con α.</li>
+      <li><b>Conclusión</b> en el contexto del problema.</li>
+    </ol>
+  </div>
+
+  <div class="grid3">
+    <div class="card"><span class="pill">H₁: &gt;</span><h4>Cola derecha</h4><p>Rechazo si estadístico &gt; crítico<sub>1−α</sub>.</p><p>p-valor = P(estadístico &gt; valor observado).</p></div>
+    <div class="card"><span class="pill">H₁: &lt;</span><h4>Cola izquierda</h4><p>Rechazo si estadístico &lt; crítico<sub>α</sub>.</p><p>p-valor = P(estadístico &lt; valor observado).</p></div>
+    <div class="card"><span class="pill">H₁: ≠</span><h4>Dos colas</h4><p>Rechazo si cae por fuera de crítico<sub>α/2</sub> y crítico<sub>1−α/2</sub>.</p><p>p-valor = 2 × (la cola más pequeña).</p></div>
+  </div>
+  <div class="callout">Decisión con p-valor: <b>p-valor ≤ α ⇒ se rechaza H₀</b>. Con p-valor &gt; α no se "acepta" H₀: se dice que no hay evidencia suficiente para rechazarla (el documento escribe "AH₀"; en el examen escribe "no se rechaza H₀").</div>
+
+  <div class="card">
+    <h3>Traductor de frases</h3>
+    <table class="dt">
+      <thead><tr><th>Frase</th><th>H₀</th><th>H₁</th><th>Ejemplo del doc.</th></tr></thead>
+      <tbody>
+        <tr><td>"supera", "es mayor que", "aumentó", "excede"</td><td>≤</td><td>&gt;</td><td>67, 88, 111 (al revés)</td></tr>
+        <tr><td>"es menor", "disminuyó", "redujo", "es más rápido"</td><td>≥</td><td>&lt;</td><td>38, 50, 98</td></tr>
+        <tr><td>"difiere", "cambió", "hay diferencia", "se desajustó"</td><td>=</td><td>≠</td><td>31, 41, 79</td></tr>
+        <tr><td>"al menos 80%" (afirmación con igual que se pone en duda)</td><td>π ≥ 0.8</td><td>π &lt; 0.8</td><td>26, 34</td></tr>
+        <tr><td>"máximo", "no supera", "a lo sumo 2%"</td><td>π ≤ 0.02</td><td>π &gt; 0.02</td><td>45, 71, 81</td></tr>
+        <tr><td>"excede en más de 2000 a"</td><td>μ₁−μ₂ ≤ 2000</td><td>μ₁−μ₂ &gt; 2000</td><td>37, 65</td></tr>
+        <tr><td>"la desviación es mayor a 15"</td><td>σ² ≤ 225</td><td>σ² &gt; 225</td><td>104 (¡eleva al cuadrado!)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Concluir con un intervalo de confianza</h3>
+    <table class="dt">
+      <thead><tr><th>Intervalo</th><th>Resultado</th><th>Conclusión</th></tr></thead>
+      <tbody>
+        <tr><td>IC(μ₁−μ₂) o IC(π₁−π₂)</td><td>Todo positivo</td><td>μ₁ &gt; μ₂</td></tr>
+        <tr><td></td><td>Todo negativo</td><td>μ₁ &lt; μ₂</td></tr>
+        <tr><td></td><td>Contiene el 0</td><td>No hay diferencia significativa</td></tr>
+        <tr><td>IC(σ₁²/σ₂²)</td><td>Contiene el 1</td><td>Varianzas iguales ⇒ caso 2</td></tr>
+        <tr><td></td><td>No contiene el 1</td><td>Varianzas diferentes ⇒ caso 3</td></tr>
+        <tr><td>IC(μ) frente a un valor c</td><td>c dentro del IC</td><td>No hay evidencia de que μ ≠ c</td></tr>
+        <tr><td></td><td>Todo el IC &gt; c (o &lt; c)</td><td>μ &gt; c (o μ &lt; c)</td></tr>
+        <tr><td>"supera en más de d" (2, 11, 101, 108)</td><td>Límite inferior &gt; d</td><td>Sí supera en más de d</td></tr>
+      </tbody>
+    </table>
+    <p class="callout red">Ejercicios 95 y 106: el documento aplica el descuento porque el límite superior pasa el umbral, aunque el umbral está dentro del IC. Con la regla de esta tabla no habría evidencia. Pregunta en clase qué criterio usan y, en el examen, escribe explícitamente cuál aplicas.</p>
+  </div>
+
+  <div class="card" id="h1quiz"></div>
+</section>
+
+<!-- ================= 05 TABLAS ================= -->
+<section class="view" id="v-tablas">
+  <div class="prose">
+    <h1>Tablas</h1>
+    <p class="lead">Las mismas tablas que usarás en el examen, con el área a la izquierda como subíndice. Pasa el cursor por una fila para seguirla. El buscador sirve para verificar en casa.</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Trucos para leerlas a mano</h3>
+      <ul class="clean">
+        <li><b>F izquierda:</b> F<sub>α/2; v₁, v₂</sub> = 1 / F<sub>1−α/2; v₂, v₁</sub> (invierte los g.l.). Ej.: F<sub>0.025; 15, 6</sub> = 1/F<sub>0.975; 6, 15</sub> = 1/3.415 = 0.293.</li>
+        <li><b>t simétrica:</b> t<sub>α</sub> = −t<sub>1−α</sub>.</li>
+        <li><b>g.l. que no están:</b> interpola o usa el más cercano hacia abajo (más conservador).</li>
+        <li><b>p-valor con tabla:</b> ubica el estadístico entre dos columnas y reporta el rango (0.01 &lt; p &lt; 0.025). Si es de dos colas, duplica.</li>
+        <li><b>χ² con muchos g.l.</b> (ej. 62 con ν = 99): χ²<sub>p; ν</sub> ≈ ν·(1 − 2/(9ν) + z<sub>p</sub>·√(2/(9ν)))³.</li>
+        <li><b>Z poco común:</b> 1−α/2 = 0.97 ⇒ z = 1.88; 0.98 ⇒ 2.05 (o 2.054); 0.985 ⇒ 2.17; 0.965 ⇒ 1.81.</li>
+      </ul>
+    </div>
+    <div class="card" id="finder"></div>
+  </div>
+  <div class="card"><h3>Percentiles de Z más usados</h3><div class="tbl-wrap" id="tabZq"></div></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><h3>Normal estándar Φ(z) = P(Z ≤ z)</h3><div class="row" id="zSide"></div></div><div class="tbl-wrap" style="max-height:440px" id="tabZ"></div></div>
+  <div class="card"><h3>t de Student: t<sub>p; ν</sub></h3><div class="tbl-wrap" style="max-height:480px" id="tabT"></div></div>
+  <div class="card"><h3>Chi-cuadrado: χ²<sub>p; ν</sub></h3><div class="tbl-wrap" style="max-height:480px" id="tabC"></div></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><h3>F de Fisher: F<sub>p; v₁ (columnas), v₂ (filas)</sub></h3><div class="row" id="fSel"></div></div><div class="tbl-wrap" style="max-height:480px" id="tabF"></div></div>
+</section>
+
+<!-- ================= 06 EJERCICIOS ================= -->
+<section class="view" id="v-ejercicios">
+  <div class="prose">
+    <h1>Banco de ejercicios del documento</h1>
+    <p class="lead">Resuélvelo primero en papel. Luego abre la tarjeta, pide la pista del método y revela los pasos uno a uno. Marca los que ya dominas para llevar tu avance.</p>
+  </div>
+  <div class="card">
+    <div class="row"><input type="search" id="exSearch" placeholder="Buscar: café, Transmilenio, 0.05, F…" aria-label="Buscar ejercicio" style="flex:1 1 260px"><select id="exState" aria-label="Filtrar por estado"><option value="all">Todos</option><option value="todo">Pendientes</option><option value="done">Repasados</option><option value="note">Con error en el documento</option></select></div>
+    <div class="row" id="exChips"></div>
+  </div>
+  <p id="exCount" class="lead"></p>
+  <div id="exList" style="display:flex;flex-direction:column;gap:10px"></div>
+</section>
+
+<!-- ================= 07 SIMULADOR ================= -->
+<section class="view" id="v-simulador">
+  <div class="prose">
+    <h1>Simulador de examen</h1>
+    <p class="lead">Problemas nuevos con datos aleatorios, al estilo del documento. Resuélvelo en papel con las tablas, escribe tus resultados y revisa. Se acepta una diferencia pequeña por redondeo de tabla.</p>
+  </div>
+  <div class="card"><div class="row" id="simTypes"></div><div class="row"><button class="btn" id="simNew">Nuevo problema</button><span class="score" id="simScore"></span></div></div>
+  <div class="card" id="simBox"></div>
+</section>
+
+<!-- ================= 08 QUIZ ================= -->
+<section class="view" id="v-quiz">
+  <div class="prose">
+    <h1>¿Qué método aplica?</h1>
+    <p class="lead">Te muestro un enunciado del documento y eliges el procedimiento. Entrena lo que más se olvida bajo presión: identificar el caso.</p>
+  </div>
+  <div class="card" id="quizBox"></div>
+</section>
+
+<!-- ================= 09 ERRORES ================= -->
+<section class="view" id="v-errores">
+  <div class="prose">
+    <h1>Errores y trampas del documento</h1>
+    <p class="lead">Al recalcular los 111 ejercicios aparecieron estas diferencias. Ninguna está en el enunciado: están en las soluciones. Sirven para no copiar un error al estudiar.</p>
+  </div>
+  <div id="errList" style="display:flex;flex-direction:column;gap:10px"></div>
+</section>
+
+</main>
+</div>
+<script>
+// Motor numérico: distribuciones Normal, t, chi-cuadrado y F (cdf y percentiles)
+const D = (() => {
+  function lnGamma(x) {
+    const g = 7, c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313,
+      -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+    if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lnGamma(1 - x);
+    x -= 1; let a = c[0]; const t = x + g + 0.5;
+    for (let i = 1; i < 9; i++) a += c[i] / (x + i);
+    return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+  }
+  function gammaP(a, x) { // regularized lower incomplete gamma
+    if (x <= 0) return 0;
+    if (x < a + 1) {
+      let sum = 1 / a, del = sum, ap = a;
+      for (let n = 0; n < 500; n++) { ap++; del *= x / ap; sum += del; if (Math.abs(del) < Math.abs(sum) * 1e-15) break; }
+      return sum * Math.exp(-x + a * Math.log(x) - lnGamma(a));
+    }
+    let b = x + 1 - a, c = 1 / 1e-300, d = 1 / b, h = d;
+    for (let i = 1; i < 500; i++) {
+      const an = -i * (i - a); b += 2;
+      d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300;
+      c = b + an / c; if (Math.abs(c) < 1e-300) c = 1e-300;
+      d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-15) break;
+    }
+    return 1 - Math.exp(-x + a * Math.log(x) - lnGamma(a)) * h;
+  }
+  function betacf(a, b, x) {
+    const qab = a + b, qap = a + 1, qam = a - 1;
+    let c = 1, d = 1 - qab * x / qap; if (Math.abs(d) < 1e-300) d = 1e-300; d = 1 / d; let h = d;
+    for (let m = 1; m <= 500; m++) {
+      const m2 = 2 * m;
+      let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+      d = 1 + aa * d; if (Math.abs(d) < 1e-300) d = 1e-300; c = 1 + aa / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; h *= d * c;
+      aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+      d = 1 + aa * d; if (Math.abs(d) < 1e-300) d = 1e-300; c = 1 + aa / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d;
+      const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-15) break;
+    }
+    return h;
+  }
+  function betaI(a, b, x) {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    const bt = Math.exp(lnGamma(a + b) - lnGamma(a) - lnGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+    if (x < (a + 1) / (a + b + 2)) return bt * betacf(a, b, x) / a;
+    return 1 - bt * betacf(b, a, 1 - x) / b;
+  }
+  const normCdf = z => z < 0 ? 0.5 * (1 - gammaP(0.5, z * z / 2)) : 0.5 * (1 + gammaP(0.5, z * z / 2));
+  const tCdf = (t, v) => { const x = v / (v + t * t); const p = 0.5 * betaI(v / 2, 0.5, x); return t > 0 ? 1 - p : p; };
+  const chiCdf = (x, v) => x <= 0 ? 0 : gammaP(v / 2, x / 2);
+  const fCdf = (x, a, b) => x <= 0 ? 0 : betaI(a / 2, b / 2, a * x / (a * x + b));
+  function invert(cdf, p, lo, hi) {
+    while (cdf(hi) < p) hi *= 2;
+    while (cdf(lo) > p) lo = lo < 0 ? lo * 2 : lo / 2 - 1e-9;
+    for (let i = 0; i < 200; i++) { const m = (lo + hi) / 2; if (cdf(m) < p) lo = m; else hi = m; if (hi - lo < 1e-12 * Math.max(1, Math.abs(m))) break; }
+    return (lo + hi) / 2;
+  }
+  const normInv = p => invert(normCdf, p, -10, 10);
+  const tInv = (p, v) => invert(x => tCdf(x, v), p, -50, 50);
+  const chiInv = (p, v) => invert(x => chiCdf(x, v), p, 1e-12, v + 10 * Math.sqrt(2 * v) + 10);
+  const fInv = (p, a, b) => invert(x => fCdf(x, a, b), p, 1e-12, 10);
+  return { normCdf, tCdf, chiCdf, fCdf, normInv, tInv, chiInv, fInv };
+})();
+
+
+</script>
+<script>
+const EX = [{"id": 1, "t": "Peso de pastillas (σ ≤ 10 mg)", "tags": ["var1", "form"], "e": "Pastillas: σ no debe superar 10 mg. Muestra de n = V1 con x̄ = 501 mg y s = V2. Se sospecha que σ > 10. PH al 95%. Si se confirma la sospecha, responder el estadístico; si no, el p-valor. <i>Ejemplo resuelto con V1 = 60, V2 = 11.1.</i>", "s": ["Parámetro: σ² (variabilidad) ⇒ χ². σ₀² = 10² = 100", "H₀: σ² ≤ 100 vs H₁: σ² > 100 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 59·123.2100/100 = <b>72.694</b> (59 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 59</sub> = 77.931", "p-valor = 0.1085", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀ (χ²ₚ = 72.69 < 77.93). Respuesta del formulario: <b>p-valor = 0.1085</b>.", "n": "Clave: el problema habla de desviación estándar pero la prueba se hace sobre σ² (eleva al cuadrado 10 y s).", "x": null}, {"id": 2, "t": "Ingreso con y sin MBA", "tags": ["dmedZ", "form"], "e": "n₁ = 40 con MBA (x̄₁ = V1), n₂ = 50 sin MBA (x̄₂ = 3400). σ₁ = 800, σ₂ = 500 conocidas. ¿Los que tienen MBA ganan en promedio más de V2 dólares que los que no? IC 95%. Si sí: responder el mayor |límite|; si no, el menor. <i>Ejemplo: V1 = 4500, V2 = 700.</i>", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 1100.00", "√(σ₁²/n₁ + σ₂²/n₂) = √(800.0000²/40 + 500.0000²/50) = 144.9138", "z<sub>0.975</sub> = 1.960; error = 284.0258", "IC(μ₁−μ₂)<sub>95%</sub> = <b>(815.9742 ; 1384.03)</b>", "Para afirmar μ₁ − μ₂ > 700 TODO el intervalo debe estar por encima de 700: límite inferior 816 > 700 ✔"], "a": "Sí ganan más de 700. Respuesta: <b>1384.0</b>.", "n": null, "x": null}, {"id": 3, "t": "Horas viendo grabaciones: hombres vs mujeres", "tags": ["ratioF", "dmedT2", "form"], "e": "Centro de acompañamiento: los hombres ven MENOS grabaciones que las mujeres. Estudiantes de posgrado creen lo contrario (hombres ≥ ... más). Hombres: n = v1, x̄ = v2, s = 2.6 h; Mujeres: n = 28, x̄ = 12, s = 3.4 h. α = 5%. Si NO hay evidencia → p-valor; si sí → |estadístico|. <i>Ejemplo: v1 = 20, v2 = 15.</i>", "s": ["Primero se prueba igualdad de varianzas (no se conocen σ y no se dice si son iguales):", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 6.7600/11.5600 = <b>0.585</b>  (19, 27 g.l.)", "F<sub>0.025; 19, 27</sub> = 1/F<sub>0.975; 27, 19</sub> = 0.4132 ;  F<sub>0.975; 19, 27</sub> = 2.2713", "p-valor = 0.2291 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Luego la diferencia de medias (X = hombres, Y = mujeres). Refutar al centro ⇒ H₁: μ<sub>X</sub> − μ<sub>Y</sub> > 0", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 3.0947;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (3.0000 − 0)/0.9060 = <b>3.311</b> (46 g.l.)", "Valor crítico: 1.679;  p-valor = 0.0009", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: los posgrado tienen razón. Respuesta: <b>|t| = 3.31</b> (la hoja del profe da 3.31, Sp = 3.09).", "n": null, "x": null}, {"id": 4, "t": "Distancia promedio de viajeros", "tags": ["media1t", "form"], "e": "n = v1 vehículos, x̄ = v2 km, s = 12.8 km. IC 95% para μ. Si se puede afirmar que μ ≥ 200 km → responder 2 × límite inferior; si no, el límite superior. <i>Ejemplo: v1 = 25, v2 = 225.</i>", "s": ["σ desconocida, población normal, n = 25 ⇒ t con 24 g.l.", "t<sub>0.975; 24</sub> = 2.064", "Error = t·s/√n = 2.064·12.8000/√25 = 5.2836", "IC(μ)<sub>95%</sub> = 225.0000 ± 5.2836 = <b>(219.7164 ; 230.2836)</b>", "Todo el intervalo está por encima de 200 ⇒ se puede afirmar μ ≥ 200."], "a": "Respuesta: 2 × 219.716 = <b>439.43</b>.", "n": null, "x": null}, {"id": 5, "t": "Espectadores frecuentes de cine (con/sin hijos)", "tags": ["dprop", "form"], "e": "1000 adultos: V1 van con hijos (123 son frecuentes), el resto sin hijos (145 frecuentes). ¿Hay diferencia en las proporciones? PH al 95%. Si hay diferencia → |estadístico|; si no → p-valor. <i>Ejemplo: V1 = 460.</i>", "s": ["H₀: π₁ − π₂ = 0 vs H₁: π₁ − π₂ ≠ 0 (dos colas), α = 0.05", "p̂₁ = 123/460 = 0.2674, p̂₂ = 145/540 = 0.2685, p̄ (combinada) = (123+145)/(460+540) = 0.2680", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>-0.040</b>", "Valor crítico: ±1.960;  p-valor = 0.9680", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No hay diferencia significativa. Respuesta: <b>p-valor = 0.9680</b>.", "n": "La hoja de Excel del documento muestra p̂<sub>Y</sub> = 22.2% (otros datos, p-valor 0.0969). Con los datos del enunciado p̂₂ = 145/540 = 0.2685.", "x": null}, {"id": 6, "t": "Cine (variante con α = V2)", "tags": ["dprop", "form"], "e": "Mismo caso del 5 con tamaños V1 y 1000 − V1, y α = V2. <i>Ejemplo: V1 = 440, α = 10%.</i>", "s": ["H₀: π₁ − π₂ = 0 vs H₁: π₁ − π₂ ≠ 0 (dos colas), α = 0.1", "p̂₁ = 123/440 = 0.2795, p̂₂ = 145/560 = 0.2589, p̄ (combinada) = (123+145)/(440+560) = 0.2680", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>0.731</b>", "Valor crítico: ±1.645;  p-valor = 0.4650", "Como p-valor > α = 0.1, <b>no se rechaza H₀</b>.", "z<sub>c</sub> = ±1.645 (α/2 = 0.05 en cada cola)."], "a": "Z<sub>p</sub> = 0.73 cae entre −1.645 y 1.645 ⇒ no hay diferencia (p = 0.465).", "n": "En el documento la conclusión compara el p-valor con 0.05 aunque α = 10% (no cambia la decisión). También el rango 'Si 400 ≤ V2 ≤ 440' es en realidad para V1.", "x": null}, {"id": 7, "t": "Enlatadora: P(S² > V2)", "tags": ["prob_s2", "form"], "e": "Llenado normal con σ = 0.03162278 (σ² = 0.001). n = V1 latas. Calcule P(S² > V2). <i>Ejemplo: n = 10, V2 = 0.0025.</i>", "s": ["Población normal ⇒ (n−1)S²/σ² ~ χ²<sub>n−1</sub>", "P(S² > 0.0025) = P(χ²<sub>9</sub> > 9·0.0025/0.001) = P(χ²<sub>9</sub> > 22.50)", "En tabla: 22.5 está entre χ²<sub>0.99;9</sub> = 21.666 y χ²<sub>0.995;9</sub> = 23.589 ⇒ la probabilidad está entre 0.005 y 0.01"], "a": "<b>P = 0.00742</b>", "n": null, "x": null}, {"id": 8, "t": "Cobertura de pintura (¿difiere de 400?)", "tags": ["media1t", "form"], "e": "n = V1 galones, x̄ = 365.2 pies², s² = V2. Normal. IC 95%: ¿la cobertura promedio difiere de 400? Si sí → límite superior; si no → x̄ − límite inferior. <i>Ejemplo: V1 = 10, V2 = 2344.21.</i>", "s": ["s = √2344.21 = 48.417", "σ desconocida, población normal, n = 10 ⇒ t con 9 g.l.", "t<sub>0.975; 9</sub> = 2.262", "Error = t·s/√n = 2.262·48.4170/√10 = 34.6355", "IC(μ)<sub>95%</sub> = 365.2000 ± 34.6355 = <b>(330.5645 ; 399.8355)</b>", "400 ∉ IC ⇒ sí difiere."], "a": "Respuesta: <b>399.84</b>.", "n": "El documento escribe t<sub>(0.957, …)</sub> y 'IC (90)%' por error de digitación: es t<sub>0.975</sub> e IC 95%.", "x": null}, {"id": 9, "t": "COMPUMUNDO: software vs hardware", "tags": ["ratioF", "dmedT2", "form"], "e": "Software: x̄₁ = V1, s₁ = 4.2, n₁ = 20. Hardware: x̄₂ = V2, s₂ = 3.9, n₂ = 25. Normales. α = 5%. ¿Se tarda más en software? Si sí → |estadístico|, si no → p-valor. <i>Ejemplo: V1 = 18.0, V2 = 15.5.</i>", "s": ["H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 17.6400/15.2100 = <b>1.160</b>  (19, 24 g.l.)", "F<sub>0.025; 19, 24</sub> = 1/F<sub>0.975; 24, 19</sub> = 0.4078 ;  F<sub>0.975; 19, 24</sub> = 2.3452", "p-valor = 0.7225 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 4.0353;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (2.5000 − 0)/1.2106 = <b>2.065</b> (43 g.l.)", "Valor crítico: 1.681;  p-valor = 0.0225", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: software tarda más. Respuesta: <b>2.065</b> (documento: 2.068 por redondear Sp a 4.03).", "n": "El p-valor de la prueba F del documento usa 1.22 (copiado del ejercicio 15); con F = 1.16 el p-valor es 0.723. No cambia la conclusión.", "x": null}, {"id": 10, "t": "Laboratorio COVID: reprocesar si s difiere >10% de σ", "tags": ["prob_s2", "form"], "e": "Temperatura ~ N(18, σ = v1). Si en n = v2 mediciones la desviación s difiere en más del 10% de σ se reprocesa todo. Calcule la probabilidad de reprocesar. <i>Ejemplo: v2 = 30.</i>", "s": ["P(|s − σ| > 0.1σ) = 1 − P(0.9σ < s < 1.1σ) = 1 − P(0.81σ² < s² < 1.21σ²)", "= 1 − P(0.81(n−1) < χ²<sub>n−1</sub> < 1.21(n−1))  — ¡σ se cancela! La respuesta no depende de v1.", "Con n = 30: 1 − P(23.49 < χ²<sub>29</sub> < 35.09)"], "a": "<b>P ≈ 0.448</b>", "n": null, "x": null}, {"id": 11, "t": "Cupcakes vs cheesecakes (σ conocida)", "tags": ["dmedZ", "form"], "e": "6 meses. Media cupcakes = v1, cheesecakes = 125/mes. Ventas normales con σ = v2 para cualquier postre. IC 90% para μ<sub>X</sub> − μ<sub>Y</sub>. Si los cupcakes superan en más de 25 → 2 × límite inferior; si no → |límite superior|. <i>Ejemplo: v1 = 170, v2 = 10.</i>", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 45.0000", "√(σ₁²/n₁ + σ₂²/n₂) = √(10.0000²/6 + 10.0000²/6) = 5.7735", "z<sub>0.95</sub> = 1.645; error = 9.4966", "IC(μ₁−μ₂)<sub>90%</sub> = <b>(35.5034 ; 54.4966)</b>", "Límite inferior > 25 ⇒ sí superan en más de 25."], "a": "Respuesta: 2 × 35.503 = <b>71.007</b>.", "n": null, "x": null}, {"id": 12, "t": "Cortes de comerciales: 95% central de s", "tags": ["prob_s2", "form"], "e": "Duración normal con σ = V1 s. Se muestrean V2 cortes. ¿Entre qué valores cae el 95% central de la desviación muestral? <i>Ejemplo: V1 = 30, V2 = 22.</i>", "s": ["Buscar b₁, b₂ con P(b₁ ≤ S² ≤ b₂) = 0.95 y sacar raíz", "χ²<sub>0.025;21</sub> = 10.283, χ²<sub>0.975;21</sub> = 35.479", "b₁ = χ²·σ²/(n−1) = 10.283·900/21 = 440.70;  b₂ = 1520.52"], "a": "95% de las desviaciones muestrales está entre <b>20.99 y 38.99 segundos</b>.", "n": "El documento da 20.93; el valor correcto es 20.99 (pequeño error de redondeo).", "x": null}, {"id": 13, "t": "Máquina de líquidos: 90% central de S", "tags": ["prob_s2"], "e": "Varianza dispensada σ² = 0.8 onzas². Muestra de 10 botellas: si s pertenece al 90% central de su distribución no se recalibra. Encuentre los dos límites para s.", "s": ["P(a < S < b) = 0.9 ⇔ P((n−1)a²/σ² < χ²<sub>9</sub> < (n−1)b²/σ²) = 0.9", "χ²<sub>0.05;9</sub> = 3.325,  χ²<sub>0.95;9</sub> = 16.919", "a² = 3.325·0.8/9 = 0.2956 ⇒ a = 0.5437;  b² = 16.919·0.8/9 = 1.5039 ⇒ b = 1.2263"], "a": "s debe estar entre <b>0.5437 y 1.2263 onzas</b>.", "n": null, "x": null}, {"id": 14, "t": "Desgaste de llantas tipo 1 vs tipo 2", "tags": ["dmedZ", "form"], "e": "n₁ = n₂ = 100. x̄₁ = 26400 millas, x̄₂ = V2. σ₁ = V1, σ₂ = 1400. IC 99% para μ₁ − μ₂: ¿hay diferencia? <i>Ejemplo: V1 = 1200, V2 = 25100.</i>", "s": ["Distribución desconocida pero n ≥ 30 ⇒ TLC, y σ conocidas ⇒ Z", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 1300.00", "√(σ₁²/n₁ + σ₂²/n₂) = √(1200.00²/100 + 1400.00²/100) = 184.3909", "z<sub>0.995</sub> = 2.576; error = 474.9595", "IC(μ₁−μ₂)<sub>99%</sub> = <b>(825.0405 ; 1774.96)</b>", "0 ∉ IC y todo positivo ⇒ μ₁ > μ₂"], "a": "Sí hay diferencia, a favor de la llanta tipo 1: <b>(825.0 ; 1775.0)</b>.", "n": "El documento intercambia los nombres: dice 'V1 = 25100 y V2 = 1200' pero V1 es σ₁ (≈1200) y V2 es x̄₂ (≈25100). En el 14 también escribe n₂ = 10 (es 100). Con z = 2.58 de tabla el documento obtiene (824.2 ; 1775.8).", "x": null}, {"id": 15, "t": "SERVI TV: ¿disminuyó el tiempo de instalación?", "tags": ["ratioF", "dmedT2"], "e": "Antiguo: x̄₁ = 149 min, s₁ = 21, n₁ = 25. Moderno: x̄₂ = 135, s₂ = 19, n₂ = 31. Normales. ¿Hay evidencia de disminución? PH 95%.", "s": ["H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 441.0000/361.0000 = <b>1.222</b>  (24, 30 g.l.)", "F<sub>0.025; 24, 30</sub> = 1/F<sub>0.975; 30, 24</sub> = 0.4527 ;  F<sub>0.975; 24, 30</sub> = 2.1359", "p-valor = 0.5975 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 19.9137;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (14.0000 − 0)/5.3530 = <b>2.615</b> (54 g.l.)", "Valor crítico: 1.674;  p-valor = 0.0058", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: el nuevo procedimiento sí disminuye el tiempo (t = 2.62, p = 0.0058).", "n": "El documento escribe x̄₁ = 141 en los datos pero calcula con 149 (correcto). También dice 'prueba de dos colas' cuando es de cola derecha, y t<sub>CR(54, 0.95)</sub>: los g.l. son 54.", "x": null}, {"id": 16, "t": "Ibuprofeno: disco vs óvalo", "tags": ["ratioF", "dmedT2"], "e": "Tiempos de disolución (s). Disco: 269, 249.3, 255.2, 252.7, 247, 261.6. Óvalo: 268.8, 260, 273.5, 253.9, 278.5, 289.4, 261.6, 280.2. Normales. a) α = 2%: ¿varianzas iguales? b) IC 95% para μ<sub>X</sub> − μ<sub>Y</sub>.", "s": ["Disco: n = 6, x̄ = 255.8000, s² = 67.5080;  Óvalo: n = 8, x̄ = 270.7375, s² = 141.6798", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.02", "F<sub>p</sub> = s₁²/s₂² = 67.5080/141.6798 = <b>0.476</b>  (5, 7 g.l.)", "F<sub>0.01; 5, 7</sub> = 1/F<sub>0.99; 7, 5</sub> = 0.0956 ;  F<sub>0.99; 5, 7</sub> = 7.4604", "p-valor = 0.4316 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 10.5250", "t<sub>0.975; 12</sub> = 2.179;  S<sub>p</sub>√(1/n₁+1/n₂) = 5.6841", "IC(μ₁−μ₂)<sub>95%</sub> = -14.9375 ± 12.3847 = <b>(-27.3222 ; -2.5528)</b>"], "a": "Varianzas iguales; todo el IC es negativo ⇒ las tabletas de disco se disuelven más rápido (μ<sub>X</sub> < μ<sub>Y</sub>).", "n": null, "x": null}, {"id": 17, "t": "Compresor: temperatura del agua", "tags": ["var1", "media1"], "e": "Especificación: aumento promedio μ < 5 °C con σ = 1.5. En 10 periodos: x̄ = 6.6, s = 2.0. Normal. a) α = 5%: ¿σ > 1.5? b) Con el resultado anterior, ¿se cumple la especificación de la media?", "s": ["a)", "H₀: σ² ≤ 2.25 vs H₁: σ² > 2.25 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 9·4.0000/2.25 = <b>16.000</b> (9 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 9</sub> = 16.919", "p-valor = 0.0669", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>.", "b) Como no se rechazó σ = 1.5, se toma σ como CONOCIDA ⇒ Z (aunque n = 10)", "H₀: μ ≤ 5 vs H₁: μ > 5 (cola derecha), α = 0.05", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (6.6000 − 5)/(1.5000/√10) = <b>3.373</b>", "z<sub>c</sub> = z<sub>0.95</sub> = 1.645", "p-valor = 0.0004", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "a) σ sigue siendo 1.5. b) Se rechaza H₀: μ > 5, la especificación NO se cumple.", "n": "Truco del examen: usar la conclusión del literal a) para decidir si σ es conocida en b).", "x": null}, {"id": 18, "t": "Ana y Juan: ¿quién llega tarde más veces?", "tags": ["dprop", "tam_n"], "e": "Ana (fila Luisa) llega tarde cuando toma la ruta 2; Juan (fila Pedro) cuando toma la ruta 1. En 15 días: Luisa 1 2 2 1 3 2 1 2 3 2 3 1 1 3 2; Pedro 2 2 1 2 2 2 1 2 2 2 1 1 2 2 2. a) α = 0.05: ¿la proporción de Juan es menor? b) n necesario para estimar la proporción de veces que Ana usa la ruta 3 con error 0.05 y 90% de confianza.", "s": ["p̂<sub>A</sub> = 6/15 = 0.4 (rutas 2 de Ana), p̂<sub>J</sub> = 4/15 = 0.2667 (rutas 1 de Juan)", "H₀: p<sub>A</sub> − p<sub>J</sub> ≤ 0 vs H₁: p<sub>A</sub> − p<sub>J</sub> > 0", "EP = (0.4 − 0.267)/√(0.4·0.6/15 + 0.267·0.733/15) = <b>0.78</b> < z<sub>0.95</sub> = 1.645 ⇒ no se rechaza H₀", "b) p̂ (ruta 3) = 4/15 = 0.2667;  n = (z/e)²·p̂(1−p̂) = (1.645/0.05)²·0.2667·0.7333 = 211.63"], "a": "a) No hay evidencia de que Juan llegue tarde menos veces ⇒ gana Ana. b) <b>n = 212 días</b> (siempre se redondea hacia arriba).", "n": "Con n = 15 la aproximación normal es débil; el documento la usa igual (y con varianzas no combinadas).", "x": null}, {"id": 19, "t": "Banco de sangre O+ vs AB+", "tags": ["ratioF", "dmedT2"], "e": "Reservas mensuales (litros). O+: 33, 45, 41, 56, 59, 49, 40, 37, 42. AB+: 28, 40, 42, 53, 40, 54, 55. Normales. Si la media de O+ es mayor que la de AB+ se hace campaña para AB+; si no, se pide O+. a) IC 95% para la razón de varianzas. b) Decisión con α = 5%.", "s": ["O+: n = 9, x̄ = 44.67, s² = 73.75;  AB+: n = 7, x̄ = 44.57, s² = 98.62", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 6, 8</sub> ; s₁²/s₂² · F<sub>0.975; 6, 8</sub>)", "s₁²/s₂² = 73.7500/98.6190 = 0.7478;  F<sub>0.025; 6, 8</sub> = 0.1786,  F<sub>0.975; 6, 8</sub> = 4.6517", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.1335 ; 3.4787)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 9.1874;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (0.0952 − 0)/4.6300 = <b>0.021</b> (14 g.l.)", "Valor crítico: 1.761;  p-valor = 0.4919", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: la reserva de O+ no es mayor ⇒ se debe hacer campaña para recolectar O+.", "n": null, "x": null}, {"id": 20, "t": "Peso de huevos: proveedor A vs B", "tags": ["ratioF", "dmedT2"], "e": "A: 102.23, 101.82, 93.14, 101.73, 116.53, 106.83, 115.59, 101.77. B: 84.37, 103.17, 101.87, 106.89, 105.47, 103.85, 104.93. Normales. a) IC 95% razón de varianzas. b) IC 98% para la diferencia de medias: ¿algún proveedor vende huevos más livianos?", "s": ["A: n = 8, x̄ = 104.955, s² = 61.1418;  B: n = 7, x̄ = 101.507, s² = 59.7438", "a) (aquí se estimó σ<sub>B</sub>²/σ<sub>A</sub>²)", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 7, 6</sub> ; s₁²/s₂² · F<sub>0.975; 7, 6</sub>)", "s₁²/s₂² = 59.7438/61.1418 = 0.9771;  F<sub>0.025; 7, 6</sub> = 0.1954,  F<sub>0.975; 7, 6</sub> = 5.6955", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.1909 ; 5.5652)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "b)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 7.7780", "t<sub>0.99; 13</sub> = 2.650;  S<sub>p</sub>√(1/n₁+1/n₂) = 4.0255", "IC(μ₁−μ₂)<sub>98%</sub> = 3.4479 ± 10.6687 = <b>(-7.2209 ; 14.1166)</b>"], "a": "Varianzas iguales; 0 ∈ IC ⇒ no hay diferencia significativa en el peso promedio.", "n": null, "x": null}, {"id": 21, "t": "Modelo de pronóstico de turistas (σ = a)", "tags": ["var1"], "e": "Pronósticos normales con σ = a. Últimas 10 semanas: 22 19 30 28 15 21 36 20 30 b. α = 10%: ¿cambió la desviación (recalibrar)? <i>Ejemplo: a = 4.9, b = 22.</i>", "s": ["s = 6.4127", "H₀: σ² = 24.01 vs H₁: σ² ≠ 24.01 (dos colas), α = 0.1", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 9·41.1222/24.01 = <b>15.414</b> (9 g.l.)", "χ²<sub>0.05; 9</sub> = 3.325 y χ²<sub>0.95; 9</sub> = 16.919", "p-valor = 0.1603 (2 × la cola más pequeña)", "Como p-valor > α = 0.1, <b>no se rechaza H₀</b>."], "a": "p-valor = 0.1603 > 0.10 ⇒ no es necesario recalibrar. (Con a = 4.5 y b = 19 el p-valor ≈ 0.045 y sí se recalibra.)", "n": null, "x": null}, {"id": 22, "t": "Spotify: tiempo de conexión (σ conocida)", "tags": ["media1"], "e": "Tiempo por sesión normal con σ = a y media histórica b. Muestra de 12: x̄ = 27.8. Si la media aumentó, la estrategia se mantiene. α = 5%. <i>Ejemplo: a = 5.7, b = 24.</i>", "s": ["Normal y σ conocida ⇒ Z sin importar n", "H₀: μ ≤ 24 vs H₁: μ > 24 (cola derecha), α = 0.05", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (27.8000 − 24)/(5.7000/√12) = <b>2.309</b>", "z<sub>c</sub> = z<sub>0.95</sub> = 1.645", "p-valor = 0.0105", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "p = 0.0105 < 0.05 ⇒ sí aumentó: mantener la estrategia. (Con a = 9.1, b = 27: p = 0.380, rediseñar.)", "n": null, "x": null}, {"id": 23, "t": "Taladro de alta precisión (μ = 0.1 mm)", "tags": ["media1t"], "e": "Últimas 8 perforaciones (mm): 0.09, 0.098, 0.11, 0.09, 0.102, 0.105, 0.099, 0.08 (con a = 0.08). Normal. IC 95% para el diámetro promedio y concluir si hay que ajustar.", "s": ["x̄ = 0.09675, s = 0.00963", "σ desconocida, población normal, n = 8 ⇒ t con 7 g.l.", "t<sub>0.975; 7</sub> = 2.365", "Error = t·s/√n = 2.365·0.0096/√8 = 0.0081", "IC(μ)<sub>95%</sub> = 0.0968 ± 0.0081 = <b>(0.0887 ; 0.1048)</b>"], "a": "0.1 ∈ IC ⇒ no hay evidencia de que se haya alejado del valor deseado.", "n": "El documento dice 95% en el enunciado pero calcula con 98% (t<sub>0.99;7</sub> = 2.998 ⇒ (0.0865; 0.1069)).", "x": null}, {"id": 24, "t": "Formulario de vinculación del banco", "tags": ["ratioF", "dmedT2"], "e": "Antes: n₁ = 30, x̄₁ = 6 min, s₁ = b. Nuevo: n₂ = 40, x̄₂ = 5.5, s₂ = a. Normales. a) PH 5%: ¿varianzas iguales? b) IC 95% para μ₁ − μ₂: ¿se redujo el tiempo? <i>Ejemplo: a = 1.5, b = 2.</i>", "s": ["H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 4.0000/2.2500 = <b>1.778</b>  (29, 39 g.l.)", "F<sub>0.025; 29, 39</sub> = 1/F<sub>0.975; 39, 29</sub> = 0.4920 ;  F<sub>0.975; 29, 39</sub> = 1.9619", "p-valor = 0.0937 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 1.7310", "t<sub>0.975; 68</sub> = 1.995;  S<sub>p</sub>√(1/n₁+1/n₂) = 0.4181", "IC(μ₁−μ₂)<sub>95%</sub> = 0.5000 ± 0.8343 = <b>(-0.3343 ; 1.3343)</b>"], "a": "Varianzas iguales; 0 ∈ IC ⇒ no se puede afirmar que el nuevo formulario redujo el tiempo.", "n": "El documento escribe S<sub>p</sub>√(1/29 + 1/39): debe ser √(1/30 + 1/40) (son los n, no los g.l.). El número 0.418 sí es el correcto.", "x": null}, {"id": 25, "t": "Desgaste de llantas tipo 1 vs tipo 2 (repetido)", "tags": ["dmedZ"], "e": "n₁ = n₂ = 100. x̄₁ = 26400 millas, x̄₂ = V2. σ₁ = V1, σ₂ = 1400. IC 99% para μ₁ − μ₂: ¿hay diferencia? <i>Ejemplo: V1 = 1200, V2 = 25100.</i>", "s": ["Distribución desconocida pero n ≥ 30 ⇒ TLC, y σ conocidas ⇒ Z", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 1300.00", "√(σ₁²/n₁ + σ₂²/n₂) = √(1200.00²/100 + 1400.00²/100) = 184.3909", "z<sub>0.995</sub> = 2.576; error = 474.9595", "IC(μ₁−μ₂)<sub>99%</sub> = <b>(825.0405 ; 1774.96)</b>", "0 ∉ IC y todo positivo ⇒ μ₁ > μ₂"], "a": "Sí hay diferencia, a favor de la llanta tipo 1: <b>(825.0 ; 1775.0)</b>.", "n": null, "x": null}, {"id": 26, "t": "Longitud aceptada por la SIC (≥ 80%)", "tags": ["prop1"], "e": "Se acepta si 13 < L ≤ 18 cm. El gerente dice que al menos 80% cumple. Tabla: [5,10]:50, (10,13]:35, (13,16]:160, (16,18]:250, (18,19]:20, (19,21]:30, (21,25]:10. α = 5%.", "s": ["Cumplen: (13,16] + (16,18] = 160 + 250 = 410 de n = 555", "H₀: π ≥ 0.8 vs H₁: π < 0.8 (cola izquierda), α = 0.05", "p̂ = 0.7387; n·π₀(1−π₀) = 88.80 ≥ 9 ⇒ normal", "Z<sub>p</sub> = (p̂ − π₀)/√(π₀(1−π₀)/n) = <b>-3.608</b>  (¡ojo! se usa π₀ en el denominador)", "Valor crítico: -1.645;  p-valor = 0.0002", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀ (p ≈ 0.00015): menos del 80% cumple ⇒ razón para el jefe de calidad.", "n": null, "x": null}, {"id": 27, "t": "Audios de WhatsApp (> 1.5 min)", "tags": ["media1t"], "e": "Duración (s) de 12 audios: 18, 96, 47, 23, 65, 54, 32, 34, 5, 61, 44, 12. Normal. IC 95% para la media: ¿duran más de 1.5 min (90 s)?", "s": ["x̄ = 40.92, s = 25.82", "σ desconocida, población normal, n = 12 ⇒ t con 11 g.l.", "t<sub>0.975; 11</sub> = 2.201", "Error = t·s/√n = 2.201·25.8227/√12 = 16.4069", "IC(μ)<sub>95%</sub> = 40.9167 ± 16.4069 = <b>(24.5097 ; 57.3236)</b>"], "a": "Todo el IC está por debajo de 90 s ⇒ no paga la salida.", "n": null, "x": null}, {"id": 28, "t": "Cancelaciones Netflix vs Amazon Prime", "tags": ["dprop"], "e": "Netflix: de 1200, 960 siguen (cancelaron 240). Amazon: de 2300, 2120 siguen (cancelaron 180). IC 98%: ¿Netflix cancela más?", "s": ["Ojo: la proporción de interés es la de CANCELACIÓN", "p̂₁ = 0.2000, p̂₂ = 0.0783 (n₁ = 1200, n₂ = 2300, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0128;  z<sub>0.99</sub> = 2.326", "IC(π₁−π₂)<sub>98%</sub> = 0.1217 ± 0.0299 = <b>(0.0919 ; 0.1516)</b>"], "a": "Todo el IC es positivo ⇒ π<sub>Netflix</sub> > π<sub>Amazon</sub>: se mantiene la tendencia.", "n": null, "x": null}, {"id": 29, "t": "Bombillos LED con nueva tecnología", "tags": ["dmedZ"], "e": "Duración normal, σ = 2000 h (ambos). Sin mejora: n = 16, x̄ = 51000. Con mejora: n = 25, x̄ = 53000. IC 97%: ¿implementar la mejora?", "s": ["Normal y σ conocida ⇒ caso 1 (Z) aunque n < 30", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = -2000.00", "√(σ₁²/n₁ + σ₂²/n₂) = √(2000.00²/16 + 2000.00²/25) = 640.3124", "z<sub>0.985</sub> = 2.170; error = 1389.54", "IC(μ₁−μ₂)<sub>97%</sub> = <b>(-3389.54 ; -610.4642)</b>"], "a": "Todo el IC es negativo ⇒ μ<sub>sin</sub> < μ<sub>con</sub>: conviene implementar la mejora.", "n": null, "x": null}, {"id": 30, "t": "TikTok vs Instagram", "tags": ["ratioF", "dmedT3"], "e": "TikTok: n = 25, x̄ = 43 min, s = 10. Instagram: n = 30, x̄ = 53, s = 6. a) IC 98% razón de varianzas. b) α = 0.02: ¿el consumo de Instagram es mayor?", "s": ["IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.01; 29, 24</sub> ; s₁²/s₂² · F<sub>0.99; 29, 24</sub>)", "s₁²/s₂² = 100.0000/36.0000 = 2.7778;  F<sub>0.01; 29, 24</sub> = 0.4009,  F<sub>0.99; 29, 24</sub> = 2.5888", "IC(σ₁²/σ₂²)<sub>98%</sub> = <b>(1.1135 ; 7.1911)</b> ⇒ 1 ∉ IC: <b>varianzas diferentes</b> (caso 3)", "H₀: μ₁−μ₂ ≥ 0 vs H₁: μ₁−μ₂ < 0 (cola izquierda), α = 0.02", "Caso 3: ν = 37.75 ≈ 38 g.l.;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/√(s₁²/n₁+s₂²/n₂) = <b>-4.385</b>", "Valor crítico: -2.127;  p-valor = &lt; 0.0001", "Como p-valor ≤ α = 0.02, <b>se rechaza H₀</b>."], "a": "Varianzas diferentes (caso 3); se rechaza H₀: Instagram tiene mayor consumo promedio.", "n": "Ojo con el IC de la razón: el documento divide por los percentiles F (equivalente a multiplicar por F de g.l. invertidos). Ambas formas dan lo mismo.", "x": null}, {"id": 31, "t": "Pelotas de golf Wilson (295 yardas)", "tags": ["media1"], "e": "σ² = 144 conocida, n = 50, x̄ = 297.6. ¿Hay que ajustar el proceso? α = 5%, usar p-valor.", "s": ["H₀: μ = 295 vs H₁: μ ≠ 295 (dos colas), α = 0.05", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (297.6000 − 295)/(12.0000/√50) = <b>1.532</b>", "z<sub>c</sub> = ±z<sub>0.975</sub> = ±1.960", "p-valor = 0.1255", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay que ajustar.", "n": "El documento escribe n = 64 en un paso, pero calcula con n = 50 (correcto).", "x": null}, {"id": 32, "t": "Salchichas Gourmet JR (σ² = 4)", "tags": ["var1"], "e": "Pesos (g) de 16 salchichas: 46.2, 45.2, 44.3, 51.7, 47.5, 41.6, 46.4, 49, 43.6, 42.2, 44, 47.8, 43.7, 47.8, 41.8, 44.2. Normal. α = 1%: ¿la varianza cambió (parar producción)?", "s": ["s² = 7.908", "H₀: σ² = 4 vs H₁: σ² ≠ 4 (dos colas), α = 0.01", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 15·7.9078/4 = <b>29.654</b> (15 g.l.)", "χ²<sub>0.005; 15</sub> = 4.601 y χ²<sub>0.995; 15</sub> = 32.801", "p-valor = 0.0265 (2 × la cola más pequeña)", "Como p-valor > α = 0.01, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay que parar la producción.", "n": null, "x": null}, {"id": 33, "t": "Varillas de acero: Aceros A vs B", "tags": ["ratioF", "dmedT2"], "e": "A: n = 10, x̄ = 365 MPa, s = 84. B: n = 5, x̄ = 415, s = 112. Normales. Confianza 90%: ¿un proveedor tiene resistencia media mayor?", "s": ["H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.1", "F<sub>p</sub> = s₁²/s₂² = 7056.00/12544.00 = <b>0.562</b>  (9, 4 g.l.)", "F<sub>0.05; 9, 4</sub> = 1/F<sub>0.95; 4, 9</sub> = 0.2752 ;  F<sub>0.95; 9, 4</sub> = 5.9988", "p-valor = 0.4347 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 93.5126", "t<sub>0.95; 13</sub> = 1.771;  S<sub>p</sub>√(1/n₁+1/n₂) = 51.2190", "IC(μ₁−μ₂)<sub>90%</sub> = -50.0000 ± 90.7054 = <b>(-140.7054 ; 40.7054)</b>"], "a": "0 ∈ IC ⇒ ningún proveedor es significativamente mejor.", "n": null, "x": null}, {"id": 34, "t": "Votación SII (a favor ≥ 2 × en contra)", "tags": ["prop1"], "e": "Se aprueba si %a favor ≥ 2·(%en contra) ⇔ p ≥ 2/3. Muestra: 94 de 144 a favor. α = 10%: ¿hay evidencia de que no se aprobará?", "s": ["p ≥ 2(1 − p) ⇒ p ≥ 2/3: lleva el igual ⇒ va en H₀", "H₀: π ≥ 0.666667 vs H₁: π < 0.666667 (cola izquierda), α = 0.1", "p̂ = 0.6528; n·π₀(1−π₀) = 32.00 ≥ 9 ⇒ normal", "Z<sub>p</sub> = (p̂ − π₀)/√(π₀(1−π₀)/n) = <b>-0.354</b>  (¡ojo! se usa π₀ en el denominador)", "Valor crítico: -1.282;  p-valor = 0.3618", "Como p-valor > α = 0.1, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de que la medida no se apruebe.", "n": null, "x": null}, {"id": 35, "t": "Vigas: P(S² > 0.015)", "tags": ["prob_s2"], "e": "Alturas normales con σ² = 0.01. Muestras de 25. Última varianza: 0.015. ¿Qué tan probable es una varianza así?", "s": ["P(S² > 0.015) = P(χ²<sub>24</sub> > 24·0.015/0.01) = P(χ²<sub>24</sub> > 36)", "En tabla: χ²<sub>0.95;24</sub> = 36.415 ⇒ P ≈ un poco más de 0.05"], "a": "<b>P = 0.0549</b>.", "n": null, "x": null}, {"id": 36, "t": "Pintura especial vs tradicional (oxidación)", "tags": ["dprop"], "e": "Especial: 20 de 200 oxidadas. Tradicional: 30 de 200. α = 5%, p-valor: ¿la especial disminuye la oxidación?", "s": ["H₀: π₁ − π₂ ≥ 0 vs H₁: π₁ − π₂ < 0 (cola izquierda), α = 0.05", "p̂₁ = 20/200 = 0.1000, p̂₂ = 30/200 = 0.1500, p̄ (combinada) = (20+30)/(200+200) = 0.1250", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>-1.512</b>", "Valor crítico: -1.645;  p-valor = 0.0653", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de que la pintura especial reduzca la oxidación.", "n": null, "x": null}, {"id": 37, "t": "Tarifa dinámica: ABER vs DoDo", "tags": ["ratioF", "dmedT2"], "e": "20 viajes. ABER: x̄ = 18700 COP, s = 2500. DoDo: x̄ = 13500, s = 3600. Normales, independientes. a) IC 95% razón de varianzas. b) α = 5%: ¿ABER excede en más de 2000 COP a DoDo?", "s": ["IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 19, 19</sub> ; s₁²/s₂² · F<sub>0.975; 19, 19</sub>)", "s₁²/s₂² = 6250000.00/12960000.00 = 0.4823;  F<sub>0.025; 19, 19</sub> = 0.3958,  F<sub>0.975; 19, 19</sub> = 2.5265", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.1909 ; 1.2184)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "b) 'excede en más de 2000' ⇒ H₁: μ<sub>X</sub> − μ<sub>Y</sub> > 2000 (¡d₀ = 2000, no 0!)", "H₀: μ₁−μ₂ ≤ 2000 vs H₁: μ₁−μ₂ > 2000 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 3099.19;  t<sub>p</sub> = ((x̄₁−x̄₂) − 2000)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (5200.00 − 2000)/980.0510 = <b>3.265</b> (38 g.l.)", "Valor crítico: 1.686;  p-valor = 0.0012", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: ABER cuesta en promedio más de 2000 COP por encima de DoDo.", "n": null, "x": null}, {"id": 38, "t": "Tiempos de reacción de atletas (reducir σ)", "tags": ["var1"], "e": "11 tiempos (s): 1.2, 1.1, 1.05, 1.46, 1.03, 1.2, 1.51, 1.23, 1.07, 1.43, 0.95. Históricamente σ = 0.25. Normal. α = 2%: ¿el nuevo protocolo redujo la variabilidad?", "s": ["s = 0.1893", "H₀: σ² ≥ 0.0625 vs H₁: σ² < 0.0625 (cola izquierda), α = 0.02", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 10·0.0358/0.0625 = <b>5.731</b> (10 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.02; 10</sub> = 3.059", "p-valor = 0.1627", "Como p-valor > α = 0.02, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: el protocolo no redujo la variabilidad.", "n": "El documento escribe 5.374 en la comparación (es 5.734).", "x": null}, {"id": 39, "t": "FiFi: ¿subir la tarifa mínima?", "tags": ["media1t"], "e": "Tiempos (min) de 18 servicios: 13.7, 14.8, 21.4, 22, 16.6, 18.1, 19.7, 20.4, 16.7, 14.5, 15.5, 20.3, 22.9, 24, 12.7, 11.9, 16.3, 16.6. Normal. Se ajusta la tarifa si la media excede en más del 10% a 16.5 min (o sea > 18.15). IC 98%.", "s": ["x̄ = 17.672, s = 3.602", "σ desconocida, población normal, n = 18 ⇒ t con 17 g.l.", "t<sub>0.99; 17</sub> = 2.567", "Error = t·s/√n = 2.567·3.6024/√18 = 2.1796", "IC(μ)<sub>98%</sub> = 17.6722 ± 2.1796 = <b>(15.4926 ; 19.8518)</b>", "Umbral: 16.5 × 1.1 = 18.15; el IC no está completamente por encima"], "a": "Se mantiene la tarifa actual.", "n": null, "x": null}, {"id": 40, "t": "Contratación: modelo 1 vs modelo 2", "tags": ["dprop"], "e": "Modelo 1: 1297 bien clasificados de 1400. Modelo 2: 1204 de 1350. IC 96%: ¿a quién contratar?", "s": ["p̂₁ = 0.9264, p̂₂ = 0.8919 (n₁ = 1400, n₂ = 1350, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0110;  z<sub>0.98</sub> = 2.054", "IC(π₁−π₂)<sub>96%</sub> = 0.0346 ± 0.0225 = <b>(0.0121 ; 0.0571)</b>"], "a": "Todo el IC es positivo ⇒ el modelo 1 es mejor: contratar al ingeniero 1.", "n": null, "x": null}, {"id": 41, "t": "Viga T45-G (σ = 0.75)", "tags": ["var1"], "e": "Resistencia de 9 vigas: 73.4, 75.4, 72.1, 73.5, 72.8, 76.1, 75, 74.1, 74.5. Normal. α = 10%: probar σ = 0.75.", "s": ["s² = 1.6500  (Σ(x − x̄)² = 13.20)", "H₀: σ² = 0.5625 vs H₁: σ² ≠ 0.5625 (dos colas), α = 0.1", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 8·1.6500/0.5625 = <b>23.467</b> (8 g.l.)", "χ²<sub>0.05; 8</sub> = 2.733 y χ²<sub>0.95; 8</sub> = 15.507", "p-valor = 0.0056 (2 × la cola más pequeña)", "Como p-valor ≤ α = 0.1, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: la desviación difiere de la especificada.", "n": null, "x": null}, {"id": 42, "t": "Fibra de neopreno (μ = 12 cm)", "tags": ["media1"], "e": "σ = 1.5, n = 50, x̄ = 11.5. α = 0.01: ¿cumple las especificaciones?", "s": ["H₀: μ = 12 vs H₁: μ ≠ 12 (dos colas), α = 0.01", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (11.5000 − 12)/(1.5000/√50) = <b>-2.357</b>", "z<sub>c</sub> = ±z<sub>0.995</sub> = ±2.576", "p-valor = 0.0184", "Como p-valor > α = 0.01, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: cumple las especificaciones.", "n": null, "x": null}, {"id": 43, "t": "Pérdidas por robo: cámaras vs vigilante", "tags": ["ratioF", "dmedT2"], "e": "Vigilante (6 semanas): x̄ = 361.5, s² = 6767.5. Cámaras: 486, 303, 270, 386, 411, 435. Normales. IC 95% para la razón de varianzas y PH 5%: ¿las pérdidas son mayores con cámara?", "s": ["Cámaras: x̄ = 381.83, s² = 6653.37", "(aquí σ<sub>vigilante</sub>²/σ<sub>cámara</sub>²)", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 5, 5</sub> ; s₁²/s₂² · F<sub>0.975; 5, 5</sub>)", "s₁²/s₂² = 6767.50/6653.37 = 1.0172;  F<sub>0.025; 5, 5</sub> = 0.1399,  F<sub>0.975; 5, 5</sub> = 7.1464", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.1423 ; 7.2690)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 81.9172;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (20.3333 − 0)/47.2949 = <b>0.430</b> (10 g.l.)", "Valor crítico: 1.812;  p-valor = 0.3382", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de que las pérdidas sean mayores con cámaras.", "n": "En la varianza muestral el documento escribe (x − 361.5)² — es la media del vigilante. Debe ser (x − 381.83)². El valor 6653.37 sí es correcto.", "x": null}, {"id": 44, "t": "U-Scan vs caja tradicional", "tags": ["dmedZ"], "e": "Tradicional: x̄ = 5.50, σ = 0.40, n = 50. U-Scan: x̄ = 5.30, σ = 0.30, n = 100. IC 95%: ¿U-Scan disminuye el tiempo?", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 0.2000", "√(σ₁²/n₁ + σ₂²/n₂) = √(0.4000²/50 + 0.3000²/100) = 0.0640", "z<sub>0.975</sub> = 1.960; error = 0.1255", "IC(μ₁−μ₂)<sub>95%</sub> = <b>(0.0745 ; 0.3255)</b>"], "a": "0 ∉ IC y todo positivo ⇒ U-Scan sí reduce el tiempo.", "n": null, "x": null}, {"id": 45, "t": "Balones defectuosos (≤ 2%)", "tags": ["prop1"], "e": "6 defectuosos en 200. α = 5%: ¿la proporción supera el 2%?", "s": ["H₀: π ≤ 0.02 vs H₁: π > 0.02 (cola derecha), α = 0.05", "p̂ = 0.0300; n·π₀(1−π₀) = 3.92 ≥ 9 ⇒ normal", "Z<sub>p</sub> = (p̂ − π₀)/√(π₀(1−π₀)/n) = <b>1.010</b>  (¡ojo! se usa π₀ en el denominador)", "Valor crítico: 1.645;  p-valor = 0.1562", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>.", "⚠ n·π₀(1−π₀) = 3.92 < 9: la aproximación normal es dudosa (el documento la usa igual)"], "a": "No se rechaza H₀.", "n": null, "x": null}, {"id": 46, "t": "Llenado de gaseosas: equipo clásico vs nuevo", "tags": ["ratioF", "dmedT2"], "e": "Clásico: n = 10, x̄ = 1.00, s = 0.02. Nuevo: n = 15, x̄ = 0.90, s = 0.01. Normales. α = 1%: ¿cuál reduce el tiempo?", "s": ["H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.01", "F<sub>p</sub> = s₁²/s₂² = 0.0004/0.0001 = <b>4.000</b>  (9, 14 g.l.)", "F<sub>0.005; 9, 14</sub> = 1/F<sub>0.995; 14, 9</sub> = 0.1642 ;  F<sub>0.995; 9, 14</sub> = 4.7173", "p-valor = 0.0206 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.01", "Caso 2: S<sub>p</sub> = 0.0147;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (0.1000 − 0)/0.0060 = <b>16.613</b> (23 g.l.)", "Valor crítico: 2.500;  p-valor = &lt; 0.0001", "Como p-valor ≤ α = 0.01, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: el equipo nuevo tiene menor tiempo promedio ⇒ elegir el nuevo.", "n": "El documento escribe 14·0.01 (debe ser 14·0.01²) y 10 + 14 − 2 (es 10 + 15 − 2 = 23), y llama t<sub>1−α/2</sub> al valor crítico de una cola. El S<sub>p</sub> = 0.0147 y t = 16.61 sí son correctos.", "x": null}, {"id": 48, "t": "Pablo vs Pedro (ejecuciones exitosas)", "tags": ["dprop"], "e": "Éxito = ≤ 2 errores. Pablo: archivos con 0,1,2,3,4,5 errores = 48, 62, 30, 15, 0, 20. Pedro: 53, 91, 23, 50, 3, 30. α = 5%: ¿la proporción de éxito de Pablo es mayor?", "s": ["Pablo: 140 éxitos de 175; Pedro: 167 de 250", "H₀: π₁ − π₂ ≤ 0 vs H₁: π₁ − π₂ > 0 (cola derecha), α = 0.05", "p̂₁ = 140/175 = 0.8000, p̂₂ = 167/250 = 0.6680, p̄ (combinada) = (140+167)/(175+250) = 0.7224", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>2.991</b>", "Valor crítico: 1.645;  p-valor = 0.0014", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: Pablo tiene mayor proporción de éxitos ⇒ el Comité tiene razón.", "n": null, "x": null}, {"id": 49, "t": "Sensores INTELLIGENT THINGS", "tags": ["prob_s2"], "e": "σ = 2.5 °C. Si la desviación llega a ser mayor que el 10% de ese valor (s > 2.75) se recalibra. Muestra de 16. Probabilidad de recalibrar.", "s": ["P(S > 1.1σ) = P(S² > 1.21σ²) = P(χ²<sub>15</sub> > 15·1.21) = P(χ²<sub>15</sub> > 18.15)"], "a": "<b>P = 0.2549</b>", "n": null, "x": null}, {"id": 50, "t": "Ortodoncia: alineadores vs brackets (σ² = 100)", "tags": ["var1"], "e": "Duración (meses) con alineadores: 14, 21, 8, 19, 24, 27, 15, 20. Normal. α = 10%: ¿menor dispersión que brackets (σ² = 100)?", "s": ["s² = 36.2857", "H₀: σ² ≥ 100 vs H₁: σ² < 100 (cola izquierda), α = 0.1", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 7·36.2857/100 = <b>2.540</b> (7 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.1; 7</sub> = 2.833", "p-valor = 0.0759", "Como p-valor ≤ α = 0.1, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: los alineadores tienen menor dispersión.", "n": null, "x": null}, {"id": 51, "t": "Fórmula 1: piloto 1 vs piloto 2", "tags": ["ratioF", "dmedT3"], "e": "Piloto 1: 10 vueltas, x̄ = 1.231 min, s = 0.21. Piloto 2: 1.21, 1.34, 1.22, 1.28, 1.31, 1.18, 1.27, 1.41, 1.4, 1.3, 1.24, 1.22. Normales. a) α = 5%: ¿varianzas iguales? b) IC 95% para decidir.", "s": ["Piloto 2: x̄ = 1.2817, s² = 0.00545", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 0.0441/0.0055 = <b>8.089</b>  (9, 11 g.l.)", "F<sub>0.025; 9, 11</sub> = 1/F<sub>0.975; 11, 9</sub> = 0.2556 ;  F<sub>0.975; 9, 11</sub> = 3.5879", "p-valor = 0.0020 ⇒ <b>se rechaza H₀: varianzas diferentes</b> (caso 3)", "Caso 3 (σ² desconocidas y diferentes): ν = (s₁²/n₁ + s₂²/n₂)² / [ (s₁²/n₁)²/(n₁−1) + (s₂²/n₂)²/(n₂−1) ] = 10.86 ≈ 11", "t<sub>0.975; 11</sub> = 2.201;  √(s₁²/n₁ + s₂²/n₂) = 0.0697", "IC(μ₁−μ₂)<sub>95%</sub> = -0.0507 ± 0.1535 = <b>(-0.2042 ; 0.1028)</b>"], "a": "Varianzas diferentes (caso 3); 0 ∈ IC ⇒ no hay diferencia: hacer pruebas en otro circuito.", "n": null, "x": null}, {"id": 52, "t": "Vendedor de equipos médicos (> 70%)", "tags": ["prop1"], "e": "Cerró 144 ventas de 192 visitas. α = 4%: ¿su eficiencia es mayor al 70%?", "s": ["H₀: π ≤ 0.7 vs H₁: π > 0.7 (cola derecha), α = 0.04", "p̂ = 0.7500; n·π₀(1−π₀) = 40.32 ≥ 9 ⇒ normal", "Z<sub>p</sub> = (p̂ − π₀)/√(π₀(1−π₀)/n) = <b>1.512</b>  (¡ojo! se usa π₀ en el denominador)", "Valor crítico: 1.751;  p-valor = 0.0653", "Como p-valor > α = 0.04, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no se puede afirmar que supere el 70%.", "n": null, "x": null}, {"id": 53, "t": "Aleaciones A y B (≥ 34 Ksi)", "tags": ["dprop"], "e": "Frecuencias A: [26,30):26, [30,34):32, [34,38):35, [38,42):27. B: 24, 29, 39, 30. α = 5%: ¿difieren las proporciones con resistencia ≥ 34?", "s": ["A: 35 + 27 = 62 de 120; B: 39 + 30 = 69 de 122", "H₀: π₁ − π₂ = 0 vs H₁: π₁ − π₂ ≠ 0 (dos colas), α = 0.05", "p̂₁ = 62/120 = 0.5167, p̂₂ = 69/122 = 0.5656, p̄ (combinada) = (62+69)/(120+122) = 0.5413", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>-0.763</b>", "Valor crítico: ±1.960;  p-valor = 0.4452", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No hay diferencia significativa.", "n": null, "x": null}, {"id": 54, "t": "Ruido en planta: probabilidad de estrategia general", "tags": ["prob_s2"], "e": "10 puntos (dB): 72, 64, 69, 65, 61, 59, 60, 66, 68, 63. σ = 3 dB, normal. Estrategia general si la varianza muestral es ≤ a la observada. Probabilidad de estrategia general.", "s": ["s² = 17.34", "P(S² ≤ 17.34) = P(χ²<sub>9</sub> ≤ 9·17.34/9) = P(χ²<sub>9</sub> ≤ 17.34)"], "a": "<b>P = 0.9564</b>", "n": null, "x": null}, {"id": 55, "t": "FRESCOPAN: ventanas abiertas vs cerradas", "tags": ["ratioF", "dmedT2"], "e": "Teusaquillo (cerradas): 20 días, x̄ = 188.47, s = 12.52. Chapinero (abiertas): 202, 204.5, 207, 215.5, 190.8, 215.6, 208.8, 187.8, 204.1, 212.4, 185.7, 195.3, 195.7, 204.5, 206. Normales. α = 5%, IC 95% para varianzas: ¿el olor a pan aumenta las ventas?", "s": ["Chapinero: x̄ = 202.38, s² = 89.62", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 14, 19</sub> ; s₁²/s₂² · F<sub>0.975; 14, 19</sub>)", "s₁²/s₂² = 156.7504/89.6217 = 1.7490;  F<sub>0.025; 14, 19</sub> = 0.3496,  F<sub>0.975; 14, 19</sub> = 2.6469", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.6114 ; 4.6295)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "PH con 1 = Chapinero, 2 = Teusaquillo", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 11.3257;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (13.9100 − 0)/3.8685 = <b>3.596</b> (33 g.l.)", "Valor crítico: 1.692;  p-valor = 0.0005", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: abrir las ventanas aumenta las ventas promedio.", "n": null, "x": null}, {"id": 56, "t": "Planta eólica: producción vs consumo", "tags": ["dmedZ"], "e": "σ históricas: producción 25 KWH, consumo 30 KWH. Piloto 30 días: producción x̄ = 380, consumo x̄ = 375. IC 90%: ¿la planta satisface siempre el consumo?", "s": ["Se usan las σ poblacionales (conocidas), no las s de la muestra", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 5.0000", "√(σ₁²/n₁ + σ₂²/n₂) = √(25.0000²/30 + 30.0000²/30) = 7.1297", "z<sub>0.95</sub> = 1.645; error = 11.7274", "IC(μ₁−μ₂)<sub>90%</sub> = <b>(-6.7274 ; 16.7274)</b>"], "a": "0 ∈ IC (hay valores negativos) ⇒ no se puede garantizar que la planta satisfaga siempre el consumo.", "n": null, "x": null}, {"id": 57, "t": "Ergonomía: postura incorrecta del cuello", "tags": ["media1t"], "e": "Minutos en postura incorrecta (9 trabajadores): 15, 14, 21, 15, 22, 29, 10, 16, 18. Normal. Intervención si la media supera 25 min. IC 95%.", "s": ["x̄ = 17.78, s = 5.56", "σ desconocida, población normal, n = 9 ⇒ t con 8 g.l.", "t<sub>0.975; 8</sub> = 2.306", "Error = t·s/√n = 2.306·5.5628/√9 = 4.2759", "IC(μ)<sub>95%</sub> = 17.7778 ± 4.2759 = <b>(13.5019 ; 22.0537)</b>"], "a": "Todo el IC < 25 ⇒ no se recomienda intervención.", "n": "El documento escribe t<sub>(0.025, 8)</sub> = 2.30 (notación de cola superior). En la notación del curso es t<sub>0.975; 8</sub> = 2.306.", "x": null}, {"id": 58, "t": "Desempleo universitario: mujeres vs hombres (DANE)", "tags": ["dprop"], "e": "Mujeres: 13.2% de 2550; hombres: 11.2% de 2800. IC 95%: ¿la tasa de las mujeres es mayor?", "s": ["p̂₁ = 0.1320, p̂₂ = 0.1120 (n₁ = 2550, n₂ = 2800, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0090;  z<sub>0.975</sub> = 1.960", "IC(π₁−π₂)<sub>95%</sub> = 0.0200 ± 0.0176 = <b>(0.0024 ; 0.0376)</b>"], "a": "Todo el IC es positivo ⇒ la tasa de desempleo de las mujeres es mayor.", "n": null, "x": null}, {"id": 59, "t": "Domicilios: Quickly vs delivery.com", "tags": ["ratioF", "dmedT2"], "e": "Quickly: 25, 38, 27, 45, 40, 52 min. delivery.com: n = 15, x̄ = 32.5, s = 8.8. Normales. a) α = 2%: ¿difieren en variabilidad? b) IC 98%: ¿cuál es más rápida?", "s": ["Quickly: x̄ = 37.833, s² = 107.767", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.02", "F<sub>p</sub> = s₁²/s₂² = 107.7667/77.4400 = <b>1.392</b>  (5, 14 g.l.)", "F<sub>0.01; 5, 14</sub> = 1/F<sub>0.99; 14, 5</sub> = 0.1024 ;  F<sub>0.99; 5, 14</sub> = 4.6950", "p-valor = 0.5725 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 9.2423", "t<sub>0.99; 19</sub> = 2.539;  S<sub>p</sub>√(1/n₁+1/n₂) = 4.4645", "IC(μ₁−μ₂)<sub>98%</sub> = 5.3333 ± 11.3374 = <b>(-6.0041 ; 16.6708)</b>"], "a": "Varianzas iguales; 0 ∈ IC ⇒ ninguna plataforma es más rápida.", "n": null, "x": null}, {"id": 60, "t": "Profesor: notas más homogéneas (σ² < 1)", "tags": ["var1"], "e": "Notas: 4, 2.6, 2.8, 3.5, 4.2, 4.5, 4.5, 4.8. Normal. Éxito si σ² < 1. α = 2%.", "s": ["s² = 0.6684", "H₀: σ² ≥ 1 vs H₁: σ² < 1 (cola izquierda), α = 0.02", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 7·0.6684/1 = <b>4.679</b> (7 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.02; 7</sub> = 1.564", "p-valor = 0.3009", "Como p-valor > α = 0.02, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: la estrategia no cumple el criterio de éxito.", "n": null, "x": null}, {"id": 61, "t": "El Dorado: pista Norte vs Sur", "tags": ["dprop"], "e": "Norte: 112 retrasos de 203. Sur: 100 de 230. Informe: la Sur retrasa proporcionalmente más. IC 96%.", "s": ["p̂₁ = 0.5517, p̂₂ = 0.4348 (n₁ = 203, n₂ = 230, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0478;  z<sub>0.98</sub> = 2.054", "IC(π₁−π₂)<sub>96%</sub> = 0.1169 ± 0.0982 = <b>(0.0187 ; 0.2152)</b>"], "a": "Todo el IC es positivo ⇒ p<sub>Norte</sub> > p<sub>Sur</sub>: el informe es incorrecto.", "n": null, "x": null}, {"id": 62, "t": "Taladros de diamantes: hallar K", "tags": ["prob_s2"], "e": "Diámetro normal con σ = 31.623 μm (σ² ≈ 1000). Muestras de 100. Se ajusta si S² > K. Hallar K si se ajusta en el 15% de los casos.", "s": ["P(S² > K) = 0.15 ⇒ P(χ²<sub>99</sub> > 99K/1000) = 0.15 ⇒ 99K/1000 = χ²<sub>0.85; 99</sub>", "χ²<sub>0.85;99</sub> = 113.585  (a mano: aproximación de Wilson–Hilferty con z<sub>0.85</sub> = 1.036 ⇒ 113.58)", "K = χ²·σ²/(n−1) = 113.585·1000/99"], "a": "<b>K ≈ 1147.32 μm²</b>", "n": "Sin app: las tablas no traen 99 g.l. Usa χ²<sub>p;ν</sub> ≈ ν(1 − 2/(9ν) + z<sub>p</sub>√(2/(9ν)))³ (ver pestaña Tablas).", "x": null}, {"id": 63, "t": "LUZMAX: duración media 800 h", "tags": ["media1t"], "e": "8 bombillas (h): 785, 804, 778, 805, 795, 808, 790, 805. Normal. IC 90%: ¿se puede sacar el lote al mercado?", "s": ["x̄ = 796.25, s = 11.03", "σ desconocida, población normal, n = 8 ⇒ t con 7 g.l.", "t<sub>0.95; 7</sub> = 1.895", "Error = t·s/√n = 1.895·11.0292/√8 = 7.3877", "IC(μ)<sub>90%</sub> = 796.2500 ± 7.3877 = <b>(788.8623 ; 803.6377)</b>"], "a": "800 ∈ IC ⇒ no hay evidencia contra la duración de 800 h: el lote sale al mercado.", "n": null, "x": null}, {"id": 64, "t": "Transmilenio Alcalá: 3er vs 2do trimestre", "tags": ["dmedZ"], "e": "2do trimestre: 35 días, x̄ = 1417.5, σ = 65. 3er: 31 días, x̄ = 1455.9, σ = 73. IC 90%: ¿hubo incremento?", "s": ["1 = tercer trimestre, 2 = segundo", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 38.4000", "√(σ₁²/n₁ + σ₂²/n₂) = √(73.0000²/31 + 65.0000²/35) = 17.1061", "z<sub>0.95</sub> = 1.645; error = 28.1370", "IC(μ₁−μ₂)<sub>90%</sub> = <b>(10.2630 ; 66.5370)</b>"], "a": "Todo el IC es positivo ⇒ sí hubo incremento.", "n": null, "x": null}, {"id": 65, "t": "Rock al Parque: escenario Bio vs Eco", "tags": ["ratioF", "dmedT3"], "e": "Bio: 126 ingresos, x̄ = 15.4 min, s = 1.8. Eco: 214, x̄ = 12.6, s = 0.9. Normales. a) IC 97% razón de varianzas. b) α = 3%: ¿Bio excede en más de 2 min a Eco?", "s": ["IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.015; 213, 125</sub> ; s₁²/s₂² · F<sub>0.985; 213, 125</sub>)", "s₁²/s₂² = 3.2400/0.8100 = 4.0000;  F<sub>0.015; 213, 125</sub> = 0.7119,  F<sub>0.985; 213, 125</sub> = 1.4258", "IC(σ₁²/σ₂²)<sub>97%</sub> = <b>(2.8476 ; 5.7031)</b> ⇒ 1 ∉ IC: <b>varianzas diferentes</b> (caso 3)", "H₀: μ₁−μ₂ ≤ 2 vs H₁: μ₁−μ₂ > 2 (cola derecha), α = 0.03", "Caso 3: ν = 162.44 ≈ 162 g.l.;  t<sub>p</sub> = ((x̄₁−x̄₂) − 2)/√(s₁²/n₁+s₂²/n₂) = <b>4.658</b>", "Valor crítico: 1.894;  p-valor = &lt; 0.0001", "Como p-valor ≤ α = 0.03, <b>se rechaza H₀</b>."], "a": "Varianzas diferentes; se rechaza H₀: Bio supera en más de 2 minutos.", "n": "Con g.l. tan grandes (125, 213) no hay tabla F exacta; usa la fila/columna ∞ o 120 más cercana.", "x": null}, {"id": 66, "t": "Fajos de billetes (σ > 1.65 g)", "tags": ["var1"], "e": "12 fajos (g): 93.6, 95.1, 94.2, 96, 93.8, 91.9, 90.6, 93.2, 95, 97.4, 89.6, 94.5. Normal. α = 10%: ¿la desviación excede 1.65 g?", "s": ["s = 2.2039", "H₀: σ² ≤ 2.7225 vs H₁: σ² > 2.7225 (cola derecha), α = 0.1", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 11·4.8572/2.7225 = <b>19.625</b> (11 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.9; 11</sub> = 17.275", "p-valor = 0.0508", "Como p-valor ≤ α = 0.1, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: la desviación supera 1.65 g.", "n": null, "x": null}, {"id": 67, "t": "GRANTIERRA: volumen por carrotanque", "tags": ["media1"], "e": "Contrato: 185 barriles por carrotanque, σ = 8.3. 3 días × 12 carrotanques = 36 viajes, total 6840 ⇒ x̄ = 190. α = 5%: ¿excede 185?", "s": ["Distribución desconocida pero n = 36 ≥ 30 ⇒ TLC; σ conocida ⇒ Z", "H₀: μ ≤ 185 vs H₁: μ > 185 (cola derecha), α = 0.05", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (190.0000 − 185)/(8.3000/√36) = <b>3.614</b>", "z<sub>c</sub> = z<sub>0.95</sub> = 1.645", "p-valor = 0.0002", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: TRANSESPECIALES tiene razón.", "n": "El documento dice 'asumiendo H₀ cierta (μ = 180)': es μ = 185.", "x": null}, {"id": 68, "t": "FARMAX: recuperación en ≤ 4 días", "tags": ["dprop"], "e": "Actual (225): ≤3:45, 4:54, 5:62, 6:56, ≥7:8. Nuevo (225): 62, 55, 47, 24, 37. α = 5%: ¿mayor % de recuperación en ≤ 4 días con el nuevo?", "s": ["1 = nuevo: 62+55 = 117; 2 = actual: 45+54 = 99", "H₀: π₁ − π₂ ≤ 0 vs H₁: π₁ − π₂ > 0 (cola derecha), α = 0.05", "p̂₁ = 117/225 = 0.5200, p̂₂ = 99/225 = 0.4400, p̄ (combinada) = (117+99)/(225+225) = 0.4800", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>1.698</b>", "Valor crítico: 1.645;  p-valor = 0.0447", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: el nuevo medicamento es más efectivo.", "n": null, "x": null}, {"id": 69, "t": "Aerogami: ¿récord mundial (8.7 m)?", "tags": ["media1t"], "e": "10 lanzamientos: 8.6 7.2 3.2 5.9 8.4 5.8 6.2 5 6.5 8.1. Usar los 6 mejores. Normal. IC 90%: ¿pueden superar el récord de 8.7 m?", "s": ["6 mejores: 8.6, 8.4, 8.1, 7.2, 6.5, 6.2 ⇒ x̄ = 7.500, s = 1.016", "σ desconocida, población normal, n = 6 ⇒ t con 5 g.l.", "t<sub>0.95; 5</sub> = 2.015", "Error = t·s/√n = 2.015·1.0159/√6 = 0.8357", "IC(μ)<sub>90%</sub> = 7.5000 ± 0.8357 = <b>(6.6643 ; 8.3357)</b>"], "a": "Todo el IC < 8.7 ⇒ no pueden superar el récord.", "n": null, "x": null}, {"id": 70, "t": "Obianca: compras por agencia (nacional vs internacional)", "tags": ["dprop"], "e": "Nacional: 3500 vendidos, 2310 en la página ⇒ 1190 por agencia. Internacional: 2800, 1624 en la página ⇒ 1176 por agencia. IC 97%.", "s": ["p̂₁ = 0.3400, p̂₂ = 0.4200 (n₁ = 3500, n₂ = 2800, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0123;  z<sub>0.985</sub> = 2.170", "IC(π₁−π₂)<sub>97%</sub> = -0.0800 ± 0.0267 = <b>(-0.1067 ; -0.0533)</b>"], "a": "Todo el IC es negativo ⇒ la proporción nacional por agencia es menor: las denuncias sí la redujeron.", "n": null, "x": null}, {"id": 71, "t": "Autos de bajo peso (σ ≤ 6 kg)", "tags": ["var1"], "e": "8 autos (kg): 750.5, 752.7, 741.8, 760, 744.2, 745.6, 735.7, 742.1. Normal. α = 1%: ¿evidencia de que NO cumple σ ≤ 6?", "s": ["s² = 57.26", "H₀: σ² ≤ 36 vs H₁: σ² > 36 (cola derecha), α = 0.01", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 7·57.2621/36 = <b>11.134</b> (7 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.99; 7</sub> = 18.475", "p-valor = 0.1329", "Como p-valor > α = 0.01, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: sí cumple la especificación de variabilidad.", "n": null, "x": null}, {"id": 72, "t": "Basura en la zona 1 (dividir si s > 35 kg)", "tags": ["prob_s2"], "e": "Basura diaria normal, μ = 350, σ = 30. 25 días. Se divide la zona si s > 35. Probabilidad.", "s": ["P(S > 35) = P(S² > 1225) = P(χ²<sub>24</sub> > 24·1225/900) = P(χ²<sub>24</sub> > 32.67)"], "a": "<b>P = 0.1113</b>", "n": null, "x": null}, {"id": 73, "t": "Baterías: aleación nueva", "tags": ["dmedZ"], "e": "σ² = 0.5 h² en ambas. Antigua: n = 15, x̄ = 8.2. Nueva: 7.5, 8.3, 8.7, 7.9, 9, 8.6, 7.4, 8, 7.6, 8.5. Normales. IC 94%: ¿la aleación mejora la duración?", "s": ["Nueva: x̄ = 8.150", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 0.0500", "√(σ₁²/n₁ + σ₂²/n₂) = √(0.7071²/15 + 0.7071²/10) = 0.2887", "z<sub>0.97</sub> = 1.881; error = 0.5429", "IC(μ₁−μ₂)<sub>94%</sub> = <b>(-0.4929 ; 0.5929)</b>"], "a": "0 ∈ IC ⇒ la aleación no mejora la duración media.", "n": null, "x": null}, {"id": 74, "t": "Almuerzos en 20 min: familiar vs empresa", "tags": ["ratioF", "dmedT2"], "e": "Familiar: 5 pedidos, x̄ = 22, s = 3. Empresa: 22, 20, 24, 19, 17. Normales. a) IC 96% varianzas. b) α = 4%: ¿la empresa entrega más rápido?", "s": ["Empresa: x̄ = 20.40, s² = 7.30", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.02; 4, 4</sub> ; s₁²/s₂² · F<sub>0.98; 4, 4</sub>)", "s₁²/s₂² = 9.0000/7.3000 = 1.2329;  F<sub>0.02; 4, 4</sub> = 0.0917,  F<sub>0.98; 4, 4</sub> = 10.8994", "IC(σ₁²/σ₂²)<sub>96%</sub> = <b>(0.1131 ; 13.4376)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.04", "Caso 2: S<sub>p</sub> = 2.8548;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (1.6000 − 0)/1.8055 = <b>0.886</b> (8 g.l.)", "Valor crítico: 2.004;  p-valor = 0.2007", "Como p-valor > α = 0.04, <b>no se rechaza H₀</b>."], "a": "Varianzas iguales; no se rechaza H₀: no conviene contratar a la empresa por ahora.", "n": null, "x": null}, {"id": 75, "t": "Creative Software: Scrum vs cascada", "tags": ["dprop"], "e": "Scrum: 45 commits defectuosos de 500. Cascada: 50 de 400. α = 5%: ¿el % de errores con ágil es menor?", "s": ["1 = cascada, 2 = ágil ⇒ H₁: π<sub>cascada</sub> − π<sub>ágil</sub> > 0", "H₀: π₁ − π₂ ≤ 0 vs H₁: π₁ − π₂ > 0 (cola derecha), α = 0.05", "p̂₁ = 50/400 = 0.1250, p̂₂ = 45/500 = 0.0900, p̄ (combinada) = (50+45)/(400+500) = 0.1056", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>1.698</b>", "Valor crítico: 1.645;  p-valor = 0.0448", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Z = 1.698, p = 0.0448 < 0.05 ⇒ se rechaza H₀: el gerente tiene razón.", "n": null, "x": null}, {"id": 76, "t": "Happy-Chats: bonificación (σ conocida, n = 50)", "tags": ["media1"], "e": "Bono si la satisfacción media supera 8. n = 50, x̄ = 8.2, σ = 1.2. α = 4%.", "s": ["H₀: μ ≤ 8 vs H₁: μ > 8 (cola derecha), α = 0.04", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (8.2000 − 8)/(1.2000/√50) = <b>1.179</b>", "z<sub>c</sub> = z<sub>0.96</sub> = 1.751", "p-valor = 0.1193", "Como p-valor > α = 0.04, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay bonificación.", "n": null, "x": null}, {"id": 77, "t": "Happy-Chats: misma pregunta con s y n = 25", "tags": ["media1t"], "e": "n = 25, x̄ = 8.2, s = 1.2 (desviación muestral). α = 4%. Compara con el 76: ¿qué cambia?", "s": ["H₀: μ ≤ 8 vs H₁: μ > 8 (cola derecha), α = 0.04", "σ desconocida, normal ⇒ t<sub>p</sub> = (x̄ − μ₀)/(s/√n) = (8.2000 − 8)/(1.2000/√25) = <b>0.833</b> (24 g.l.)", "Valor crítico: 1.828", "p-valor = 0.2064", "Como p-valor > α = 0.04, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀. Cambia el estadístico (t con 24 g.l.) porque σ es desconocida.", "n": "Para usar t con n < 30 hay que suponer población normal (el documento no lo dice explícitamente).", "x": null}, {"id": 78, "t": "Lepson: ¿al menos 2800 páginas?", "tags": ["media1t"], "e": "10 cartuchos: 2840, 2620, 2474, 2910, 2475, 2850, 2585, 2805, 2380, 2490. Normal. IC 90%: ¿publicidad engañosa?", "s": ["x̄ = 2642.9, s = 192.19", "σ desconocida, población normal, n = 10 ⇒ t con 9 g.l.", "t<sub>0.95; 9</sub> = 1.833", "Error = t·s/√n = 1.833·192.1940/√10 = 111.4113", "IC(μ)<sub>90%</sub> = 2642.90 ± 111.4113 = <b>(2531.49 ; 2754.31)</b>"], "a": "Todo el IC < 2800 ⇒ la SIC debe sancionar.", "n": "El documento rotula 'IC (95)%' en un paso; es 90%. Rúbrica: variable 1.0, media y s 3.0, justificar t 2.0, IC 4.0, interpretación 2.5.", "x": null}, {"id": 79, "t": "Perfume Heanvenly: jóvenes vs adultas", "tags": ["dprop"], "e": "Jóvenes: 38 de 200 la comprarían. Adultas: 90 de 300. α = 2%: ¿hay diferencia?", "s": ["H₀: π₁ − π₂ = 0 vs H₁: π₁ − π₂ ≠ 0 (dos colas), α = 0.02", "p̂₁ = 38/200 = 0.1900, p̂₂ = 90/300 = 0.3000, p̄ (combinada) = (38+90)/(200+300) = 0.2560", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>-2.761</b>", "Valor crítico: ±2.326;  p-valor = 0.0058", "Como p-valor ≤ α = 0.02, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: sí hay diferencia.", "n": "Rúbrica: variables 1.0, hipótesis 2.0, estadístico 4.0, tipo de prueba 2.0, regla 1.0, conclusión 2.5.", "x": null}, {"id": 80, "t": "COLSOFT: método IA vs actual", "tags": ["dmedZ"], "e": "Actual: σ = 3, 10 sesiones, x̄ = 18.2. IA: σ = 2, datos 21, 20, 19, 16, 21, 20, 18, 17. Normales. IC 96%: ¿la IA detecta más errores?", "s": ["IA: x̄ = 19.00. (1 = IA, 2 = actual)", "Normales con σ conocidas ⇒ caso 1 aunque n < 30", "Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 0.8000", "√(σ₁²/n₁ + σ₂²/n₂) = √(2.0000²/8 + 3.0000²/10) = 1.1832", "z<sub>0.98</sub> = 2.054; error = 2.4300", "IC(μ₁−μ₂)<sub>96%</sub> = <b>(-1.6300 ; 3.2300)</b>"], "a": "0 ∈ IC ⇒ la IA no muestra mejor tasa promedio.", "n": "El documento rotula IC(μ₁ − μ₂) con 1 = actual pero calcula 19 − 18.2 (IA − actual). Define bien el orden antes de concluir.", "x": null}, {"id": 81, "t": "BIOTECH: varianza máxima 2 MPa²", "tags": ["var1"], "e": "7 muestras: 52.2, 49, 50.1, 49.8, 50.3, 52, 48. Normal. α = 5%: ¿evidencia de que NO logra σ² ≤ 2?", "s": ["s² = 2.283", "H₀: σ² ≤ 2 vs H₁: σ² > 2 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 6·2.2833/2 = <b>6.850</b> (6 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 6</sub> = 12.592", "p-valor = 0.3349", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de que incumpla la meta.", "n": null, "x": null}, {"id": 82, "t": "Brocas de tungsteno (exponencial)", "tags": ["media1"], "e": "Vida útil exponencial con media 400 h ⇒ σ = 400. 35 brocas, x̄ = 360. α = 3%: ¿reclamar?", "s": ["Exponencial: σ = μ = 400 bajo H₀. n = 35 ⇒ TLC ⇒ Z", "H₀: μ ≥ 400 vs H₁: μ < 400 (cola izquierda), α = 0.03", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (360.0000 − 400)/(400.0000/√35) = <b>-0.592</b>", "z<sub>c</sub> = z<sub>0.03</sub> = -1.881", "p-valor = 0.2771", "Como p-valor > α = 0.03, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no se debe reclamar.", "n": null, "x": null}, {"id": 83, "t": "Insulina: P(s > 1.2σ)", "tags": ["prob_s2"], "e": "Dosis normal con μ = 5, σ = 0.2. n = 51. Probabilidad de que s exceda en más del 20% a σ.", "s": ["P(S > 0.24) = P(χ²<sub>50</sub> > 50·0.24²/0.2²) = P(χ²<sub>50</sub> > 72)", "En tabla: χ²<sub>0.975;50</sub> = 71.420 y χ²<sub>0.99;50</sub> = 76.154 ⇒ P entre 0.01 y 0.025"], "a": "<b>P = 0.0224</b> (el documento interpola a ojo y da 0.0175; cualquier valor entre 0.01 y 0.025 justificado con tabla es razonable).", "n": null, "x": null}, {"id": 84, "t": "Café Nariño vs Quindío", "tags": ["ratioF", "dmedT2"], "e": "Nariño: 41 expertos, x̄ = 83.5, s = 13.9. Quindío: 86.9, 80.4, 76.1, 68.7, 90.8, 86.1, 83, 75, 70.7, 93.8, 91.5. Normales. a) PH 5% varianzas. b) IC 95% diferencia de medias.", "s": ["Quindío: x̄ = 82.09, s = 8.60", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 193.2100/73.9609 = <b>2.612</b>  (40, 10 g.l.)", "F<sub>0.025; 40, 10</sub> = 1/F<sub>0.975; 10, 40</sub> = 0.4187 ;  F<sub>0.975; 40, 10</sub> = 3.2554", "p-valor = 0.1062 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 13.0138", "t<sub>0.975; 50</sub> = 2.009;  S<sub>p</sub>√(1/n₁+1/n₂) = 4.4189", "IC(μ₁−μ₂)<sub>95%</sub> = 1.4091 ± 8.8757 = <b>(-7.4666 ; 10.2848)</b>"], "a": "Varianzas iguales; 0 ∈ IC ⇒ no hay diferencia de calidad.", "n": null, "x": null}, {"id": 85, "t": "Café Cundinamarca vs Tolima", "tags": ["ratioF", "dmedT3"], "e": "Cundinamarca: 86.9, 80.4, 76.1, 68.7, 90.8, 86.1, 83, 75, 70.7, 93.8, 91.5. Tolima: 31 expertos, x̄ = 93.2, s = 18.3. a) IC 95% razón de varianzas. b) α = 5%: ¿Cundinamarca tiene menor calidad?", "s": ["IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 30, 10</sub> ; s₁²/s₂² · F<sub>0.975; 30, 10</sub>)", "s₁²/s₂² = 73.9609/334.8900 = 0.2209;  F<sub>0.025; 30, 10</sub> = 0.3982,  F<sub>0.975; 30, 10</sub> = 3.3110", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.0879 ; 0.7312)</b> ⇒ 1 ∉ IC: <b>varianzas diferentes</b> (caso 3)", "H₀: μ₁−μ₂ ≥ 0 vs H₁: μ₁−μ₂ < 0 (cola izquierda), α = 0.05", "Caso 3: ν = 36.52 ≈ 37 g.l.;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/√(s₁²/n₁+s₂²/n₂) = <b>-2.654</b>", "Valor crítico: -1.687;  p-valor = 0.0058", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Varianzas diferentes; se rechaza H₀: Cundinamarca tiene menor calidad promedio.", "n": "El documento escribe 'con una confianza del 5%': es 95%.", "x": null}, {"id": 86, "t": "El Campín: venta en línea vs taquilla", "tags": ["dprop"], "e": "En línea: 430 de 500 para tribuna general. Taquilla: 68% de 500. IC 94%.", "s": ["p̂₁ = 0.8600, p̂₂ = 0.6800 (n₁ = 500, n₂ = 500, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0260;  z<sub>0.97</sub> = 1.881", "IC(π₁−π₂)<sub>94%</sub> = 0.1800 ± 0.0489 = <b>(0.1311 ; 0.2289)</b>"], "a": "Todo el IC es positivo ⇒ la venta en línea es mayor: dar promociones en taquilla.", "n": null, "x": null}, {"id": 87, "t": "Cónclave: votaciones por elección", "tags": ["media1t"], "e": "Votaciones en las últimas 10 elecciones: 7, 10, 14, 3, 11, 6, 4, 8, 4, 5. Normal. IC 95%: ¿más de 3 en promedio?", "s": ["x̄ = 7.20, s = 3.55", "4 supuestos para t: población normal, σ desconocida, s calculada de la muestra, n < 30", "σ desconocida, población normal, n = 10 ⇒ t con 9 g.l.", "t<sub>0.975; 9</sub> = 2.262", "Error = t·s/√n = 2.262·3.5528/√10 = 2.5415", "IC(μ)<sub>95%</sub> = 7.2000 ± 2.5415 = <b>(4.6585 ; 9.7415)</b>"], "a": "Todo el IC > 3 ⇒ los datos respaldan al estudiante.", "n": null, "x": null}, {"id": 88, "t": "Muestras de sangre a domicilio (> 5% errores)", "tags": ["prop1"], "e": "24 de 320 muestras a domicilio mal identificadas. En instalaciones: 5%. α = 3%.", "s": ["H₀: π ≤ 0.05 vs H₁: π > 0.05 (cola derecha), α = 0.03", "p̂ = 0.0750; n·π₀(1−π₀) = 15.20 ≥ 9 ⇒ normal", "Z<sub>p</sub> = (p̂ − π₀)/√(π₀(1−π₀)/n) = <b>2.052</b>  (¡ojo! se usa π₀ en el denominador)", "Valor crítico: 1.881;  p-valor = 0.0201", "Como p-valor ≤ α = 0.03, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: la recolección a domicilio incrementó los errores.", "n": null, "x": null}, {"id": 89, "t": "Desempleo: mujeres vs hombres comprometidos", "tags": ["ratioF", "dmedT2"], "e": "Mujeres: 8.6, 10.8, 7.7, 8.2, 8.4, 6.5, 10.2 meses. Hombres: 16, x̄ = 6.45, s = 1.74. Normales. a) IC 95% varianzas. b) α = 5%: ¿mujeres con desempleo más largo?", "s": ["Mujeres: x̄ = 8.629, s² = 2.136", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 15, 6</sub> ; s₁²/s₂² · F<sub>0.975; 15, 6</sub>)", "s₁²/s₂² = 2.1357/3.0276 = 0.7054;  F<sub>0.025; 15, 6</sub> = 0.2929,  F<sub>0.975; 15, 6</sub> = 5.2687", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.2066 ; 3.7166)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 2: S<sub>p</sub> = 1.6652;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (2.1786 − 0)/0.7546 = <b>2.887</b> (21 g.l.)", "Valor crítico: 1.721;  p-valor = 0.0044", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: se mantiene la afirmación del DANE.", "n": null, "x": null}, {"id": 90, "t": "Resistencia a la tracción con mejora", "tags": ["dmedZ"], "e": "Antes: n = 30, x̄ = 210, σ² = 25. Después: n = 30, x̄ = 218, σ² = 20. Normal. IC 98%.", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = -8.0000", "√(σ₁²/n₁ + σ₂²/n₂) = √(5.0000²/30 + 4.4721²/30) = 1.2247", "z<sub>0.99</sub> = 2.326; error = 2.8492", "IC(μ₁−μ₂)<sub>98%</sub> = <b>(-10.8492 ; -5.1508)</b>"], "a": "Todo el IC es negativo ⇒ la mejora aumentó la resistencia.", "n": null, "x": null}, {"id": 91, "t": "PM2.5 en el Tolima (σ = 2)", "tags": ["var1"], "e": "5 mediciones: 14.2, 10.8, 15.5, 13.6, 16.1. Normal. α = 2%: ¿la varianza actual es mayor que 4?", "s": ["s² = 4.273", "H₀: σ² ≤ 4 vs H₁: σ² > 4 (cola derecha), α = 0.02", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 4·4.2730/4 = <b>4.273</b> (4 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.98; 4</sub> = 11.668", "p-valor = 0.3703", "Como p-valor > α = 0.02, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀.", "n": "El documento usa α = 0.01 (χ²<sub>0.99;4</sub> = 13.277) aunque el enunciado dice 2%: el crítico correcto es χ²<sub>0.98;4</sub> = 11.668. Su p-valor ≈ 0.5 tampoco es exacto. La conclusión no cambia.", "x": null}, {"id": 92, "t": "Microchips: línea A vs B", "tags": ["dprop"], "e": "A: 300 producidos, 279 sin defecto. B: 280, 264 sin defecto. IC 95% para la diferencia de proporciones de defectuosos.", "s": ["Defectuosos: A = 21, B = 16", "Condiciones: n·p̂ y n(1−p̂) ≥ 5 en ambas ✔", "p̂₁ = 0.0700, p̂₂ = 0.0571 (n₁ = 300, n₂ = 280, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0202;  z<sub>0.975</sub> = 1.960", "IC(π₁−π₂)<sub>95%</sub> = 0.0129 ± 0.0397 = <b>(-0.0268 ; 0.0525)</b>"], "a": "0 ∈ IC ⇒ no hay diferencia significativa.", "n": "El documento escribe 300 − 271 (es 300 − 279 = 21) y rotula IC 97% (es 95%).", "x": null}, {"id": 93, "t": "Sensores de presión autopista Sur", "tags": ["media1"], "e": "Normal, μ = 760 KPa, σ = 350. 55 sensores, x̄ = 700. α = 0.05: ¿resistencia menor?", "s": ["H₀: μ ≥ 760 vs H₁: μ < 760 (cola izquierda), α = 0.05", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (700.0000 − 760)/(350.0000/√55) = <b>-1.271</b>", "z<sub>c</sub> = z<sub>0.05</sub> = -1.645", "p-valor = 0.1018", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀.", "n": "El documento escribe x̄ = 860 (es 700), afirma '−1.27 < −1.64' (falso: −1.27 > −1.64) y concluye en 'horas' (son KPa). La decisión de no rechazar sí es correcta.", "x": null}, {"id": 94, "t": "Reembolsos del concierto: VIP vs general", "tags": ["ratioF", "dmedT2"], "e": "VIP: 18 registros, x̄ = 5.3 días, s = 2.3. General: 8, 6, 5, 7, 5, 6, 11, 14, 9, 7, 10, 11. Normales. a) IC 95% varianzas. b) α = 5%: ¿a VIP le devolvieron antes?", "s": ["General: x̄ = 8.250, s = 2.800", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 11, 17</sub> ; s₁²/s₂² · F<sub>0.975; 11, 17</sub>)", "s₁²/s₂² = 5.2900/7.8409 = 0.6747;  F<sub>0.025; 11, 17</sub> = 0.3047,  F<sub>0.975; 11, 17</sub> = 2.8696", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(0.2056 ; 1.9360)</b> ⇒ 1 ∈ IC: <b>varianzas iguales</b> (caso 2)", "H₀: μ₁−μ₂ ≥ 0 vs H₁: μ₁−μ₂ < 0 (cola izquierda), α = 0.05", "Caso 2: S<sub>p</sub> = 2.5084;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/(S<sub>p</sub>√(1/n₁+1/n₂)) = (-2.9500 − 0)/0.9348 = <b>-3.156</b> (28 g.l.)", "Valor crítico: -1.701;  p-valor = 0.0019", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: a VIP le devolvieron antes; la queja procede.", "n": null, "x": null}, {"id": 95, "t": "Hilandería: lana fina (18 ± 1 micras)", "tags": ["media1t"], "e": "7 ovillos: 18.3, 17.9, 19.2, 19.8, 18.5, 17.4, 16.3. Normal. Si el diámetro promedio supera 19 micras: descuento del 15% sobre 45000. IC 98%: ¿qué precio debió pagar?", "s": ["x̄ = 18.20, s = 1.155", "σ desconocida, población normal, n = 7 ⇒ t con 6 g.l.", "t<sub>0.99; 6</sub> = 3.143", "Error = t·s/√n = 3.143·1.1547/√7 = 1.3716", "IC(μ)<sub>98%</sub> = 18.2000 ± 1.3716 = <b>(16.8284 ; 19.5716)</b>"], "a": "Documento: como el límite superior 19.57 > 19 ⇒ aplica descuento ⇒ 38250 por ovillo.", "n": "⚠ Criterio discutible: el IC (16.83 ; 19.57) incluye valores dentro de la tolerancia, así que con rigor NO hay evidencia de que μ > 19 (se pagaría 45000). Pregunta en clase qué criterio piden; en el examen justifica explícitamente el que uses.", "x": null}, {"id": 96, "t": "AGUA PURA LA SABANA: ¿aumentó la variabilidad?", "tags": ["var1"], "e": "10 latas (oz): 12.18, 11.77, 12.09, 12.03, 11.87, 11.96, 12.03, 12.36, 12.28, 11.85. Normal con σ = 0.1. α = 5%.", "s": ["s = 0.1905, s² = 0.0363", "H₀: σ² ≤ 0.01 vs H₁: σ² > 0.01 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 9·0.0363/0.01 = <b>32.656</b> (9 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 9</sub> = 16.919", "p-valor = 0.0002", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: hay que recalibrar la máquina.", "n": "Cuando χ²ₚ queda fuera de la tabla, el p-valor se reporta como '< 0.001' (el documento inventa 0.9999).", "x": null}, {"id": 97, "t": "Banco Center Park: tarjeta especial", "tags": ["prop1"], "e": "200 clientes; gráfica: 36 + 42 + 4a + 37 + a + 10 = 200 ⇒ a = 15. Con compras ≥ 3.5 millones: a + 10 = 25. IC 90% para la proporción.", "s": ["p̂ = 25/200 = 0.1250; n·p̂(1−p̂) = 21.88 ≥ 9 ⇒ aproximación normal", "z<sub>0.95</sub> = 1.645; error = z·√(p̂(1−p̂)/n) = 0.0385", "IC(π)<sub>90%</sub> = <b>(0.0865 ; 0.1635)</b>"], "a": "Entre ≈ 8.7% y 16.3% de los clientes tendría derecho a la tarjeta.", "n": null, "x": null}, {"id": 98, "t": "El Dorado: tiempo de rodaje", "tags": ["media1"], "e": "σ = 4 min, antes μ = 18. 36 vuelos, x̄ = 16.9. α = 2%: ¿disminuyó?", "s": ["H₀: μ ≥ 18 vs H₁: μ < 18 (cola izquierda), α = 0.02", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (16.9000 − 18)/(4.0000/√36) = <b>-1.650</b>", "z<sub>c</sub> = z<sub>0.02</sub> = -2.054", "p-valor = 0.0495", "Como p-valor > α = 0.02, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de reducción.", "n": null, "x": null}, {"id": 99, "t": "Autolavado: proporción de motos", "tags": ["dprop"], "e": "Octubre este año: 245 motos de 350. Octubre año pasado: 260 de 400. α = 4%: ¿aumentó la proporción de motos?", "s": ["1 = este año, 2 = año pasado (ambas son proporciones de MOTOS)", "H₀: π₁ − π₂ ≤ 0 vs H₁: π₁ − π₂ > 0 (cola derecha), α = 0.04", "p̂₁ = 245/350 = 0.7000, p̂₂ = 260/400 = 0.6500, p̄ (combinada) = (245+260)/(350+400) = 0.6733", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>1.457</b>", "Valor crítico: 1.751;  p-valor = 0.0726", "Como p-valor > α = 0.04, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no se reestructura.", "n": "El documento define 'población 2 = carros', pero ambas muestras miden proporción de motos (este año vs el anterior).", "x": null}, {"id": 100, "t": "Mascotas: apartamento vs casa", "tags": ["dprop"], "e": "Apartamento: 288 de 600 con mascota. Casa: 232 de 400. IC 96%.", "s": ["p̂₁ = 0.4800, p̂₂ = 0.5800 (n₁ = 600, n₂ = 400, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0320;  z<sub>0.98</sub> = 2.054", "IC(π₁−π₂)<sub>96%</sub> = -0.1000 ± 0.0658 = <b>(-0.1658 ; -0.0342)</b>"], "a": "Todo el IC es negativo ⇒ en casas es más frecuente tener mascota.", "n": "El documento rotula IC 98% (es 96%).", "x": null}, {"id": 101, "t": "PLC optimizado: reducción de al menos 0.20 s", "tags": ["dmedZ"], "e": "Actual: n = 50, x̄ = 5.45 s, σ² = 0.49. Optimizado: n = 40, x̄ = 5.12, σ² = 0.36. IC 94%: ¿reduce al menos 0.20 s?", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = 0.3300", "√(σ₁²/n₁ + σ₂²/n₂) = √(0.7000²/50 + 0.6000²/40) = 0.1371", "z<sub>0.97</sub> = 1.881; error = 0.2579", "IC(μ₁−μ₂)<sub>94%</sub> = <b>(0.0721 ; 0.5879)</b>", "Para afirmar μ₁ − μ₂ ≥ 0.20 el límite inferior debe superar 0.20"], "a": "Límite inferior < 0.20 ⇒ Automan no demuestra su ofrecimiento.", "n": null, "x": null}, {"id": 102, "t": "Circuit breaker: latencia", "tags": ["ratioF", "dmedT3"], "e": "Sin CB: 20 pruebas, x̄ = 5.50 ms, s² = 0.050. Con CB: 5.1, 5.22, 5.05, 5.34, 5.18, 5.27, 5.16, 5.21, 5.09, 5.3, 5.25, 5.14. Normales. a) PH 5% varianzas. b) IC 95% diferencia de medias.", "s": ["Con CB: x̄ = 5.1925, s² = 0.00791", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 0.0500/0.0079 = <b>6.320</b>  (19, 11 g.l.)", "F<sub>0.025; 19, 11</sub> = 1/F<sub>0.975; 11, 19</sub> = 0.3617 ;  F<sub>0.975; 19, 11</sub> = 3.2428", "p-valor = 0.0033 ⇒ <b>se rechaza H₀: varianzas diferentes</b> (caso 3)", "Caso 3 (σ² desconocidas y diferentes): ν = (s₁²/n₁ + s₂²/n₂)² / [ (s₁²/n₁)²/(n₁−1) + (s₂²/n₂)²/(n₂−1) ] = 27.09 ≈ 27", "t<sub>0.975; 27</sub> = 2.052;  √(s₁²/n₁ + s₂²/n₂) = 0.0562", "IC(μ₁−μ₂)<sub>95%</sub> = 0.3075 ± 0.1153 = <b>(0.1922 ; 0.4228)</b>"], "a": "Varianzas diferentes; todo el IC positivo ⇒ el circuit breaker reduce la latencia.", "n": null, "x": null}, {"id": 103, "t": "Mensajería rápida: satisfacción", "tags": ["prop1"], "e": "400 pedidos: 100 con 5★ y 240 con 4★ (satisfechos = 340). IC 93%. Se implementa si > 75%, se descarta si < 60%, si no piloto.", "s": ["p̂ = 340/400 = 0.8500; n·p̂(1−p̂) = 51.00 ≥ 9 ⇒ aproximación normal", "z<sub>0.965</sub> = 1.812; error = z·√(p̂(1−p̂)/n) = 0.0323", "IC(π)<sub>93%</sub> = <b>(0.8177 ; 0.8823)</b>"], "a": "Todo el IC > 0.75 ⇒ implementar de forma permanente.", "n": null, "x": null}, {"id": 104, "t": "Transmilenio: σ > 15 min", "tags": ["var1"], "e": "11 recorridos: 50, 45, 79.8, 92, 80, 90.1, 59, 72, 65, 85, 92. Normal. α = 5%.", "s": ["s² = 282.332", "H₀: σ² ≤ 225 vs H₁: σ² > 225 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 10·282.3322/225 = <b>12.548</b> (10 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 10</sub> = 18.307", "p-valor = 0.2500", "Como p-valor > α = 0.05, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: σ no es mayor a 15.", "n": null, "x": null}, {"id": 105, "t": "Transmilenio: σ > 11.74 min", "tags": ["var1"], "e": "Mismos datos del 104, ahora con σ₀ = 11.74.", "s": ["s² = 282.332", "H₀: σ² ≤ 137.828 vs H₁: σ² > 137.828 (cola derecha), α = 0.05", "Población normal ⇒ χ²<sub>p</sub> = (n−1)s²/σ₀² = 10·282.3322/137.828 = <b>20.484</b> (10 g.l.)", "χ²<sub>c</sub> = χ²<sub>0.95; 10</sub> = 18.307", "p-valor = 0.0250", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: σ > 11.74. Observa cómo cambiar σ₀ cambia la decisión.", "n": null, "x": null}, {"id": 106, "t": "Panono: entregas en 45 min", "tags": ["media1t"], "e": "8 pedidos (min): 42, 46, 44, 41, 45, 47, 43, 40. Normal. Ganancia 25000 por pedido; si el promedio excede 45 min, descuento del 10%. IC 95%.", "s": ["x̄ = 43.50, s = 2.45", "σ desconocida, población normal, n = 8 ⇒ t con 7 g.l.", "t<sub>0.975; 7</sub> = 2.365", "Error = t·s/√n = 2.365·2.4495/√8 = 2.0478", "IC(μ)<sub>95%</sub> = 43.5000 ± 2.0478 = <b>(41.4522 ; 45.5478)</b>"], "a": "Documento: límite superior > 45 ⇒ aplica descuento ⇒ 22500 por pedido.", "n": "⚠ Mismo criterio discutible del 95: 45 ∈ IC, así que no hay evidencia de que el promedio supere 45. El documento además escribe 22.250 (es 22.500) e 'IC 98%' (es 95%).", "x": null}, {"id": 107, "t": "Campaña de mercadeo: tienda Sur vs Norte", "tags": ["ratioF", "dmedT2"], "e": "Sur: 12 transacciones, x̄ = 85.5 (miles), s = 19.7. Norte: 81, 93, 74, 64, 88, 94, 100, 57, 95, 85. Normales. a) PH 5% varianzas. b) IC 95%.", "s": ["Norte: x̄ = 83.10, s = 14.16", "H₀: σ₁² = σ₂² vs H₁: σ₁² ≠ σ₂², α = 0.05", "F<sub>p</sub> = s₁²/s₂² = 388.0900/200.5444 = <b>1.935</b>  (11, 9 g.l.)", "F<sub>0.025; 11, 9</sub> = 1/F<sub>0.975; 9, 11</sub> = 0.2787 ;  F<sub>0.975; 11, 9</sub> = 3.9121", "p-valor = 0.3309 ⇒ <b>no se rechaza H₀: varianzas iguales</b> (caso 2)", "Caso 2 (σ² desconocidas pero iguales): S<sub>p</sub> = √(((n₁−1)s₁² + (n₂−1)s₂²)/(n₁+n₂−2)) = 17.4268", "t<sub>0.975; 20</sub> = 2.086;  S<sub>p</sub>√(1/n₁+1/n₂) = 7.4617", "IC(μ₁−μ₂)<sub>95%</sub> = 2.4000 ± 15.5649 = <b>(-13.1649 ; 17.9649)</b>"], "a": "Varianzas iguales; 0 ∈ IC ⇒ la campaña no muestra impacto.", "n": "En el documento los g.l. de F están cruzados (F<sub>0.975;11,9</sub>, F<sub>0.975;9,11</sub>) y la frase 'F<sub>c</sub> = 1.935 < 3.91 = F<sub>p</sub>' invierte los nombres.", "x": null}, {"id": 108, "t": "IA en aduanas: falsos positivos", "tags": ["dprop"], "e": "Realmente NO fraudulentos: humano 206 marcados (de 1050); IA 108 (de 900). Se implementa si la reducción es de al menos 0.04 con 94%.", "s": ["Falsos positivos se calculan SOLO sobre los realmente no fraudulentos", "p̂₁ = 0.1962, p̂₂ = 0.1200 (n₁ = 1050, n₂ = 900, muestras grandes e independientes)", "√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = 0.0164;  z<sub>0.97</sub> = 1.881", "IC(π₁−π₂)<sub>94%</sub> = 0.0762 ± 0.0308 = <b>(0.0454 ; 0.1070)</b>"], "a": "Límite inferior > 0.04 ⇒ implementar el sistema de IA.", "n": null, "x": null}, {"id": 109, "t": "Biomaterial nanotexturizado", "tags": ["ratioF", "dmedT3"], "e": "Tradicional: 20 pruebas, x̄ = 14.8 h, s² = 1.20. Nano: 13.5, 14.1, 13.8, 13.2, 14, 13.7, 13.4, 13.9, 13.6, 13.3, 14.2, 13.5. Normales. a) IC 95% varianzas. b) α = 5%: ¿el nano reduce el tiempo?", "s": ["Nano: x̄ = 13.683, s² = 0.1033", "IC(σ₁²/σ₂²) = (s₁²/s₂² · F<sub>0.025; 11, 19</sub> ; s₁²/s₂² · F<sub>0.975; 11, 19</sub>)", "s₁²/s₂² = 1.2000/0.1033 = 11.6129;  F<sub>0.025; 11, 19</sub> = 0.3084,  F<sub>0.975; 11, 19</sub> = 2.7645", "IC(σ₁²/σ₂²)<sub>95%</sub> = <b>(3.5811 ; 32.1041)</b> ⇒ 1 ∉ IC: <b>varianzas diferentes</b> (caso 3)", "H₀: μ₁−μ₂ ≤ 0 vs H₁: μ₁−μ₂ > 0 (cola derecha), α = 0.05", "Caso 3: ν = 23.99 ≈ 24 g.l.;  t<sub>p</sub> = ((x̄₁−x̄₂) − 0)/√(s₁²/n₁+s₂²/n₂) = <b>4.263</b>", "Valor crítico: 1.711;  p-valor = 0.0001", "Como p-valor ≤ α = 0.05, <b>se rechaza H₀</b>."], "a": "Varianzas diferentes; se rechaza H₀: optar por el nuevo tratamiento.", "n": null, "x": null}, {"id": 110, "t": "Cargadores tipo 1 vs tipo 2", "tags": ["dmedZ"], "e": "Tipo 1: n = 22, x̄ = 2.60 kwh. Tipo 2: n = 24, x̄ = 2.85. σ = 0.25 en ambos. Normales. IC 99%.", "s": ["Caso 1 (σ₁, σ₂ conocidas) ⇒ Z.  x̄₁ − x̄₂ = -0.2500", "√(σ₁²/n₁ + σ₂²/n₂) = √(0.2500²/22 + 0.2500²/24) = 0.0738", "z<sub>0.995</sub> = 2.576; error = 0.1901", "IC(μ₁−μ₂)<sub>99%</sub> = <b>(-0.4401 ; -0.0599)</b>"], "a": "0 ∉ IC (todo negativo) ⇒ sí hay diferencia: el tipo 2 transmite más.", "n": "El documento escribe primero 'el intervalo contiene al 0' (falso) y luego lo corrige. La correcta es la segunda.", "x": null}, {"id": 111, "t": "Mensajería en bicicleta eléctrica", "tags": ["media1"], "e": "Antes μ = 42 min, σ = 6. 49 entregas, x̄ = 40.1. α = 4%: ¿se redujo el tiempo?", "s": ["H₀: μ ≥ 42 vs H₁: μ < 42 (cola izquierda), α = 0.04", "σ conocida → Z<sub>p</sub> = (x̄ − μ₀)/(σ/√n) = (40.1000 − 42)/(6.0000/√49) = <b>-2.217</b>", "z<sub>c</sub> = z<sub>0.04</sub> = -1.751", "p-valor = 0.0133", "Como p-valor ≤ α = 0.04, <b>se rechaza H₀</b>."], "a": "Se rechaza H₀: la estrategia redujo el tiempo.", "n": null, "x": null}, {"id": 112, "t": "Plataforma de matrícula", "tags": ["dprop"], "e": "Anterior: 84 de 300 con inconvenientes. Nueva: 77 de 350. α = 3%: ¿la nueva redujo la proporción?", "s": ["1 = anterior, 2 = nueva ⇒ H₁: π₁ − π₂ > 0", "H₀: π₁ − π₂ ≤ 0 vs H₁: π₁ − π₂ > 0 (cola derecha), α = 0.03", "p̂₁ = 84/300 = 0.2800, p̂₂ = 77/350 = 0.2200, p̄ (combinada) = (84+77)/(300+350) = 0.2477", "Z<sub>p</sub> = (p̂₁ − p̂₂)/√(p̄(1−p̄)(1/n₁+1/n₂)) = <b>1.767</b>", "Valor crítico: 1.881;  p-valor = 0.0386", "Como p-valor > α = 0.03, <b>no se rechaza H₀</b>."], "a": "No se rechaza H₀: no hay evidencia de reducción.", "n": "El documento escribe 'Zcr(0.04)' en la regla: es z<sub>0.97</sub> = 1.88 (α = 3%).", "x": null}];
+</script>
+<script>
+(() => {
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const h = (tag, attrs = {}, html = '') => { const e = document.createElement(tag); for (const k in attrs) { if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } if (html) e.innerHTML = html; return e; };
+const fr = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const rt = x => `√<span class="rt">${x}</span>`;
+const f = (x, d = 4) => (x === undefined || x === null || isNaN(x)) ? '—' : (Math.abs(x) >= 1000 ? x.toFixed(Math.min(d, 2)) : x.toFixed(d));
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+const TAGS = {
+  media1: ['Media · σ conocida (Z)', 'z1'], media1t: ['Media · σ desconocida (t)', 't1'], var1: ['Varianza (χ²)', 'chi1'],
+  prob_s2: ['Probabilidad de S² (χ²)', 'probs2'], prop1: ['Proporción (Z)', 'p1'], dmedZ: ['Dif. medias · caso 1 (Z)', 'dz'],
+  ratioF: ['Razón de varianzas (F)', 'F'], dmedT2: ['Dif. medias · caso 2 (Sp)', 't2'], dmedT3: ['Dif. medias · caso 3 (Welch)', 't3'],
+  dprop: ['Dif. proporciones (Z)', 'dp'], tam_n: ['Tamaño de muestra', 'n'], form: ['Formulario V1/V2', null]
+};
+
+/* ---------------- progreso ---------------- */
+let done = new Set(store.get('pf-done', []));
+function saveDone() { store.set('pf-done', [...done]); renderProg(); }
+function renderProg() { $('#progTxt').textContent = `${done.size} de ${EX.length} ejercicios repasados`; $('#progBar').style.width = (100 * done.size / EX.length) + '%'; }
+
+/* ---------------- router ---------------- */
+const VIEWS = ['inicio', 'arbol', 'formulario', 'hipotesis', 'tablas', 'ejercicios', 'simulador', 'quiz', 'errores'];
+function route() {
+  let v = (location.hash || '#inicio').slice(1);
+  if (!VIEWS.includes(v)) v = 'inicio';
+  $$('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
+  $$('.nav a').forEach(a => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + v));
+  $$('.nav a').forEach(a => { if (a.hasAttribute('aria-current')) a.setAttribute('aria-current', 'page'); });
+  if (v === 'tablas') buildTables();
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+function go(v) { if (location.hash === '#' + v) route(); else location.hash = v; }
+
+/* ---------------- inicio ---------------- */
+function tiles() {
+  const box = $('#topicTiles');
+  const desc = { media1: 'x̄ con σ poblacional', media1t: 'x̄ con s y población normal', var1: 'PH o IC de σ²', prob_s2: 'P(S² > c), percentiles de S', prop1: 'p̂ contra π₀', dmedZ: 'σ₁, σ₂ conocidas', ratioF: 'Paso previo a caso 2 o 3', dmedT2: 'Varianzas iguales', dmedT3: 'Varianzas diferentes', dprop: 'p̂₁ − p̂₂', tam_n: 'n para un error dado' };
+  Object.keys(desc).forEach(t => {
+    const c = EX.filter(e => e.tags.includes(t)).length;
+    const b = h('button', { class: 'opt', onclick: () => { exFilter = t; renderChips(); renderEx(); go('ejercicios'); } },
+      `<span class="pill">${c} ejercicio${c === 1 ? '' : 's'}</span><b>${TAGS[t][0]}</b><small>${desc[t]}</small>`);
+    box.append(b);
+  });
+}
+
+/* ---------------- formulario ---------------- */
+const FX = {
+  z1: { t: 'Media, σ conocida', pill: 'Z', when: 'Parámetro μ. σ poblacional conocida y población normal, o cualquier distribución con n ≥ 30 (TLC).',
+    stat: `Z = ${fr('x̄ − μ₀', 'σ / √n')} ~ N(0, 1)`, ic: `x̄ ± z<sub>1−α/2</sub> · ${fr('σ', '√n')}`,
+    why: '"Como X es normal (o n ≥ 30, TLC) y σ es conocida, x̄ ~ N(μ, σ/√n) y se usa Z."', ex: [22, 31, 42, 67, 76, 82, 93, 98, 111],
+    ojo: 'Si la distribución es exponencial, σ = μ (ej. 82). Si σ es conocida y la población es normal, Z aplica aunque n sea pequeño (ej. 17b, 22).' },
+  t1: { t: 'Media, σ desconocida', pill: 't', when: 'Parámetro μ. σ desconocida, s calculada de la muestra, población normal, n < 30.',
+    stat: `t = ${fr('x̄ − μ₀', 's / √n')} ~ t<sub>n−1</sub>`, ic: `x̄ ± t<sub>1−α/2; n−1</sub> · ${fr('s', '√n')}`,
+    why: '4 supuestos (ej. 87): población normal, σ desconocida, s estimada de la muestra, n < 30 ⇒ t con n − 1 g.l.', ex: [4, 8, 23, 27, 39, 57, 63, 69, 77, 78, 87, 95, 106],
+    ojo: 'Con datos crudos, calcula x̄ y s con n − 1 en el denominador. La rúbrica da hasta 3 puntos por esto.' },
+  chi1: { t: 'Varianza de una población', pill: 'χ²', when: 'Parámetro σ² (o σ). Población normal (obligatorio).',
+    stat: `χ² = ${fr('(n − 1) s²', 'σ₀²')} ~ χ²<sub>n−1</sub>`, ic: `( ${fr('(n−1)s²', 'χ²<sub>1−α/2</sub>')} ; ${fr('(n−1)s²', 'χ²<sub>α/2</sub>')} )`,
+    why: '"Como X es normal, (n−1)S²/σ² ~ χ² con n − 1 g.l."', ex: [1, 21, 32, 38, 41, 50, 60, 66, 71, 81, 91, 96, 104, 105],
+    ojo: 'Si la hipótesis es sobre σ, eleva al cuadrado: σ > 1.65 ⇔ σ² > 2.7225. El IC de σ es la raíz del IC de σ². Rechazo: derecha χ² > χ²<sub>1−α</sub>; izquierda χ² < χ²<sub>α</sub>; dos colas fuera de [χ²<sub>α/2</sub>, χ²<sub>1−α/2</sub>].' },
+  probs2: { t: 'Probabilidades de S² o S', pill: 'χ²', when: 'Te piden una probabilidad o un rango para la varianza/desviación muestral. No hay hipótesis.',
+    stat: `P(S² &gt; c) = P( χ²<sub>n−1</sub> &gt; ${fr('(n − 1) c', 'σ²')} )`, ic: `b = ${rt(fr('χ²<sub>p; n−1</sub> · σ²', 'n − 1'))}  (límites de S para el p central)`,
+    why: '"Como la población es normal, (n−1)S²/σ² ~ χ²<sub>n−1</sub>."', ex: [7, 10, 12, 13, 35, 49, 54, 62, 72, 83],
+    ojo: '"s excede en más del 20% a σ" ⇒ P(S > 1.2σ) = P(χ² > (n−1)·1.44). "Difiere en más del 10%" ⇒ 1 − P(0.81(n−1) < χ² < 1.21(n−1)): σ se cancela. Para hallar K con P(S² > K) = p: K = χ²<sub>1−p</sub>σ²/(n−1).' },
+  p1: { t: 'Proporción de una población', pill: 'Z', when: 'Parámetro π. n grande: n·π₀(1−π₀) ≥ 9 (o n·p ≥ 5 y n(1−p) ≥ 5).',
+    stat: `Z = ${fr('p̂ − π₀', rt(fr('π₀(1 − π₀)', 'n')))}`, ic: `p̂ ± z<sub>1−α/2</sub> · ${rt(fr('p̂(1 − p̂)', 'n'))}`,
+    why: '"Como n es grande y n·π₀(1−π₀) ≥ 9, p̂ es aproximadamente normal."', ex: [26, 34, 45, 52, 88, 97, 103],
+    ojo: 'En la PH el denominador lleva π₀; en el IC lleva p̂. Cuenta bien x: a veces hay que sumar clases de una tabla (26, 97).' },
+  n: { t: 'Tamaño de muestra', pill: 'n', when: 'Te dan un error máximo e y una confianza.',
+    stat: `n = ${fr('z²<sub>1−α/2</sub> · p̂(1 − p̂)', 'e²')}`, ic: `n = ( ${fr('z<sub>1−α/2</sub> · σ', 'e')} )²  para la media`,
+    why: 'Siempre redondea hacia arriba. Sin p̂ previo usa p̂ = 0.5.', ex: [18], ojo: 'Ej. 18b: (1.645/0.05)²·0.2667·0.7333 = 211.7 ⇒ 212.' },
+  dz: { t: 'Diferencia de medias, caso 1', pill: 'Z', when: 'μ₁ − μ₂ con σ₁ y σ₂ conocidas (poblaciones normales o n₁, n₂ ≥ 30). Muestras independientes.',
+    stat: `Z = ${fr('(x̄₁ − x̄₂) − d₀', rt(fr('σ₁²', 'n₁') + ' + ' + fr('σ₂²', 'n₂')))}`, ic: `(x̄₁ − x̄₂) ± z<sub>1−α/2</sub> ${rt(fr('σ₁²', 'n₁') + ' + ' + fr('σ₂²', 'n₂'))}`,
+    why: '"Poblaciones independientes, normales (o TLC) con σ conocidas ⇒ x̄₁ − x̄₂ ~ Normal."', ex: [2, 11, 14, 29, 44, 56, 64, 73, 80, 90, 101, 110],
+    ojo: 'Si te dan σ históricas y también s de la muestra, se usan las σ (ej. 56). Define 1 y 2 antes de concluir: el signo del IC depende del orden.' },
+  F: { t: 'Razón de varianzas', pill: 'F', when: 'Comparar σ₁² y σ₂², casi siempre como paso previo a una diferencia de medias. Poblaciones normales e independientes.',
+    stat: `F = ${fr('s₁²', 's₂²')} ~ F<sub>n₁−1, n₂−1</sub>`, ic: `( ${fr('s₁²', 's₂²')}·F<sub>α/2; n₂−1, n₁−1</sub> ; ${fr('s₁²', 's₂²')}·F<sub>1−α/2; n₂−1, n₁−1</sub> )`,
+    why: '"Como ambas poblaciones son normales e independientes, (S₁²/σ₁²)/(S₂²/σ₂²) ~ F."', ex: [3, 9, 15, 16, 19, 20, 24, 30, 33, 37, 43, 46, 51, 55, 59, 65, 74, 84, 85, 89, 94, 102, 107, 109],
+    ojo: 'PH de dos colas: no se rechaza si F<sub>α/2; n₁−1, n₂−1</sub> ≤ F ≤ F<sub>1−α/2; n₁−1, n₂−1</sub>. Para el IC los g.l. van invertidos (n₂−1, n₁−1). F<sub>α/2; a, b</sub> = 1/F<sub>1−α/2; b, a</sub>.' },
+  t2: { t: 'Diferencia de medias, caso 2', pill: 't · Sp', when: 'σ₁², σ₂² desconocidas pero iguales (la prueba F no rechazó o 1 ∈ IC de la razón). Normales e independientes.',
+    stat: `t = ${fr('(x̄₁ − x̄₂) − d₀', 'S<sub>p</sub> ' + rt(fr('1', 'n₁') + ' + ' + fr('1', 'n₂')))} ~ t<sub>n₁+n₂−2</sub>`,
+    ic: `S<sub>p</sub>² = ${fr('(n₁−1)s₁² + (n₂−1)s₂²', 'n₁ + n₂ − 2')} ;  (x̄₁ − x̄₂) ± t<sub>1−α/2; n₁+n₂−2</sub> S<sub>p</sub> ${rt(fr('1', 'n₁') + ' + ' + fr('1', 'n₂'))}`,
+    why: '"Normales, independientes, σ² desconocidas e iguales (según la prueba F) ⇒ caso 2 con n₁ + n₂ − 2 g.l."', ex: [3, 9, 15, 16, 19, 20, 24, 33, 37, 43, 46, 55, 59, 74, 84, 89, 94, 107],
+    ojo: 'En S<sub>p</sub>² las varianzas se ponderan con n − 1; en la raíz del denominador van 1/n₁ + 1/n₂ (no 1/(n−1)). Error del ej. 24 del documento.' },
+  t3: { t: 'Diferencia de medias, caso 3', pill: 't · Welch', when: 'σ₁², σ₂² desconocidas y diferentes (la prueba F rechazó o 1 ∉ IC de la razón).',
+    stat: `t = ${fr('(x̄₁ − x̄₂) − d₀', rt(fr('s₁²', 'n₁') + ' + ' + fr('s₂²', 'n₂')))} ~ t<sub>ν</sub>`,
+    ic: `ν = ${fr('(s₁²/n₁ + s₂²/n₂)²', fr('(s₁²/n₁)²', 'n₁ − 1') + ' + ' + fr('(s₂²/n₂)²', 'n₂ − 1'))}`,
+    why: '"Normales, independientes, σ² desconocidas y diferentes ⇒ caso 3 con ν g.l. (Welch)."', ex: [30, 51, 65, 85, 102, 109],
+    ojo: 'ν casi nunca es entero. El documento redondea al más cercano (10.86 → 11, 23.98 → 24); redondear hacia abajo es más conservador. Escribe cuál usas.' },
+  dp: { t: 'Diferencia de proporciones', pill: 'Z', when: 'π₁ − π₂ con muestras grandes e independientes.',
+    stat: `PH: Z = ${fr('p̂₁ − p̂₂', rt('p̄(1 − p̄)(' + fr('1', 'n₁') + ' + ' + fr('1', 'n₂') + ')'))},  p̄ = ${fr('x₁ + x₂', 'n₁ + n₂')}`,
+    ic: `IC: (p̂₁ − p̂₂) ± z<sub>1−α/2</sub> ${rt(fr('p̂₁(1−p̂₁)', 'n₁') + ' + ' + fr('p̂₂(1−p̂₂)', 'n₂'))}`,
+    why: '"Muestras grandes e independientes (n·p̂ ≥ 5 y n(1−p̂) ≥ 5 en ambas) ⇒ p̂₁ − p̂₂ aproximadamente normal."', ex: [5, 6, 18, 28, 36, 40, 48, 53, 58, 61, 68, 70, 75, 79, 86, 92, 99, 100, 108, 112],
+    ojo: 'La p̄ combinada solo se usa en la PH con H₀: π₁ − π₂ = 0. En el IC no se combina. Lee qué proporción interesa: cancelaciones (28), falsos positivos (108), defectuosos (92).' }
+};
+function fxCards() {
+  const nav = $('#fxNav'), box = $('#fxCards');
+  Object.entries(FX).forEach(([k, c]) => {
+    nav.append(h('a', { href: '#formulario', class: 'chip', onclick: ev => { ev.preventDefault(); $('#fx-' + k).scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, c.t));
+    box.append(h('article', { class: 'card', id: 'fx-' + k }, `
+      <div class="row" style="justify-content:space-between"><h3>${c.t}</h3><span class="pill">${c.pill}</span></div>
+      <p><b>Cuándo:</b> ${c.when}</p>
+      <div class="fx">${c.stat}</div>
+      <div class="fx">${c.ic}</div>
+      <p><b>Justificación:</b> ${c.why}</p>
+      <p class="callout">${c.ojo}</p>
+      <p style="font-size:.9rem;color:var(--muted)">En el documento: ${c.ex.map(i => `<a href="#ejercicios" data-ex="${i}">${i}</a>`).join(', ')}</p>`));
+  });
+  box.addEventListener('click', ev => { const a = ev.target.closest('[data-ex]'); if (a) { ev.preventDefault(); openEx(+a.dataset.ex); } });
+}
+
+/* ---------------- árbol ---------------- */
+const TREE = {
+  start: { q: '¿Qué te piden?', o: [['Una prueba de hipótesis o un intervalo de confianza', 'pob'], ['Una probabilidad sobre S² o S (o un percentil de S)', '=probs2'], ['Un tamaño de muestra n', '=n']] },
+  pob: { q: '¿Cuántas poblaciones compara?', o: [['Una', 'par1'], ['Dos, independientes', 'par2']] },
+  par1: { q: '¿Sobre qué parámetro?', o: [['La media μ', 'sig1'], ['La varianza σ² o la desviación σ', 'norm1'], ['Una proporción π', '=p1']] },
+  sig1: { q: '¿Conoces σ poblacional?', o: [['Sí: "la desviación poblacional es…", "históricamente…"', 'z1c'], ['No: solo tengo s de la muestra o los datos', 't1c']] },
+  z1c: { q: '¿La población es normal o n ≥ 30?', o: [['Sí', '=z1'], ['No (n pequeño y no normal)', '=none']] },
+  t1c: { q: '¿La población es normal?', o: [['Sí (n < 30)', '=t1'], ['No dice, pero n ≥ 30', '=z1s']] },
+  norm1: { q: '¿La población es normal?', o: [['Sí', '=chi1'], ['No', '=none']] },
+  par2: { q: '¿Qué comparas?', o: [['Las medias: μ₁ − μ₂', 'sig2'], ['Las varianzas: σ₁²/σ₂²', '=F'], ['Las proporciones: π₁ − π₂', '=dp']] },
+  sig2: { q: '¿Conoces σ₁ y σ₂ poblacionales?', o: [['Sí', '=dz'], ['No: tengo s₁ y s₂', 'feq']] },
+  feq: { q: 'Haz primero la prueba F (o el IC de la razón). ¿Qué resultó?', o: [['No se rechaza H₀ / 1 ∈ IC: varianzas iguales', '=t2'], ['Se rechaza H₀ / 1 ∉ IC: varianzas diferentes', '=t3']] }
+};
+let path = ['start'], picks = [];
+function renderTree() {
+  const box = $('#tree'); box.innerHTML = '';
+  const cr = h('div', { class: 'crumbs' }); picks.forEach(p => cr.append(h('span', {}, p))); if (picks.length) box.append(cr);
+  const cur = path[path.length - 1];
+  if (cur.startsWith('=')) {
+    const k = cur.slice(1);
+    if (k === 'none') { box.append(h('div', { class: 'callout red' }, '<b>No hay un procedimiento del curso para este caso.</b> Revisa el enunciado: casi siempre dice "suponga normalidad" o n es grande.')); }
+    else if (k === 'z1s') { box.append(h('div', { class: 'callout blue' }, '<b>Z con s en lugar de σ (TLC).</b> Con n ≥ 30 la media muestral es aproximadamente normal. Algunos ejercicios usan t igual (el 77 con n = 25 sí exige t). Escribe la justificación.')); box.append(fxCard('z1')); }
+    else box.append(fxCard(k));
+  } else {
+    const node = TREE[cur];
+    box.append(h('h2', {}, node.q));
+    const opts = h('div', { class: 'opts' });
+    node.o.forEach(([lab, nx]) => opts.append(h('button', { class: 'opt', onclick: () => { path.push(nx); picks.push(lab.split(':')[0]); renderTree(); } }, `<b>${lab}</b>`)));
+    box.append(opts);
+  }
+  const r = h('div', { class: 'row' });
+  if (path.length > 1) r.append(h('button', { class: 'btn ghost small', onclick: () => { path.pop(); picks.pop(); renderTree(); } }, 'Atrás'));
+  if (path.length > 1) r.append(h('button', { class: 'btn ghost small', onclick: () => { path = ['start']; picks = []; renderTree(); } }, 'Empezar de nuevo'));
+  box.append(r);
+}
+function fxCard(k) {
+  const c = FX[k];
+  const d = h('div', { class: 'card', style: 'border-color:var(--accent)' }, `<div class="row" style="justify-content:space-between"><h3>${c.t}</h3><span class="pill">${c.pill}</span></div>
+    <div class="fx">${c.stat}</div><div class="fx">${c.ic}</div><p><b>Escribe:</b> ${c.why}</p><p class="callout">${c.ojo}</p>
+    <p style="font-size:.9rem">Practica con: ${c.ex.slice(0, 8).map(i => `<a href="#ejercicios" data-ex="${i}">${i}</a>`).join(', ')}</p>`);
+  d.addEventListener('click', ev => { const a = ev.target.closest('[data-ex]'); if (a) { ev.preventDefault(); openEx(+a.dataset.ex); } });
+  return d;
+}
+
+/* ---------------- quiz H1 ---------------- */
+const H1Q = [
+  ['Se sospecha que las pastillas tienen una desviación mayor a la permitida de 10 mg.', ['σ² > 100', 'σ² < 100', 'σ² ≠ 100'], 0],
+  ['El fabricante asegura al menos 2800 páginas por cartucho; la SIC sospecha publicidad engañosa.', ['μ > 2800', 'μ < 2800', 'μ ≠ 2800'], 1],
+  ['¿El proceso de las pelotas de golf se desajustó respecto a 295 yardas?', ['μ > 295', 'μ < 295', 'μ ≠ 295'], 2],
+  ['¿La nueva técnica de ortodoncia tiene menor dispersión que los brackets (σ² = 100)?', ['σ² > 100', 'σ² < 100', 'σ² ≠ 100'], 1],
+  ['¿El costo promedio en ABER excede en más de 2000 COP al de DoDo?', ['μ₁ − μ₂ > 0', 'μ₁ − μ₂ > 2000', 'μ₁ − μ₂ ≠ 2000'], 1],
+  ['¿Hay diferencia entre la proporción de jóvenes y de adultas que comprarían el perfume?', ['π₁ − π₂ > 0', 'π₁ − π₂ < 0', 'π₁ − π₂ ≠ 0'], 2],
+  ['El fabricante dice que máximo el 2% de los balones sale defectuoso. ¿La proporción real supera eso?', ['π > 0.02', 'π < 0.02', 'π ≠ 0.02'], 0],
+  ['El gerente afirma que al menos el 80% cumple; el jefe de calidad sospecha que no.', ['π > 0.8', 'π < 0.8', 'π ≠ 0.8'], 1],
+  ['¿La plataforma nueva (2) redujo la proporción de inconvenientes frente a la anterior (1)?', ['π₁ − π₂ > 0', 'π₁ − π₂ < 0', 'π₁ − π₂ ≠ 0'], 0],
+  ['¿Las varianzas de resistencia de los dos proveedores son iguales?', ['σ₁²/σ₂² > 1', 'σ₁²/σ₂² < 1', 'σ₁²/σ₂² ≠ 1'], 2],
+  ['Happy-Chats recibe bono si la satisfacción media supera 8.', ['μ > 8', 'μ < 8', 'μ ≠ 8'], 0],
+  ['¿La reestructuración disminuyó el tiempo medio de rodaje de 18 min?', ['μ > 18', 'μ < 18', 'μ ≠ 18'], 1],
+  ['¿El traslado aumentó la variabilidad de la máquina (σ = 0.1 oz)?', ['σ² > 0.1', 'σ² > 0.01', 'σ² ≠ 0.01'], 1],
+  ['El centro dice que los hombres (1) ven menos grabaciones que las mujeres (2). Los de posgrado creen lo contrario y quieren refutarlo.', ['μ₁ − μ₂ < 0', 'μ₁ − μ₂ > 0', 'μ₁ − μ₂ ≠ 0'], 1]
+];
+let hq = { i: 0, ok: 0, ans: false };
+function renderH1() {
+  const box = $('#h1quiz'); box.innerHTML = '';
+  if (hq.i >= H1Q.length) {
+    box.append(h('h3', {}, `Quiz de frases: ${hq.ok}/${H1Q.length}`));
+    box.append(h('p', {}, hq.ok === H1Q.length ? 'Perfecto. Ya sabes dónde va el igual y qué cola usar.' : 'Repite hasta sacar todo. Los errores típicos: olvidar elevar σ al cuadrado y poner la afirmación con "al menos" en H₁.'));
+    box.append(h('button', { class: 'btn', onclick: () => { hq = { i: 0, ok: 0, ans: false }; renderH1(); } }, 'Repetir'));
+    return;
+  }
+  const [q, ops, a] = H1Q[hq.i];
+  box.append(h('div', { class: 'row', style: 'justify-content:space-between' }, `<h3>Quiz de frases: ¿cuál es H₁?</h3><span class="pill">${hq.i + 1} / ${H1Q.length}</span>`));
+  box.append(h('p', { class: 'sim-q' }, q));
+  const o = h('div', { class: 'opts' });
+  ops.forEach((t, j) => o.append(h('button', { class: 'opt', onclick: ev => {
+    if (hq.ans) return; hq.ans = true; if (j === a) hq.ok++;
+    $$('.opt', o).forEach((b, k) => b.classList.add(k === a ? 'ok' : (k === j ? 'no' : '')));
+    nx.disabled = false;
+  } }, `<b>H₁: ${t}</b>`)));
+  box.append(o);
+  const nx = h('button', { class: 'btn', onclick: () => { hq.i++; hq.ans = false; renderH1(); } }, 'Siguiente'); nx.disabled = true;
+  const row = h('div', { class: 'row' }); row.append(nx); box.append(row);
+}
+
+/* ---------------- tablas ---------------- */
+let tablesBuilt = false;
+function tbl(head, rows) { return `<table class="tbl"><thead><tr>${head.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr><th>${r[0]}</th>${r.slice(1).map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table>`; }
+function buildTables() {
+  if (tablesBuilt) return; tablesBuilt = true;
+  // Z percentiles
+  const confs = [0.80, 0.85, 0.88, 0.90, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 0.995];
+  $('#tabZq').innerHTML = tbl(['Confianza 1−α', 'α', 'Una cola z<sub>1−α</sub>', 'Dos colas z<sub>1−α/2</sub>'],
+    confs.map(c => [`${(c * 100).toFixed(1).replace('.0', '')}%`, (1 - c).toFixed(3), D.normInv(c).toFixed(3), D.normInv(1 - (1 - c) / 2).toFixed(3)]));
+  // Z table
+  const zt = neg => {
+    const rows = [];
+    for (let i = 0; i <= 34; i++) { const zb = neg ? -(3.4 - i / 10) : i / 10; const r = [(neg && zb === 0 ? '−0.0' : zb.toFixed(1))]; for (let j = 0; j < 10; j++) { const z = neg ? zb - j / 100 : zb + j / 100; r.push(D.normCdf(z).toFixed(4)); } rows.push(r); }
+    return tbl(['z', ...Array.from({ length: 10 }, (_, j) => '0.0' + j)], neg ? rows : rows);
+  };
+  const zs = $('#zSide');
+  [['z ≥ 0', false], ['z < 0', true]].forEach(([lab, neg], k) => zs.append(h('button', { class: 'chip', 'aria-pressed': k === 0 ? 'true' : 'false', onclick: ev => { $$('.chip', zs).forEach(c => c.setAttribute('aria-pressed', 'false')); ev.currentTarget.setAttribute('aria-pressed', 'true'); $('#tabZ').innerHTML = zt(neg); } }, lab)));
+  $('#tabZ').innerHTML = zt(false);
+  // t
+  const tp = [0.80, 0.90, 0.95, 0.96, 0.97, 0.975, 0.98, 0.99, 0.995];
+  const tdf = [...Array.from({ length: 30 }, (_, i) => i + 1), 35, 40, 45, 50, 60, 70, 80, 100, 120, Infinity];
+  $('#tabT').innerHTML = tbl(['ν \\ p', ...tp.map(String)], tdf.map(v => [v === Infinity ? '∞' : v, ...tp.map(p => (v === Infinity ? D.normInv(p) : D.tInv(p, v)).toFixed(3))]));
+  // chi
+  const cp = [0.005, 0.01, 0.02, 0.025, 0.05, 0.10, 0.90, 0.95, 0.975, 0.98, 0.99, 0.995];
+  const cdf = [...Array.from({ length: 30 }, (_, i) => i + 1), 35, 40, 45, 50, 60, 70, 80, 90, 100];
+  $('#tabC').innerHTML = tbl(['ν \\ p', ...cp.map(String)], cdf.map(v => [v, ...cp.map(p => { const x = D.chiInv(p, v); return x < 0.01 ? x.toExponential(2) : x.toFixed(3); })]));
+  // F
+  const fs = $('#fSel'); const fps = [0.90, 0.95, 0.975, 0.98, 0.99, 0.995];
+  const v1s = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 19, 20, 24, 29, 30, 40, 60, 120];
+  const v2s = [...Array.from({ length: 30 }, (_, i) => i + 1), 39, 40, 60, 120];
+  const ft = p => tbl([`v₂ \\ v₁`, ...v1s], v2s.map(b => [b, ...v1s.map(a => D.fInv(p, a, b).toFixed(p >= 0.99 && b < 3 ? 1 : 3))]));
+  fps.forEach((p, k) => fs.append(h('button', { class: 'chip', 'aria-pressed': p === 0.975 ? 'true' : 'false', onclick: ev => { $$('.chip', fs).forEach(c => c.setAttribute('aria-pressed', 'false')); ev.currentTarget.setAttribute('aria-pressed', 'true'); $('#tabF').innerHTML = ft(p); } }, 'p = ' + p)));
+  $('#tabF').innerHTML = ft(0.975);
+}
+function finder() {
+  const box = $('#finder');
+  box.innerHTML = `<h3>Buscador de percentiles</h3><p style="color:var(--muted);font-size:.92rem">Para comprobar en casa lo que leíste en la tabla.</p>
+  <div class="fields">
+    <label class="f">Distribución<select id="fdDist"><option value="z">Normal Z</option><option value="t" selected>t de Student</option><option value="c">χ²</option><option value="F">F</option></select></label>
+    <label class="f">Área a la izquierda p<input id="fdP" type="number" step="0.001" value="0.975"></label>
+    <label class="f">g.l. ν (o v₁)<input id="fdA" type="number" value="9"></label>
+    <label class="f">g.l. v₂ (solo F)<input id="fdB" type="number" value="10"></label>
+    <label class="f">Valor x (para P(X ≤ x))<input id="fdX" type="number" step="0.01" value="2.262"></label>
+  </div>
+  <div class="fx" id="fdOut"></div>`;
+  const upd = () => {
+    const d = $('#fdDist').value, p = +$('#fdP').value, a = +$('#fdA').value, b = +$('#fdB').value, x = +$('#fdX').value;
+    let q, c, name;
+    try {
+      if (d === 'z') { q = D.normInv(p); c = D.normCdf(x); name = `z<sub>${p}</sub>`; }
+      if (d === 't') { q = D.tInv(p, a); c = D.tCdf(x, a); name = `t<sub>${p}; ${a}</sub>`; }
+      if (d === 'c') { q = D.chiInv(p, a); c = D.chiCdf(x, a); name = `χ²<sub>${p}; ${a}</sub>`; }
+      if (d === 'F') { q = D.fInv(p, a, b); c = D.fCdf(x, a, b); name = `F<sub>${p}; ${a}, ${b}</sub>`; }
+      $('#fdOut').innerHTML = (p > 0 && p < 1 ? `${name} = <b>${q.toFixed(4)}</b>` : 'p debe estar entre 0 y 1') + `<br>P(X ≤ ${x}) = <b>${c.toFixed(5)}</b> · P(X &gt; ${x}) = ${(1 - c).toFixed(5)}`;
+    } catch (e) { $('#fdOut').textContent = 'Revisa los valores.'; }
+  };
+  $$('input,select', box).forEach(e => e.addEventListener('input', upd)); upd();
+}
+
+/* ---------------- banco de ejercicios ---------------- */
+let exFilter = 'all';
+function renderChips() {
+  const box = $('#exChips'); box.innerHTML = '';
+  [['all', 'Todos'], ...Object.entries(TAGS).map(([k, v]) => [k, v[0]])].forEach(([k, lab]) => {
+    box.append(h('button', { class: 'chip', 'aria-pressed': exFilter === k ? 'true' : 'false', onclick: () => { exFilter = k; renderChips(); renderEx(); } }, lab));
+  });
+}
+function exCard(e) {
+  const d = h('details', { class: 'ex' + (done.has(e.id) ? ' done' : ''), id: 'ex-' + e.id });
+  const tags = e.tags.map(t => `<span class="pill${t === 'form' ? ' m' : ''}">${TAGS[t][0]}</span>`).join(' ');
+  d.innerHTML = `<summary><span class="id">${e.id}</span><span class="tt">${e.t}</span>${e.n ? '<span class="pill b">error en doc.</span>' : ''}</summary>
+  <div class="body">
+    <p>${e.e}</p>
+    <div class="row">
+      <button class="btn ghost small" data-a="hint">Pista: ¿qué método?</button>
+      <button class="btn small" data-a="next">Siguiente paso</button>
+      <button class="btn ghost small" data-a="all">Ver solución completa</button>
+      <label class="row" style="gap:6px;margin-left:auto;font-weight:600"><input type="checkbox" data-a="done" ${done.has(e.id) ? 'checked' : ''}> Ya lo domino</label>
+    </div>
+    <p class="callout blue" data-r="hint" hidden>${tags}</p>
+    <ol class="steps">${e.s.map(s => `<li class="hid">${s}</li>`).join('')}</ol>
+    <div class="ans" data-r="ans" hidden><b>Respuesta:</b> ${e.a}</div>
+    ${e.n ? `<div class="docnote" data-r="note" hidden><b>Ojo con el documento:</b> ${e.n}</div>` : ''}
+  </div>`;
+  d.addEventListener('click', ev => {
+    const b = ev.target.closest('[data-a]'); if (!b) return;
+    const a = b.dataset.a, lis = $$('.steps li', d);
+    const reveal = () => { $('[data-r="ans"]', d).hidden = false; const n = $('[data-r="note"]', d); if (n) n.hidden = false; };
+    if (a === 'hint') $('[data-r="hint"]', d).hidden = false;
+    if (a === 'next') { const nx = lis.find(l => l.classList.contains('hid')); if (nx) nx.classList.remove('hid'); if (!lis.some(l => l.classList.contains('hid'))) reveal(); }
+    if (a === 'all') { lis.forEach(l => l.classList.remove('hid')); reveal(); }
+    if (a === 'done') { if (b.checked) done.add(e.id); else done.delete(e.id); saveDone(); d.classList.toggle('done', b.checked); }
+  });
+  return d;
+}
+const cards = {};
+function renderEx() {
+  const q = ($('#exSearch').value || '').toLowerCase().trim(), st = $('#exState').value;
+  let n = 0;
+  EX.forEach(e => {
+    if (!cards[e.id]) { cards[e.id] = exCard(e); $('#exList').append(cards[e.id]); }
+    const txt = (e.id + ' ' + e.t + ' ' + e.e).toLowerCase();
+    const ok = (exFilter === 'all' || e.tags.includes(exFilter)) && (!q || txt.includes(q)) &&
+      (st === 'all' || (st === 'done' && done.has(e.id)) || (st === 'todo' && !done.has(e.id)) || (st === 'note' && e.n));
+    cards[e.id].style.display = ok ? '' : 'none'; if (ok) n++;
+  });
+  $('#exCount').textContent = `${n} ejercicio${n === 1 ? '' : 's'}`;
+}
+function openEx(id) {
+  exFilter = 'all'; $('#exSearch').value = ''; $('#exState').value = 'all'; renderChips(); renderEx();
+  go('ejercicios');
+  setTimeout(() => { const c = cards[id]; if (c) { c.open = true; c.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 60);
+}
+
+/* ---------------- simulador ---------------- */
+const R = (a, b) => a + Math.random() * (b - a);
+const RI = (a, b) => Math.floor(R(a, b + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rnorm = () => { let u = 0, v = 0; while (!u) u = Math.random(); while (!v) v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+const rd = (x, d) => +x.toFixed(d);
+const ALPHAS = [0.01, 0.02, 0.03, 0.04, 0.05, 0.10];
+const CONFS = [0.90, 0.92, 0.94, 0.95, 0.96, 0.98, 0.99];
+const CTX = [
+  { q: 'el tiempo de atención en una EPS', u: 'min', mu: 25, sd: 6, d: 1 },
+  { q: 'el peso de una bolsa de café', u: 'g', mu: 500, sd: 12, d: 1 },
+  { q: 'la vida útil de una batería', u: 'h', mu: 400, sd: 40, d: 0 },
+  { q: 'el consumo diario de datos de un usuario', u: 'MB', mu: 850, sd: 110, d: 0 },
+  { q: 'la resistencia de una viga', u: 'MPa', mu: 50, sd: 3, d: 2 },
+  { q: 'el tiempo de un trayecto de Transmilenio', u: 'min', mu: 70, sd: 14, d: 1 },
+  { q: 'la latencia de un servicio web', u: 'ms', mu: 5.5, sd: 0.25, d: 3 },
+  { q: 'el puntaje de una prueba de inglés', u: 'puntos', mu: 72, sd: 9, d: 1 }
+];
+const PCTX = [
+  ['clientes satisfechos con un servicio', 0.75], ['piezas defectuosas en un lote', 0.05], ['estudiantes que usan la biblioteca virtual', 0.40],
+  ['pedidos entregados tarde', 0.12], ['usuarios que pagan membresía', 0.30], ['hogares con mascota', 0.60]
+];
+const TAILW = { right: ['supera', '>'], left: ['es menor que', '<'], two: ['difiere de', '≠'] };
+const critOf = (q, a, tail) => tail === 'right' ? q(1 - a) : tail === 'left' ? q(a) : q(1 - a / 2);
+const pOf = (cdf, x, tail) => tail === 'right' ? 1 - cdf(x) : tail === 'left' ? cdf(x) : 2 * Math.min(cdf(x), 1 - cdf(x));
+const decSel = rej => ({ kind: 'sel', label: 'Decisión', options: ['Se rechaza H₀', 'No se rechaza H₀'], ans: rej ? 0 : 1 });
+const critLabel = tail => tail === 'two' ? 'Valor crítico (positivo)' : 'Valor crítico';
+
+const GEN = {
+  z1: { lab: 'Media · Z', fn() {
+    const c = pick(CTX), tail = pick(['right', 'left', 'two']), a = pick(ALPHAS), n = RI(30, 80);
+    const mu0 = c.mu, sd = rd(c.sd * R(0.8, 1.2), c.d), sh = (tail === 'left' ? -1 : tail === 'right' ? 1 : pick([-1, 1])) * R(0.3, 3.2) * sd / Math.sqrt(n);
+    const xb = rd(mu0 + sh, c.d + 1); const z = (xb - mu0) / (sd / Math.sqrt(n)); const zc = critOf(D.normInv, a, tail); const p = pOf(D.normCdf, z, tail); const rej = p <= a;
+    return { e: `Se sabe que ${c.q} tiene desviación poblacional σ = ${sd} ${c.u}. En una muestra de ${n} casos el promedio fue ${xb} ${c.u}. Con α = ${a}, ¿hay evidencia de que la media ${TAILW[tail][0]} ${mu0} ${c.u}?`,
+      fields: [{ label: 'Z<sub>p</sub>', ans: z }, { label: critLabel(tail), ans: Math.abs(zc) * (tail === 'left' ? -1 : 1) }, { label: 'p-valor', ans: p, abs: 0.006 }, decSel(rej)],
+      sol: [`H₀: μ ${tail === 'right' ? '≤' : tail === 'left' ? '≥' : '='} ${mu0} vs H₁: μ ${TAILW[tail][1]} ${mu0}`, `σ conocida y n = ${n} ≥ 30 ⇒ Z`, `Z<sub>p</sub> = (${xb} − ${mu0}) / (${sd}/√${n}) = <b>${f(z, 3)}</b>`, `Crítico: ${tail === 'two' ? '±' : ''}${f(zc, 3)}; p-valor = ${f(p)}`, rej ? '<b>Se rechaza H₀.</b>' : '<b>No se rechaza H₀.</b>'] };
+  } },
+  t1: { lab: 'IC media · t (datos)', fn() {
+    const c = pick(CTX), n = RI(6, 12), conf = pick([0.90, 0.95, 0.98, 0.99]);
+    const data = Array.from({ length: n }, () => rd(c.mu + c.sd * rnorm(), c.d));
+    const xb = data.reduce((s, x) => s + x, 0) / n, s = Math.sqrt(data.reduce((t, x) => t + (x - xb) ** 2, 0) / (n - 1));
+    const t = D.tInv(1 - (1 - conf) / 2, n - 1), e = t * s / Math.sqrt(n), li = xb - e, ls = xb + e;
+    const cc = rd(c.mu + pick([-1, 0, 1]) * R(0.3, 1.5) * s, c.d);
+    const ans = li > cc ? 0 : ls < cc ? 1 : 2;
+    return { e: `Para estudiar ${c.q} (normal) se tomaron ${n} mediciones en ${c.u}: <span class="mono">${data.join(', ')}</span>. Construya un IC del ${conf * 100}% para la media. ¿Se puede afirmar que la media supera ${cc} ${c.u}?`,
+      fields: [{ label: 'x̄', ans: xb }, { label: 's', ans: s }, { label: `t<sub>${rd(1 - (1 - conf) / 2, 3)}; ${n - 1}</sub>`, ans: t }, { label: 'Límite inferior', ans: li }, { label: 'Límite superior', ans: ls },
+        { kind: 'sel', label: `¿μ > ${cc}?`, options: ['Sí: todo el IC > ' + cc, 'No: todo el IC < ' + cc, 'No hay evidencia: ' + cc + ' ∈ IC'], ans }],
+      sol: [`x̄ = ${f(xb)}, s = ${f(s)} (divide entre n − 1 = ${n - 1})`, `σ desconocida, normal, n < 30 ⇒ t con ${n - 1} g.l.: t = ${f(t, 3)}`, `Error = ${f(t, 3)}·${f(s)}/√${n} = ${f(e)}`, `IC = <b>(${f(li)} ; ${f(ls)})</b>`] };
+  } },
+  chi: { lab: 'Varianza · χ²', fn() {
+    const c = pick(CTX), tail = pick(['right', 'left', 'two']), a = pick([0.01, 0.02, 0.05, 0.10]), n = RI(8, 25);
+    const sig = rd(c.sd, c.d), ratio = tail === 'right' ? R(0.9, 1.9) : tail === 'left' ? R(0.4, 1.1) : pick([R(0.45, 0.8), R(1.2, 1.8), R(0.9, 1.1)]);
+    const s = rd(sig * Math.sqrt(ratio), c.d + 1), df = n - 1, x = df * s * s / (sig * sig), p = pOf(z => D.chiCdf(z, df), x, tail), rej = p <= a;
+    const fields = [{ label: 'χ²<sub>p</sub>', ans: x }];
+    if (tail === 'two') fields.push({ label: 'Crítico inferior', ans: D.chiInv(a / 2, df) }, { label: 'Crítico superior', ans: D.chiInv(1 - a / 2, df) });
+    else fields.push({ label: 'Valor crítico', ans: D.chiInv(tail === 'right' ? 1 - a : a, df) });
+    fields.push(decSel(rej));
+    const w = { right: 'es mayor a', left: 'es menor a', two: 'es diferente de' }[tail];
+    return { e: `Históricamente la desviación de ${c.q} es ${sig} ${c.u} (población normal). En una muestra de ${n} se obtuvo s = ${s} ${c.u}. Con α = ${a}, ¿hay evidencia de que la desviación ${w} ${sig}?`, fields,
+      sol: [`H₀: σ² ${tail === 'right' ? '≤' : tail === 'left' ? '≥' : '='} ${f(sig * sig)} vs H₁: σ² ${TAILW[tail][1]} ${f(sig * sig)} (¡al cuadrado!)`, `χ²<sub>p</sub> = ${df}·${s}²/${sig}² = <b>${f(x, 3)}</b> con ${df} g.l.`,
+        tail === 'two' ? `Críticos: χ²<sub>${a / 2}</sub> = ${f(D.chiInv(a / 2, df), 3)}, χ²<sub>${1 - a / 2}</sub> = ${f(D.chiInv(1 - a / 2, df), 3)}` : `Crítico: χ²<sub>${tail === 'right' ? 1 - a : a}; ${df}</sub> = ${f(D.chiInv(tail === 'right' ? 1 - a : a, df), 3)}`,
+        `p-valor = ${f(p)} ⇒ <b>${rej ? 'se rechaza H₀' : 'no se rechaza H₀'}</b>`] };
+  } },
+  probs2: { lab: 'Probabilidad de S²', fn() {
+    const c = pick(CTX), n = RI(10, 30), k = pick([0.10, 0.15, 0.20, 0.25, 0.30]), sig = rd(c.sd, c.d), df = n - 1;
+    const x = df * (1 + k) ** 2, p = 1 - D.chiCdf(x, df);
+    return { e: `${c.q[0].toUpperCase() + c.q.slice(1)} es normal con σ = ${sig} ${c.u}. Se toma una muestra de ${n}. ¿Cuál es la probabilidad de que la desviación muestral exceda en más del ${k * 100}% a σ?`,
+      fields: [{ label: 'Valor de χ² a buscar', ans: x }, { label: 'Probabilidad', ans: p, abs: 0.015 }],
+      sol: [`P(S > ${1 + k}σ) = P(S² > ${f((1 + k) ** 2, 4)}σ²)`, `= P(χ²<sub>${df}</sub> > ${df}·${f((1 + k) ** 2, 4)}) = P(χ²<sub>${df}</sub> > <b>${f(x, 3)}</b>)`, `= <b>${f(p)}</b> (con tabla, ubica ${f(x, 2)} entre dos columnas de la fila ${df})`] };
+  } },
+  p1: { lab: 'Proporción · Z', fn() {
+    const [q, p0b] = pick(PCTX), p0 = p0b, tail = pick(['right', 'left', 'two']), a = pick(ALPHAS), n = RI(120, 600);
+    const sh = (tail === 'left' ? -1 : tail === 'right' ? 1 : pick([-1, 1])) * R(0.2, 3) * Math.sqrt(p0 * (1 - p0) / n);
+    const x = Math.max(1, Math.round(n * (p0 + sh))), ph = x / n, z = (ph - p0) / Math.sqrt(p0 * (1 - p0) / n), p = pOf(D.normCdf, z, tail), rej = p <= a;
+    return { e: `Se afirma que la proporción de ${q} es ${p0}. En una muestra de ${n}, ${x} cumplieron la característica. Con α = ${a}, ¿hay evidencia de que la proporción ${TAILW[tail][0]} ${p0}?`,
+      fields: [{ label: 'p̂', ans: ph }, { label: 'Z<sub>p</sub>', ans: z }, { label: 'p-valor', ans: p, abs: 0.006 }, decSel(rej)],
+      sol: [`p̂ = ${x}/${n} = ${f(ph)}; n·π₀(1−π₀) = ${f(n * p0 * (1 - p0), 1)} ≥ 9`, `Z<sub>p</sub> = (${f(ph)} − ${p0})/√(${p0}·${f(1 - p0, 2)}/${n}) = <b>${f(z, 3)}</b>`, `p-valor = ${f(p)} ⇒ <b>${rej ? 'se rechaza H₀' : 'no se rechaza H₀'}</b>`] };
+  } },
+  dz: { lab: 'IC dif. medias · Z', fn() {
+    const c = pick(CTX), conf = pick(CONFS), n1 = RI(30, 70), n2 = RI(30, 70), s1 = rd(c.sd * R(0.7, 1.3), c.d), s2 = rd(c.sd * R(0.7, 1.3), c.d);
+    const se = Math.sqrt(s1 * s1 / n1 + s2 * s2 / n2), x1 = rd(c.mu, c.d + 1), x2 = rd(c.mu + pick([-1, 1]) * R(0, 3.5) * se, c.d + 1);
+    const z = D.normInv(1 - (1 - conf) / 2), d = x1 - x2, li = d - z * se, ls = d + z * se, ans = li > 0 ? 0 : ls < 0 ? 1 : 2;
+    return { e: `Se compara ${c.q} en dos sedes independientes. Sede 1: n = ${n1}, x̄ = ${x1}, σ = ${s1}. Sede 2: n = ${n2}, x̄ = ${x2}, σ = ${s2} (σ poblacionales conocidas). Construya un IC del ${conf * 100}% para μ₁ − μ₂ y concluya.`,
+      fields: [{ label: `z<sub>${rd(1 - (1 - conf) / 2, 3)}</sub>`, ans: z }, { label: 'Límite inferior', ans: li }, { label: 'Límite superior', ans: ls }, { kind: 'sel', label: 'Conclusión', options: ['μ₁ > μ₂', 'μ₁ < μ₂', 'No hay diferencia'], ans }],
+      sol: [`Caso 1: √(σ₁²/n₁ + σ₂²/n₂) = ${f(se)}`, `z = ${f(z, 3)}; error = ${f(z * se)}`, `IC = ${f(d)} ± ${f(z * se)} = <b>(${f(li)} ; ${f(ls)})</b>`] };
+  } },
+  Ft: { lab: 'F + caso 2/3', fn() {
+    const c = pick(CTX), a = pick([0.05, 0.05, 0.02, 0.10]), tail = pick(['right', 'left']), n1 = RI(8, 22), n2 = RI(8, 22);
+    const s1 = rd(c.sd * R(0.8, 1.2), c.d + 1), s2 = rd(s1 * pick([R(0.75, 1.3), R(0.35, 0.55), R(1.9, 2.6)]), c.d + 1);
+    const x1 = rd(c.mu, c.d + 1), sh = (tail === 'right' ? 1 : -1) * R(0.2, 3) * Math.sqrt(s1 * s1 / n1 + s2 * s2 / n2), x2 = rd(c.mu - sh, c.d + 1);
+    const F = s1 * s1 / (s2 * s2), flo = D.fInv(a / 2, n1 - 1, n2 - 1), fhi = D.fInv(1 - a / 2, n1 - 1, n2 - 1), dif = F < flo || F > fhi;
+    let t, df, extra;
+    if (!dif) { df = n1 + n2 - 2; const sp = Math.sqrt(((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / df); t = (x1 - x2) / (sp * Math.sqrt(1 / n1 + 1 / n2)); extra = `Caso 2: S<sub>p</sub> = ${f(sp)}, ${df} g.l.`; }
+    else { const A = s1 * s1 / n1, B = s2 * s2 / n2, v = (A + B) ** 2 / (A * A / (n1 - 1) + B * B / (n2 - 1)); df = Math.round(v); t = (x1 - x2) / Math.sqrt(A + B); extra = `Caso 3: ν = ${f(v, 2)} ≈ ${df} g.l.`; }
+    const tc = critOf(p => D.tInv(p, df), a, tail), p = pOf(x => D.tCdf(x, df), t, tail), rej = p <= a;
+    return { e: `Se compara ${c.q} con dos métodos (poblaciones normales e independientes). Método 1: n = ${n1}, x̄ = ${x1}, s = ${s1}. Método 2: n = ${n2}, x̄ = ${x2}, s = ${s2}. Con α = ${a}: primero pruebe la igualdad de varianzas y luego si la media del método 1 ${tail === 'right' ? 'es mayor' : 'es menor'} que la del método 2.`,
+      fields: [{ label: 'F<sub>p</sub> = s₁²/s₂²', ans: F }, { label: `F<sub>${a / 2}; ${n1 - 1}, ${n2 - 1}</sub>`, ans: flo }, { label: `F<sub>${1 - a / 2}; ${n1 - 1}, ${n2 - 1}</sub>`, ans: fhi },
+        { kind: 'sel', label: 'Varianzas', options: ['Iguales (caso 2)', 'Diferentes (caso 3)'], ans: dif ? 1 : 0 }, { label: 't<sub>p</sub>', ans: t }, { label: 't crítico', ans: tc }, decSel(rej)],
+      sol: [`F = ${s1}²/${s2}² = <b>${f(F, 3)}</b>; zona de no rechazo [${f(flo)}, ${f(fhi)}] ⇒ ${dif ? 'varianzas diferentes' : 'varianzas iguales'}`, extra,
+        `t<sub>p</sub> = <b>${f(t, 3)}</b>; crítico t<sub>${tail === 'right' ? 1 - a : a}; ${df}</sub> = ${f(tc, 3)}`, `p-valor = ${f(p)} ⇒ <b>${rej ? 'se rechaza H₀' : 'no se rechaza H₀'}</b>`] };
+  } },
+  dp: { lab: 'PH dif. proporciones', fn() {
+    const [q, pb] = pick(PCTX), a = pick(ALPHAS), tail = pick(['right', 'left', 'two']), n1 = RI(150, 600), n2 = RI(150, 600);
+    const p1 = pb + R(-0.03, 0.03), sh = (tail === 'left' ? -1 : tail === 'right' ? 1 : pick([-1, 1])) * R(0.2, 3) * Math.sqrt(pb * (1 - pb) * (1 / n1 + 1 / n2));
+    const x1 = Math.round(n1 * Math.min(0.97, Math.max(0.03, p1 + sh))), x2 = Math.round(n2 * Math.min(0.97, Math.max(0.03, p1)));
+    const pm = (x1 + x2) / (n1 + n2), z = (x1 / n1 - x2 / n2) / Math.sqrt(pm * (1 - pm) * (1 / n1 + 1 / n2)), p = pOf(D.normCdf, z, tail), rej = p <= a;
+    const w = { right: 'es mayor en el grupo 1', left: 'es menor en el grupo 1', two: 'difiere entre los grupos' }[tail];
+    return { e: `Proporción de ${q}. Grupo 1: ${x1} de ${n1}. Grupo 2: ${x2} de ${n2} (independientes). Con α = ${a}, ¿hay evidencia de que la proporción ${w}?`,
+      fields: [{ label: 'p̄ combinada', ans: pm }, { label: 'Z<sub>p</sub>', ans: z }, { label: 'p-valor', ans: p, abs: 0.006 }, decSel(rej)],
+      sol: [`p̂₁ = ${f(x1 / n1)}, p̂₂ = ${f(x2 / n2)}, p̄ = (${x1} + ${x2})/(${n1} + ${n2}) = ${f(pm)}`, `Z<sub>p</sub> = <b>${f(z, 3)}</b>`, `p-valor = ${f(p)} ⇒ <b>${rej ? 'se rechaza H₀' : 'no se rechaza H₀'}</b>`] };
+  } },
+  dpic: { lab: 'IC dif. proporciones', fn() {
+    const [q, pb] = pick(PCTX), conf = pick(CONFS), n1 = RI(200, 1500), n2 = RI(200, 1500);
+    const x1 = Math.round(n1 * (pb + R(-0.06, 0.06))), x2 = Math.round(n2 * (pb + R(-0.06, 0.06)));
+    const p1 = x1 / n1, p2 = x2 / n2, se = Math.sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2), z = D.normInv(1 - (1 - conf) / 2), li = p1 - p2 - z * se, ls = p1 - p2 + z * se, ans = li > 0 ? 0 : ls < 0 ? 1 : 2;
+    return { e: `Proporción de ${q}. Muestra 1: ${x1} de ${n1}. Muestra 2: ${x2} de ${n2}. Construya un IC del ${conf * 100}% para π₁ − π₂ y concluya.`,
+      fields: [{ label: 'p̂₁', ans: p1 }, { label: 'p̂₂', ans: p2 }, { label: 'Límite inferior', ans: li, abs: 0.003 }, { label: 'Límite superior', ans: ls, abs: 0.003 }, { kind: 'sel', label: 'Conclusión', options: ['π₁ > π₂', 'π₁ < π₂', 'No hay diferencia'], ans }],
+      sol: [`p̂₁ = ${f(p1)}, p̂₂ = ${f(p2)}`, `√(p̂₁(1−p̂₁)/n₁ + p̂₂(1−p̂₂)/n₂) = ${f(se)}; z = ${f(z, 3)}`, `IC = <b>(${f(li)} ; ${f(ls)})</b>`] };
+  } },
+  ratio: { lab: 'IC razón de varianzas', fn() {
+    const c = pick(CTX), conf = pick([0.90, 0.95, 0.98]), n1 = RI(6, 25), n2 = RI(6, 25), s1 = rd(c.sd * R(0.6, 1.6), c.d + 1), s2 = rd(c.sd * R(0.6, 1.6), c.d + 1);
+    const a = 1 - conf, q = s1 * s1 / (s2 * s2), flo = D.fInv(a / 2, n2 - 1, n1 - 1), fhi = D.fInv(1 - a / 2, n2 - 1, n1 - 1), li = q * flo, ls = q * fhi;
+    return { e: `Dos procesos normales e independientes para ${c.q}. Proceso 1: n = ${n1}, s = ${s1}. Proceso 2: n = ${n2}, s = ${s2}. Construya un IC del ${conf * 100}% para σ₁²/σ₂² y concluya si las varianzas pueden asumirse iguales.`,
+      fields: [{ label: `F<sub>${rd(a / 2, 3)}; ${n2 - 1}, ${n1 - 1}</sub>`, ans: flo }, { label: `F<sub>${rd(1 - a / 2, 3)}; ${n2 - 1}, ${n1 - 1}</sub>`, ans: fhi }, { label: 'Límite inferior', ans: li }, { label: 'Límite superior', ans: ls },
+        { kind: 'sel', label: '¿Iguales?', options: ['Sí: 1 ∈ IC', 'No: 1 ∉ IC'], ans: li <= 1 && ls >= 1 ? 0 : 1 }],
+      sol: [`s₁²/s₂² = ${f(q)}`, `F<sub>${rd(a / 2, 3)}; ${n2 - 1}, ${n1 - 1}</sub> = 1/F<sub>${rd(1 - a / 2, 3)}; ${n1 - 1}, ${n2 - 1}</sub> = ${f(flo)}; F<sub>${rd(1 - a / 2, 3)}; ${n2 - 1}, ${n1 - 1}</sub> = ${f(fhi)}`, `IC = <b>(${f(li)} ; ${f(ls)})</b>`] };
+  } }
+};
+let simType = 'mix', simTot = { ok: 0, n: 0 };
+function simChips() {
+  const box = $('#simTypes'); box.innerHTML = '';
+  [['mix', 'Mezcla aleatoria'], ...Object.entries(GEN).map(([k, g]) => [k, g.lab])].forEach(([k, lab]) => box.append(h('button', { class: 'chip', 'aria-pressed': simType === k ? 'true' : 'false', onclick: () => { simType = k; simChips(); newSim(); } }, lab)));
+}
+function newSim() {
+  const k = simType === 'mix' ? pick(Object.keys(GEN)) : simType, P = GEN[k].fn(), box = $('#simBox');
+  box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>${GEN[k].lab}</h3><span class="pill m">problema nuevo</span></div><p class="sim-q">${P.e}</p>`;
+  const fl = h('div', { class: 'fields' });
+  P.fields.forEach((fd, i) => {
+    const id = 'sf' + i;
+    const inp = fd.kind === 'sel' ? `<select id="${id}"><option value="">Elige…</option>${fd.options.map((o, j) => `<option value="${j}">${o}</option>`).join('')}</select>` : `<input id="${id}" type="text" inputmode="decimal" autocomplete="off">`;
+    fl.append(h('label', { class: 'f', for: id }, `${fd.label}${inp}<span class="exp"></span>`));
+  });
+  box.append(fl);
+  const sol = h('ol', { class: 'steps', hidden: '' }, P.sol.map(s => `<li>${s}</li>`).join(''));
+  const chk = h('button', { class: 'btn', onclick: () => {
+    let ok = 0;
+    P.fields.forEach((fd, i) => {
+      const el = $('#sf' + i), lab = el.closest('.f'), exp = $('.exp', lab); let good;
+      if (fd.kind === 'sel') { good = el.value !== '' && +el.value === fd.ans; exp.textContent = good ? '' : 'Correcto: ' + fd.options[fd.ans]; }
+      else { const v = parseFloat(String(el.value).replace(',', '.')); const tol = Math.max(fd.abs ?? 0.01, 0.02 * Math.abs(fd.ans)); good = !isNaN(v) && Math.abs(v - fd.ans) <= tol; exp.textContent = good ? '' : 'Correcto ≈ ' + f(fd.ans); }
+      lab.classList.toggle('ok', good); lab.classList.toggle('no', !good); if (good) ok++;
+    });
+    simTot.ok += ok; simTot.n += P.fields.length; $('#simScore').textContent = `Acumulado: ${simTot.ok}/${simTot.n} respuestas correctas`;
+    sol.hidden = false; chk.disabled = true;
+  } }, 'Revisar');
+  const row = h('div', { class: 'row' }); row.append(chk, h('button', { class: 'btn ghost', onclick: () => { sol.hidden = false; } }, 'Ver solución sin revisar')); box.append(row);
+  box.append(sol);
+}
+
+/* ---------------- quiz de método ---------------- */
+function methodKey(e) {
+  const t = e.tags.filter(x => x !== 'form');
+  if (t.includes('ratioF') && t.includes('dmedT2')) return 'F → caso 2 (Sp)';
+  if (t.includes('ratioF') && t.includes('dmedT3')) return 'F → caso 3 (Welch)';
+  if (t.includes('var1') && t.includes('media1')) return 'χ² y luego Z';
+  if (t.includes('dprop')) return TAGS.dprop[0];
+  return TAGS[t[0]][0];
+}
+const QPOOL = EX.filter(e => e.tags.some(t => t !== 'form'));
+const KEYS = [...new Set(QPOOL.map(methodKey))];
+let qz = { ok: 0, n: 0 };
+function newQuiz() {
+  const e = pick(QPOOL), key = methodKey(e), box = $('#quizBox');
+  const opts = [key, ...KEYS.filter(k => k !== key).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+  box.innerHTML = `<div class="row" style="justify-content:space-between"><h3>Ejercicio ${e.id}: ${e.t}</h3><span class="score">${qz.ok}/${qz.n}</span></div><p class="sim-q">${e.e}</p>`;
+  const o = h('div', { class: 'opts' }); let answered = false;
+  const fb = h('div', { hidden: '' });
+  opts.forEach(k => o.append(h('button', { class: 'opt', onclick: ev => {
+    if (answered) return; answered = true; qz.n++; if (k === key) qz.ok++;
+    $$('.opt', o).forEach(b => { if (b.dataset.k === key) b.classList.add('ok'); else if (b === ev.currentTarget) b.classList.add('no'); });
+    fb.innerHTML = `<p class="callout blue"><b>${key}.</b> ${e.s[0]}</p>`; fb.hidden = false;
+    $('.score', box).textContent = `${qz.ok}/${qz.n}`;
+  }, 'data-k': k }, `<b>${k}</b>`)));
+  box.append(o, fb);
+  const r = h('div', { class: 'row' });
+  r.append(h('button', { class: 'btn', onclick: newQuiz }, 'Siguiente'), h('button', { class: 'btn ghost', onclick: () => openEx(e.id) }, 'Abrir este ejercicio'));
+  box.append(r);
+}
+
+/* ---------------- errores ---------------- */
+function errList() {
+  const box = $('#errList');
+  EX.filter(e => e.n).forEach(e => {
+    const c = h('div', { class: 'card' }, `<div class="row"><span class="pill b">Ej. ${e.id}</span><h4 style="flex:1">${e.t}</h4><button class="btn ghost small">Ver ejercicio</button></div><p>${e.n}</p>`);
+    $('button', c).addEventListener('click', () => openEx(e.id));
+    box.append(c);
+  });
+}
+
+/* ---------------- init ---------------- */
+tiles(); fxCards(); renderTree(); renderH1(); finder(); renderChips(); renderEx(); simChips(); newSim(); newQuiz(); errList(); renderProg();
+$('#exSearch').addEventListener('input', renderEx); $('#exState').addEventListener('change', renderEx);
+$('#simNew').addEventListener('click', newSim);
+route();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Juego de la Vida | Laboratorio de Juan Diesmers</title>
+  <meta name="description" content="Explorador del Juego de la Vida de Conway y variantes de sus reglas: HighLife, Seeds y Day &amp; Night. Patrones clásicos y gráfica de población.">
+  <meta name="theme-color" content="#0d1626">
+  <link rel="icon" type="image/x-icon" href="../../assets/images/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Martian+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/style.css">
+  <style>
+    #board { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 70vh; cursor: crosshair; touch-action: none; background: #0a111e; }
+    #pop { display: block; width: 100%; height: 56px; border-top: 1px solid var(--line); }
+    .rule-code { font: 500 .8rem/1 var(--mono); color: var(--amber); }
+  </style>
+</head>
+<body class="lab-page">
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="../../">juan@<span>diesmers</span>:~/laboratorio</a>
+      <a class="back" href="../../#laboratorio">← volver al portafolio</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <span class="status">en proceso</span>
+      <h1>El Juego de la Vida</h1>
+      <p class="lede">Cada cuadro es una célula viva o muerta. En cada generación, todas miran a sus ocho vecinas y deciden al mismo tiempo si viven, mueren o nacen. Dibuja con el mouse, coloca un patrón o cambia las reglas para ver qué pasa.</p>
+
+      <div class="panel" style="margin-top:2rem">
+        <div class="controls">
+          <button class="ctl primary" id="play">Reproducir</button>
+          <button class="ctl" id="step">Un paso</button>
+          <button class="ctl" id="rand">Aleatorio</button>
+          <button class="ctl" id="clear">Limpiar</button>
+          <label>velocidad <input type="range" id="speed" min="1" max="60" value="12"></label>
+          <span style="flex:1"></span>
+          <label>reglas
+            <select id="rule">
+              <option value="B3/S23">Conway</option>
+              <option value="B36/S23">HighLife</option>
+              <option value="B2/S">Seeds</option>
+              <option value="B3678/S34678">Day &amp; Night</option>
+              <option value="B1357/S1357">Replicator</option>
+            </select>
+          </label>
+          <span class="rule-code" id="rule-code">B3/S23</span>
+        </div>
+        <div class="controls">
+          <label>patrón
+            <select id="pattern">
+              <option value="glider">Planeador</option>
+              <option value="lwss">Nave ligera (LWSS)</option>
+              <option value="pulsar">Púlsar</option>
+              <option value="gun">Cañón de planeadores de Gosper</option>
+              <option value="rpent">R-pentominó</option>
+              <option value="acorn">Bellota</option>
+              <option value="diehard">Diehard</option>
+            </select>
+          </label>
+          <button class="ctl" id="place">Colocar en el centro</button>
+          <span style="flex:1"></span>
+          <label><input type="checkbox" id="wrap" checked> bordes conectados</label>
+        </div>
+        <canvas id="board" aria-label="Cuadrícula del Juego de la Vida. Haz clic para activar o desactivar células." role="img"></canvas>
+        <canvas id="pop" aria-hidden="true"></canvas>
+        <div class="stats">
+          <span>generación <b id="s-gen">0</b></span>
+          <span>población <b id="s-pop">0</b></span>
+          <span>máxima <b id="s-max">0</b></span>
+          <span id="s-note"></span>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div>
+          <h2>Las reglas</h2>
+          <p>La notación <code>B3/S23</code> significa: una célula muerta nace (<i>birth</i>) si tiene exactamente 3 vecinas vivas, y una viva sobrevive (<i>survival</i>) si tiene 2 o 3. Todo lo demás muere, por soledad o por sobrepoblación.</p>
+          <p style="margin-top:.8rem">Las otras reglas del menú cambian solo esos números. HighLife (<code>B36/S23</code>) se parece mucho a Conway, pero tiene un patrón que se copia a sí mismo.</p>
+        </div>
+        <div>
+          <h2>Por qué no hay patrón</h2>
+          <ul>
+            <li>El Juego de la Vida es Turing completo: con planeadores y cañones se pueden construir compuertas lógicas, y por eso hay preguntas sobre él que ninguna computadora puede responder en general, como si un patrón va a morir algún día.</li>
+            <li>El R-pentominó tiene solo 5 células y tarda 1103 generaciones en estabilizarse. Prueba colocarlo con los bordes desconectados y mira la gráfica de población.</li>
+            <li>Diehard desaparece por completo después de 130 generaciones, sin dejar nada.</li>
+          </ul>
+        </div>
+        <div>
+          <h2>Pendiente</h2>
+          <ul>
+            <li>Detectar automáticamente cuándo el sistema entra en un ciclo.</li>
+            <li>Algoritmo Hashlife para simular millones de generaciones.</li>
+            <li>Importar patrones en formato RLE.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer><div class="wrap"><span>&copy; Juan Diesmers</span><a href="../../#laboratorio">volver al laboratorio</a></div></footer>
+
+  <script>
+  (function () {
+    const $ = id => document.getElementById(id);
+    const board = $('board'), ctx = board.getContext('2d');
+    const popC = $('pop'), pctx = popC.getContext('2d');
+    const CELL = 10;
+    let cols, rows, grid, next, born, gen = 0, maxPop = 0, hist = [];
+    let running = false, last = 0, B = new Set([3]), S = new Set([2, 3]);
+
+    // Patrones como lista de coordenadas [x, y]
+    const P = {
+      glider: [[1,0],[2,1],[0,2],[1,2],[2,2]],
+      lwss: [[1,0],[4,0],[0,1],[0,2],[4,2],[0,3],[1,3],[2,3],[3,3]],
+      rpent: [[1,0],[2,0],[0,1],[1,1],[1,2]],
+      acorn: [[1,0],[3,1],[0,2],[1,2],[4,2],[5,2],[6,2]],
+      diehard: [[6,0],[0,1],[1,1],[1,2],[5,2],[6,2],[7,2]],
+      gun: parse([
+        '........................O...........',
+        '......................O.O...........',
+        '............OO......OO............OO',
+        '...........O...O....OO............OO',
+        'OO........O.....O...OO..............',
+        'OO........O...O.OO....O.O...........',
+        '..........O.....O.......O...........',
+        '...........O...O....................',
+        '............OO......................'
+      ]),
+      pulsar: (() => {
+        const q = ['..OOO...OOO..', '.............', 'O....O.O....O', 'O....O.O....O', 'O....O.O....O', '..OOO...OOO..', '.............', '..OOO...OOO..', 'O....O.O....O', 'O....O.O....O', 'O....O.O....O', '.............', '..OOO...OOO..'];
+        return parse(q);
+      })()
+    };
+    function parse(lines) { const out = []; lines.forEach((l, y) => [...l].forEach((c, x) => { if (c === 'O') out.push([x, y]); })); return out; }
+
+    function fit() {
+      const r = board.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+      board.width = r.width * dpr; board.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const pr = popC.getBoundingClientRect();
+      popC.width = pr.width * dpr; popC.height = pr.height * dpr; pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const nc = Math.floor(r.width / CELL), nr = Math.floor(r.height / CELL);
+      if (nc !== cols || nr !== rows) {
+        const old = grid, oc = cols, or = rows;
+        cols = nc; rows = nr;
+        grid = new Uint8Array(cols * rows); next = new Uint8Array(cols * rows); born = new Uint8Array(cols * rows);
+        if (old) for (let y = 0; y < Math.min(or, rows); y++) for (let x = 0; x < Math.min(oc, cols); x++) grid[y * cols + x] = old[y * oc + x];
+      }
+      draw();
+    }
+
+    function setRule(code) {
+      const m = code.match(/B(\d*)\/S(\d*)/);
+      B = new Set([...m[1]].map(Number)); S = new Set([...m[2]].map(Number));
+      $('rule-code').textContent = code;
+    }
+
+    function step() {
+      const wrap = $('wrap').checked;
+      let pop = 0;
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+        let n = 0;
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          if (!dx && !dy) continue;
+          let xx = x + dx, yy = y + dy;
+          if (wrap) { xx = (xx + cols) % cols; yy = (yy + rows) % rows; }
+          else if (xx < 0 || yy < 0 || xx >= cols || yy >= rows) continue;
+          n += grid[yy * cols + xx];
+        }
+        const i = y * cols + x, a = grid[i];
+        const v = a ? (S.has(n) ? 1 : 0) : (B.has(n) ? 1 : 0);
+        next[i] = v; born[i] = v && !a ? 1 : 0; pop += v;
+      }
+      [grid, next] = [next, grid];
+      gen++; record(pop);
+    }
+
+    function count() { let p = 0; for (let i = 0; i < grid.length; i++) p += grid[i]; return p; }
+    function record(pop) {
+      hist.push(pop); if (hist.length > 600) hist.shift();
+      maxPop = Math.max(maxPop, pop);
+      $('s-gen').textContent = gen; $('s-pop').textContent = pop; $('s-max').textContent = maxPop;
+      $('s-note').textContent = pop === 0 && gen > 0 ? 'se extinguió' : '';
+    }
+    function resetStats() { gen = 0; hist = []; maxPop = 0; born.fill(0); record(count()); }
+
+    function draw() {
+      const w = board.width / Math.min(devicePixelRatio || 1, 2), h = board.height / Math.min(devicePixelRatio || 1, 2);
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#152238';
+      for (let x = 0; x <= cols; x++) ctx.fillRect(x * CELL, 0, 1, rows * CELL);
+      for (let y = 0; y <= rows; y++) ctx.fillRect(0, y * CELL, cols * CELL, 1);
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+        const i = y * cols + x; if (!grid[i]) continue;
+        ctx.fillStyle = born[i] ? '#ffb454' : '#e2e8f2';
+        ctx.fillRect(x * CELL + 1, y * CELL + 1, CELL - 1, CELL - 1);
+      }
+      // gráfica de población
+      const pw = popC.width / Math.min(devicePixelRatio || 1, 2), ph = popC.height / Math.min(devicePixelRatio || 1, 2);
+      pctx.clearRect(0, 0, pw, ph);
+      if (hist.length > 1) {
+        const mx = Math.max(...hist, 1);
+        pctx.strokeStyle = '#ffb454'; pctx.lineWidth = 1.5; pctx.beginPath();
+        hist.forEach((v, k) => { const x = (k / (hist.length - 1)) * (pw - 8) + 4, y = ph - 6 - (v / mx) * (ph - 12); k ? pctx.lineTo(x, y) : pctx.moveTo(x, y); });
+        pctx.stroke();
+      }
+    }
+
+    function loop(t) {
+      const interval = 1000 / +$('speed').value;
+      if (running && t - last >= interval) { step(); draw(); last = t; }
+      requestAnimationFrame(loop);
+    }
+
+    function place(name) {
+      const pts = P[name], w = Math.max(...pts.map(p => p[0])) + 1, h = Math.max(...pts.map(p => p[1])) + 1;
+      const ox = Math.floor((cols - w) / 2), oy = Math.floor((rows - h) / 2);
+      grid.fill(0);
+      pts.forEach(([x, y]) => { const xx = ox + x, yy = oy + y; if (xx >= 0 && yy >= 0 && xx < cols && yy < rows) grid[yy * cols + xx] = 1; });
+      resetStats(); draw();
+    }
+
+    // dibujar con mouse / dedo
+    let painting = false, paintVal = 1;
+    function cellAt(e) {
+      const r = board.getBoundingClientRect();
+      const x = Math.floor((e.clientX - r.left) / CELL), y = Math.floor((e.clientY - r.top) / CELL);
+      return x >= 0 && y >= 0 && x < cols && y < rows ? y * cols + x : -1;
+    }
+    board.addEventListener('pointerdown', e => {
+      const i = cellAt(e); if (i < 0) return;
+      painting = true; paintVal = grid[i] ? 0 : 1; grid[i] = paintVal; born[i] = 0; record(count()); draw();
+      board.setPointerCapture(e.pointerId);
+    });
+    board.addEventListener('pointermove', e => { if (!painting) return; const i = cellAt(e); if (i >= 0 && grid[i] !== paintVal) { grid[i] = paintVal; born[i] = 0; draw(); } });
+    board.addEventListener('pointerup', () => { painting = false; record(count()); });
+
+    $('play').addEventListener('click', () => { running = !running; $('play').textContent = running ? 'Pausar' : 'Reproducir'; });
+    $('step').addEventListener('click', () => { step(); draw(); });
+    $('rand').addEventListener('click', () => { for (let i = 0; i < grid.length; i++) grid[i] = Math.random() < 0.25 ? 1 : 0; resetStats(); draw(); });
+    $('clear').addEventListener('click', () => { grid.fill(0); resetStats(); draw(); });
+    $('rule').addEventListener('change', e => setRule(e.target.value));
+    $('place').addEventListener('click', () => place($('pattern').value));
+    addEventListener('resize', fit);
+
+    fit();
+    $('pattern').value = 'gun';
+    place('gun');
+    requestAnimationFrame(loop);
+  })();
+  </script>
+</body>
+</html>
