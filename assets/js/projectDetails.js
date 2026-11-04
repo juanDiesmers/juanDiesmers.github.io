@@ -102,6 +102,58 @@ window.projectDetailsData = {
         explicacion_en: 'Allows visualization of the enemy connections structure between territories, useful for strategy and debugging.'
       },
       {
+        subtitulo: 'Costo de conquista con Dijkstra',
+        subtitulo_en: 'Conquest cost with Dijkstra',
+        code: `int calcularCostoConquista(const Territorio& inicio, const Territorio& destino,
+                           const Grafo& grafoEnemigos, int idJugadorActual) {
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>,
+                        std::greater<std::pair<int, int>>> pq;
+    std::unordered_map<int, int> costos;
+    pq.push({0, inicio.id});
+    costos[inicio.id] = 0;
+
+    while (!pq.empty()) {
+        int costo_actual = pq.top().first;
+        int nodo_actual = pq.top().second;
+        pq.pop();
+        if (nodo_actual == destino.id) return costos[destino.id];
+
+        for (int vecino_id : grafoEnemigos.ObtenerConexionesEnemigas(nodo_actual, idJugadorActual)) {
+            const auto& vecino = grafoEnemigos.ObtenerTerritorio(vecino_id);
+            int nuevo_costo = costo_actual + vecino.unidades_ejercito;
+            if (!costos.count(vecino.id) || nuevo_costo < costos[vecino.id]) {
+                costos[vecino.id] = nuevo_costo;
+                pq.push({nuevo_costo, vecino.id});
+            }
+        }
+    }
+    return INT_MAX;
+}`,
+        explicacion: 'El peso de pasar por un territorio enemigo es la cantidad de ejércitos que tiene. Dijkstra encuentra la ruta que obliga a derrotar menos ejércitos para llegar al objetivo.',
+        explicacion_en: 'The weight of going through an enemy territory is the number of armies on it. Dijkstra finds the route that requires defeating the fewest armies to reach the target.'
+      },
+      {
+        subtitulo: 'Árbol de Huffman para comprimir la partida',
+        subtitulo_en: 'Huffman tree to compress the saved game',
+        code: `Node* Huffman::buildHuffmanTree(const std::string& text) {
+    std::unordered_map<char, int> freq;
+    for (char ch : text) freq[ch]++;
+
+    std::priority_queue<Node*, std::vector<Node*>, comp> pq;
+    for (auto pair : freq)
+        pq.push(getNode(pair.first, pair.second, nullptr, nullptr));
+
+    while (pq.size() != 1) {
+        Node* left = pq.top(); pq.pop();
+        Node* right = pq.top(); pq.pop();
+        pq.push(getNode('\\0', left->freq + right->freq, left, right));
+    }
+    return pq.top();
+}`,
+        explicacion: 'Los caracteres que más se repiten en el archivo de la partida quedan cerca de la raíz y reciben códigos de pocos bits; los raros quedan abajo, con códigos largos.',
+        explicacion_en: 'The most frequent characters in the saved game end up near the root and get short bit codes; rare ones end up deeper, with long codes.'
+      },
+      {
         subtitulo: 'Guardado y carga de partidas',
         subtitulo_en: 'Saving and Loading Games',
         code: `bool guardarPartida(std::string nombre_archivo, std::vector<Jugador>& jugadores, std::vector<Territorio>& territorios) {
@@ -268,54 +320,221 @@ public:
   'WikiGroupT1': {
     title: 'WikiGroupT1',
     title_en: 'WikiGroupT1',
-    resumen: 'Wiki colaborativa desarrollada en HTML, CSS y JavaScript para gestión de información grupal. Permite a los usuarios crear, editar y visualizar páginas de forma colaborativa.',
-    resumen_en: 'Collaborative wiki developed in HTML, CSS, and JavaScript for group information management. Allows users to create, edit, and view pages collaboratively.',
-    tecnologias: ['HTML5', 'CSS3', 'JavaScript'],
-    github: '',
+    resumen: 'Wiki del grupo para la materia de Desarrollo Web, hecha con Spring Boot y Thymeleaf. Tiene páginas de presentación, descripción del proyecto y requerimientos, y una encuesta cuyo formulario se valida en el navegador y se guarda en MySQL con JPA. Se empaqueta con Docker y se despliega en Kubernetes.',
+    resumen_en: 'Group wiki for the Web Development course, built with Spring Boot and Thymeleaf. It has presentation, project description and requirements pages, plus a survey whose form is validated in the browser and saved to MySQL with JPA. It is packaged with Docker and deployed on Kubernetes.',
+    tecnologias: ['Java', 'Spring Boot', 'Thymeleaf', 'JPA', 'MySQL', 'Docker', 'Kubernetes'],
+    github: 'https://github.com/juanDiesmers/WikiGroupT1',
     imagen: 'assets/images/project3.jpg',
     secciones: [
       {
-        subtitulo: 'Agregar página a la wiki',
-        subtitulo_en: 'Add Page to Wiki',
-        code: `function addWikiPage(title, content) {\n  const page = { title, content, created: new Date() };\n  wikiPages.push(page);\n  renderWiki();\n}`,
-        explicacion: 'Permite a los usuarios agregar nuevas páginas, almacenando el título y contenido, y actualizando la vista para todos los miembros.',
-        explicacion_en: 'Allows users to add new pages, storing the title and content, and updating the view for all members.'
+        subtitulo: 'Controlador que recibe la encuesta',
+        subtitulo_en: 'Controller that receives the survey',
+        code: `@PostMapping("/submit")
+public String handleSubmitForm(Application formData) {
+    Application application = new Application();
+    application.setName(formData.getName());
+    application.setApellidos(formData.getApellidos());
+    application.setCorreo(formData.getCorreo());
+    application.setDescripcion(formData.getDescripcion());
+    application.setSemestre(formData.getSemestre());
+    application.setEdad(formData.getEdad());
+    application.setFecha(formData.getFecha());
+
+    // Guardar la nueva instancia en la base de datos
+    this.applicationRepository.save(application);
+    return "Resultado";
+}`,
+        explicacion: 'Spring convierte los campos del formulario en un objeto Application, el repositorio lo guarda en MySQL y Thymeleaf devuelve la página Resultado.',
+        explicacion_en: 'Spring maps the form fields into an Application object, the repository saves it to MySQL and Thymeleaf returns the Resultado page.'
+      },
+      {
+        subtitulo: 'Entidad con borrado lógico',
+        subtitulo_en: 'Entity with soft delete',
+        code: `@Entity
+@Getter @Setter
+@Where(clause = "status = 0")
+@SQLDelete(sql = "UPDATE application SET status = 1 WHERE id=?")
+public class Application {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String name;
+    private String apellidos;
+    private int edad;
+    private String correo;
+    private String descripcion;
+    private int semestre;
+    private LocalDate fecha;
+}`,
+        explicacion: 'Borrar un registro no lo elimina: @SQLDelete lo marca con status = 1 y @Where hace que las consultas solo vean los registros con status = 0.',
+        explicacion_en: 'Deleting a record does not remove it: @SQLDelete marks it with status = 1 and @Where makes queries see only records with status = 0.'
+      },
+      {
+        subtitulo: 'Validación del correo en el navegador',
+        subtitulo_en: 'Email validation in the browser',
+        code: `const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$/i;
+
+edad.addEventListener('input', function() {
+    if (edad.value === "" || isNaN(edad.value) || edad.value < 0 || edad.value >= 100) {
+        edad.style.borderColor = "red";
+        mensajeError.innerHTML = "Edad: Obligatorio. Debe ser un número entero entre 0 y 99.<br>";
+    } else {
+        edad.style.borderColor = "";
+    }
+});`,
+        explicacion: 'Antes de enviar, cada campo se revisa mientras el usuario escribe, para no mandar al servidor datos que de todas formas no se podrían guardar.',
+        explicacion_en: 'Before submitting, each field is checked as the user types, so data that could not be saved anyway never reaches the server.'
       }
     ]
   },
   'Portafolio Web': {
     title: 'Portafolio Web',
     title_en: 'Web Portfolio',
-    resumen: 'Portafolio personal moderno, responsivo y multilenguaje, hecho con HTML, CSS y JavaScript. Muestra proyectos, habilidades y hoja de vida de forma visual y profesional.',
-    resumen_en: 'Modern, responsive, and multilingual personal portfolio built with HTML, CSS, and JavaScript. Showcases projects, skills, and resume in a visual and professional way.',
-    tecnologias: ['HTML5', 'CSS3', 'JavaScript'],
+    resumen: 'Este mismo sitio. Está hecho a mano con HTML, CSS y JavaScript, sin frameworks: el encabezado corre el Juego de la Vida en un canvas, los textos cambian entre español e inglés y la demo de cada proyecto se descarga solo cuando alguien la abre.',
+    resumen_en: 'This very site. Handmade with HTML, CSS and JavaScript, no frameworks: the header runs the Game of Life on a canvas, the text switches between Spanish and English, and each project demo is downloaded only when someone opens it.',
+    tecnologias: ['HTML5', 'CSS3', 'JavaScript', 'Canvas', 'Web Audio'],
     github: 'https://github.com/juanDiesmers/juanDiesmers.github.io',
     imagen: 'assets/images/project4.jpg',
     secciones: [
       {
-        subtitulo: 'Renderizado dinámico de proyectos',
-        subtitulo_en: 'Dynamic Project Rendering',
-        code: `projects.forEach((project, i) => {\n  const card = document.createElement('div');\n  card.className = 'project-card fade-in';\n  card.innerHTML = '...';\n  container.appendChild(card);\n});`,
-        explicacion: 'El portafolio utiliza JavaScript para renderizar dinámicamente los proyectos en un grid visual, permitiendo fácil mantenimiento y una experiencia visual atractiva.',
-        explicacion_en: 'The portfolio uses JavaScript to dynamically render projects in a visual grid, allowing easy maintenance and an attractive visual experience.'
+        subtitulo: 'Una generación del Juego de la Vida',
+        subtitulo_en: 'One Game of Life generation',
+        code: `for (let y = 0; y < rows; y++) {
+  const yu = ((y - 1 + rows) % rows) * cols, yc = y * cols, yd = ((y + 1) % rows) * cols;
+  for (let x = 0; x < cols; x++) {
+    const xl = (x - 1 + cols) % cols, xr = (x + 1) % cols;
+    const n = grid[yu + xl] + grid[yu + x] + grid[yu + xr] +
+              grid[yc + xl] +                grid[yc + xr] +
+              grid[yd + xl] + grid[yd + x] + grid[yd + xr];
+    const alive = grid[yc + x];
+    next[yc + x] = alive ? (n === 2 || n === 3) : n === 3;
+  }
+}
+[grid, next] = [next, grid];`,
+        explicacion: 'La cuadrícula es un Uint8Array plano y los bordes se conectan con módulo, así el patrón que sale por un lado entra por el otro. Se usan dos arreglos y se intercambian para no crear memoria nueva en cada cuadro.',
+        explicacion_en: 'The grid is a flat Uint8Array and the edges wrap with modulo, so a pattern leaving one side comes back on the other. Two arrays are swapped so no new memory is allocated each frame.'
+      },
+      {
+        subtitulo: 'Cargar cada demo solo cuando se necesita',
+        subtitulo_en: 'Loading each demo only when needed',
+        code: `function loadDemo(name) {
+  if (window.PortfolioDemos[name]) return Promise.resolve(window.PortfolioDemos[name]);
+  if (!demoPromises[name]) {
+    demoPromises[name] = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = \`assets/js/demos/\${name}.js?v=\${ASSET_VERSION}\`;
+      s.onload = () => resolve(window.PortfolioDemos[name]);
+      s.onerror = () => { delete demoPromises[name]; reject(new Error('No se pudo cargar la demo')); };
+      document.head.appendChild(s);
+    });
+  }
+  return demoPromises[name];
+}`,
+        explicacion: 'La página inicial no descarga las demos ni el diccionario del Scrabble. Cuando alguien abre un proyecto se agrega el script; si falla, se borra la promesa para poder intentarlo otra vez.',
+        explicacion_en: 'The initial page does not download the demos or the Scrabble dictionary. When someone opens a project the script is added; if it fails, the promise is cleared so it can be retried.'
+      },
+      {
+        subtitulo: 'Cambiar de idioma sin recargar',
+        subtitulo_en: 'Switching language without reloading',
+        code: `function apply(next) {
+  lang = next;
+  const dict = lang === 'en' ? window.I18N_EN : es;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (!(k in es)) es[k] = el.innerHTML;   // el español sale del propio HTML
+    if (dict[k] != null) el.innerHTML = dict[k];
+  });
+  document.documentElement.lang = lang;
+  document.dispatchEvent(new CustomEvent('langchange', { detail: lang }));
+}`,
+        explicacion: 'El español vive en el HTML y solo el inglés está en un diccionario. Al cambiar de idioma se dispara un evento para que las partes generadas con JavaScript, como los proyectos, se vuelvan a dibujar.',
+        explicacion_en: 'Spanish lives in the HTML and only English is in a dictionary. Switching language fires an event so the parts generated with JavaScript, like the projects, redraw themselves.'
       }
     ]
   },
   'SimpleEqProyectoAvanzada': {
     title: 'SimpleEqProyectoAvanzada',
-    title_en: 'SimpleEq Advanced Audio Project',
-    resumen: 'Proyecto universitario de procesamiento de audio con C++ y el framework JUCE. Permite aplicar efectos y filtros en tiempo real.',
-    resumen_en: 'University audio processing project using C++ and the JUCE framework. Allows applying effects and filters in real time.',
-    tecnologias: ['C++', 'JUCE', 'Audio'],
-    github: '',
+    title_en: 'SimpleEQ audio plugin',
+    resumen: 'Plugin de ecualizador hecho en C++ con JUCE. Cada canal pasa por una cadena de tres etapas: un filtro pasa altos (low cut), un filtro de pico con frecuencia, ganancia y Q, y un filtro pasa bajos (high cut). Los cortes tienen pendientes de 12 a 48 dB por octava, armadas con filtros Butterworth en cascada.',
+    resumen_en: 'Equalizer plugin built in C++ with JUCE. Each channel runs through a three-stage chain: a high-pass filter (low cut), a peak filter with frequency, gain and Q, and a low-pass filter (high cut). The cuts have 12 to 48 dB per octave slopes, built from cascaded Butterworth filters.',
+    tecnologias: ['C++', 'JUCE', 'DSP', 'Filtros IIR'],
+    github: 'https://github.com/juanDiesmers/SimpleEqProyectoAvanzada',
     imagen: 'assets/images/project5.jpg',
     secciones: [
       {
-        subtitulo: 'Procesamiento de audio en bloques',
-        subtitulo_en: 'Block Audio Processing',
-        code: `void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages) {\n    for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {\n        float* channelData = buffer.getWritePointer(channel);\n        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {\n            channelData[sample] = processSample(channelData[sample]);\n        }\n    }\n}`,
-        explicacion: 'Procesa el audio en tiempo real, aplicando efectos a cada muestra usando el framework JUCE.',
-        explicacion_en: 'Processes audio in real time, applying effects to each sample using the JUCE framework.'
+        subtitulo: 'La cadena de filtros',
+        subtitulo_en: 'The filter chain',
+        code: `using Filter = juce::dsp::IIR::Filter<float>;
+
+// Un corte = hasta 4 filtros de 2º orden en serie (12, 24, 36 o 48 dB/oct)
+using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>;
+
+// Cada canal: LowCut -> Peak -> HighCut
+using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+
+enum ChainPositions { LowCut, Peak, HighCut };`,
+        explicacion: 'El canal izquierdo y el derecho tienen cada uno su MonoChain. Cambiar la pendiente no crea filtros nuevos: solo activa más o menos etapas del CutFilter.',
+        explicacion_en: 'The left and right channels each have their own MonoChain. Changing the slope does not create new filters: it just enables more or fewer stages of the CutFilter.'
+      },
+      {
+        subtitulo: 'Activar etapas según la pendiente',
+        subtitulo_en: 'Enabling stages by slope',
+        code: `template<typename ChainType, typename CoefficientType>
+void updateCutFilter(ChainType& chain, const CoefficientType& coefficients, const Slope& slope)
+{
+    chain.template setBypassed<0>(true);
+    chain.template setBypassed<1>(true);
+    chain.template setBypassed<2>(true);
+    chain.template setBypassed<3>(true);
+
+    switch (slope)   // sin break: cada caso cae al siguiente
+    {
+    case Slope_48: update<3>(chain, coefficients);
+    case Slope_36: update<2>(chain, coefficients);
+    case Slope_24: update<1>(chain, coefficients);
+    case Slope_12: update<0>(chain, coefficients);
+    }
+}`,
+        explicacion: 'El switch sin break es intencional: con 48 dB/oct entra en el primer caso y sigue de largo activando las cuatro etapas; con 12 dB/oct solo activa la primera.',
+        explicacion_en: 'The switch without break is intentional: at 48 dB/oct it enters the first case and falls through, enabling all four stages; at 12 dB/oct it only enables the first one.'
+      },
+      {
+        subtitulo: 'Coeficientes del pico y de los cortes',
+        subtitulo_en: 'Peak and cut coefficients',
+        code: `Coefficients makePeakFilter(const ChainSettings& s, double sampleRate)
+{
+    return juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate,
+        s.peakFreq, s.peakQuality,
+        juce::Decibels::decibelsToGain(s.peakGainInDecibels));
+}
+
+inline auto makeLowCutFilter(const ChainSettings& s, double sampleRate)
+{
+    return juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(
+        s.lowCutFreq, sampleRate, 2 * (s.lowCutSlope + 1));
+}`,
+        explicacion: 'El orden del Butterworth es 2 × (pendiente + 1): orden 2 para 12 dB/oct y orden 8 para 48 dB/oct. JUCE devuelve un arreglo con los coeficientes de cada etapa.',
+        explicacion_en: 'The Butterworth order is 2 × (slope + 1): order 2 for 12 dB/oct and order 8 for 48 dB/oct. JUCE returns an array with the coefficients of each stage.'
+      },
+      {
+        subtitulo: 'Procesar cada bloque de audio',
+        subtitulo_en: 'Processing each audio block',
+        code: `void SimpleEQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+{
+    updateFilters();
+
+    juce::dsp::AudioBlock<float> block(buffer);
+    auto leftBlock  = block.getSingleChannelBlock(0);
+    auto rightBlock = block.getSingleChannelBlock(1);
+
+    juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
+    juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
+
+    leftChain.process(leftContext);
+    rightChain.process(rightContext);
+}`,
+        explicacion: 'El host de audio llama a processBlock cientos de veces por segundo. En cada llamada se actualizan los coeficientes con los valores de las perillas y se filtra cada canal.',
+        explicacion_en: 'The audio host calls processBlock hundreds of times per second. Each call updates the coefficients from the knob values and filters each channel.'
       }
     ]
   }

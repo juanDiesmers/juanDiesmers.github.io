@@ -4,13 +4,15 @@
 const CONTACT_EMAIL = 'juan@email.com'; // <- cambia esto por tu correo real
 
 // Orden y lenguaje de resaltado de cada proyecto (los datos están en projectDetails.js)
+// `demo` es el archivo en assets/js/demos/ con la versión interactiva del proyecto.
 const PROJECTS = [
-  { key: 'ProyectoEstructuraDatos_R.I.S.K', code: 'cpp' },
-  { key: 'Proyecto_Scrabble', code: 'cpp' },
-  { key: 'SimpleEqProyectoAvanzada', code: 'cpp' },
-  { key: 'WikiGroupT1', code: 'javascript' },
-  { key: 'Portafolio Web', code: 'javascript' }
+  { key: 'ProyectoEstructuraDatos_R.I.S.K', code: 'cpp', demo: 'risk' },
+  { key: 'Proyecto_Scrabble', code: 'cpp', demo: 'scrabble' },
+  { key: 'SimpleEqProyectoAvanzada', code: 'cpp', demo: 'eq' },
+  { key: 'WikiGroupT1', code: 'java', demo: 'wiki' },
+  { key: 'Portafolio Web', code: 'javascript', demo: 'portfolio' }
 ];
+const ASSET_VERSION = '3';
 
 // Porcentaje de cada lenguaje en los repositorios de GitHub
 const LANGS = [
@@ -29,6 +31,23 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const t = (k, es) => (window.I18N ? window.I18N.t(k, es) : es);
 const isEn = () => window.I18N && window.I18N.lang === 'en';
+
+// Carga cada demo solo cuando alguien abre el detalle del proyecto
+window.PortfolioDemos = window.PortfolioDemos || {};
+const demoPromises = {};
+function loadDemo(name) {
+  if (window.PortfolioDemos[name]) return Promise.resolve(window.PortfolioDemos[name]);
+  if (!demoPromises[name]) {
+    demoPromises[name] = new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = `assets/js/demos/${name}.js?v=${ASSET_VERSION}`;
+      s.onload = () => resolve(window.PortfolioDemos[name]);
+      s.onerror = () => { delete demoPromises[name]; reject(new Error('No se pudo cargar la demo')); };
+      document.head.appendChild(s);
+    });
+  }
+  return demoPromises[name];
+}
 
 let hljsPromise = null;
 function loadHighlight() {
@@ -49,6 +68,7 @@ function renderProjects() {
   const host = $('#project-rows');
   if (!host || !window.projectDetailsData) return;
   const openKeys = [...host.querySelectorAll('.detail.open')].map(d => d.dataset.key);
+  host.querySelectorAll('.row').forEach(r => r._unmount && r._unmount());
   host.innerHTML = '';
 
   PROJECTS.forEach((p, i) => {
@@ -72,12 +92,14 @@ function renderProjects() {
           ${d.github
             ? `<a class="link-btn" href="${esc(d.github)}" target="_blank" rel="noopener">${t('projects.code', 'código')}</a>`
             : ''}
-          <button class="link-btn" aria-expanded="false" aria-controls="${id}">${t('projects.detail', 'detalle')} <span class="chev" aria-hidden="true">▾</span></button>
+          <button class="link-btn" aria-expanded="false" aria-controls="${id}">${t('projects.detail', 'probar')} <span class="chev" aria-hidden="true">▾</span></button>
         </div>
       </div>
       <div class="detail" id="${id}" data-key="${esc(p.key)}" role="region" aria-label="${esc(title)}">
         <div><div class="detail-inner">
           <p class="summary">${esc(summary)}</p>
+          ${p.demo ? `<div class="demo" data-demo-host><div class="demo-loading">${t('demo.loading', 'cargando demo…')}</div></div>` : ''}
+          <p class="how-title">${t('projects.how', 'Cómo está hecho por dentro')}</p>
           ${(d.secciones || []).map(s => `
             <div class="snippet">
               <h4>${esc(en && s.subtitulo_en ? s.subtitulo_en : s.subtitulo)}</h4>
@@ -90,15 +112,36 @@ function renderProjects() {
 
     const btn = row.querySelector('button.link-btn');
     const det = row.querySelector('.detail');
+    const demoHost = det.querySelector('[data-demo-host]');
+    let cleanup = null;
+    const mountDemo = () => {
+      if (!demoHost || !p.demo || cleanup) return;
+      cleanup = () => {};
+      loadDemo(p.demo).then(mount => {
+        if (!det.classList.contains('open')) { cleanup = null; return; }
+        demoHost.innerHTML = '';
+        const c = mount(demoHost, { lang: isEn() ? 'en' : 'es', L: (es, en) => (isEn() ? en : es) });
+        cleanup = typeof c === 'function' ? c : () => {};
+      }).catch(() => {
+        demoHost.innerHTML = `<div class="demo-loading">${t('demo.error', 'No se pudo cargar la demo. Recarga la página.')}</div>`;
+        cleanup = null;
+      });
+    };
+    const unmountDemo = () => {
+      if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
+      if (demoHost) demoHost.innerHTML = `<div class="demo-loading">${t('demo.loading', 'cargando demo…')}</div>`;
+    };
     const setOpen = open => {
       det.classList.toggle('open', open);
       btn.setAttribute('aria-expanded', String(open));
       det.inert = !open;
+      if (open) mountDemo(); else unmountDemo();
       if (open) loadHighlight().then(() => {
         if (!window.hljs) return;
         det.querySelectorAll('pre code:not([data-highlighted])').forEach(c => window.hljs.highlightElement(c));
       });
     };
+    row._unmount = unmountDemo;
     setOpen(openKeys.includes(p.key));
     btn.addEventListener('click', () => setOpen(!det.classList.contains('open')));
   });

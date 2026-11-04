@@ -18,10 +18,13 @@ window.I18N_EN = {
   'hero.play': 'play',
 
   'projects.title': 'Projects',
-  'projects.sub': 'University and personal work. Open the details to see code snippets and why they are written that way.',
+  'projects.sub': 'University and personal work. Open any of them to try it: each one has an interactive version that runs in the browser with the same logic as the original code.',
   'projects.code': 'code',
-  'projects.detail': 'details',
+  'projects.detail': 'try it',
   'projects.private': 'private repo',
+  'projects.how': 'How it works inside',
+  'demo.loading': 'loading demo…',
+  'demo.error': 'The demo could not load. Reload the page.',
 
   'guides.title': 'Interactive study guides',
   'guides.sub': 'I built these to prepare for my exams: theory, simulators, calculators and step-by-step solved exercises. They run in the browser and save your progress. Content is in Spanish.',
