@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Carbolin · Simulador en vivo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --deep:#0F2A33; --deep2:#16353F; --line:#2C4A54; --ink:#F5F7F4; --muted:#A9C3CA;
+    --cyan:#1A8FA6; --cyanL:#5CC8DA; --orange:#E0761A; --orangeL:#F4A261; --alert:#F4A261;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--deep);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+  .wrap{max-width:1400px;margin:0 auto;padding:20px 24px 28px}
+  header{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:14px}
+  .brand h1{margin:0;font-family:'Space Grotesk',sans-serif;font-size:30px;letter-spacing:-.5px}
+  .brand h1 span{color:var(--cyanL)}
+  .brand p{margin:2px 0 0;color:var(--muted);font-size:14px}
+  .clock{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .clock small{display:block;font-family:Inter,sans-serif;font-size:13px;font-weight:500;color:var(--muted);margin-top:4px;text-align:right}
+  .controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0 14px}
+  button,.seg label{font:600 15px Inter,sans-serif;border-radius:10px;border:1px solid var(--line);background:var(--deep2);color:var(--ink);padding:10px 16px;cursor:pointer;min-height:44px}
+  button.primary{background:var(--cyan);border-color:var(--cyan);min-width:150px}
+  button:focus-visible,.seg input:focus-visible+label,input[type=range]:focus-visible{outline:3px solid var(--cyanL);outline-offset:2px}
+  .seg{display:inline-flex;gap:0}
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg label{border-radius:0;margin-left:-1px}
+  .seg label:first-of-type{border-radius:10px 0 0 10px}
+  .seg label:last-of-type{border-radius:0 10px 10px 0}
+  .seg input:checked+label{background:var(--ink);color:var(--deep)}
+  .toggle{display:flex;align-items:center;gap:10px;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:var(--deep2);min-height:44px;cursor:pointer;font-weight:600;font-size:15px}
+  .toggle input{width:20px;height:20px;accent-color:var(--orange)}
+  .scrub{flex:1 1 260px;display:flex;align-items:center;gap:10px}
+  .scrub input{flex:1;accent-color:var(--cyanL);height:28px}
+  .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:18px}
+  @media (max-width:980px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--deep2);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .fans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .fan{border-radius:14px;padding:16px;border:1px solid var(--line);background:#12303A;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+  .fan h2{margin:0;font-size:16px;font-weight:700}
+  .fan .tag{font-size:12px;color:var(--muted);margin-top:-4px}
+  .fan svg{width:min(170px,100%);height:auto}
+  .pct{font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .sub{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .fan.cur .pct{color:var(--orangeL)} .fan.cb .pct{color:var(--cyanL)}
+  .fan.cur{border-color:#5a3a24} .fan.cb{border-color:#1f5866}
+  .readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+  .ro{background:#12303A;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .ro .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
+  .ro .v{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  .ro.hot .v{color:var(--alert)}
+  .savings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+  .sv{background:var(--cyan);color:#fff;border-radius:12px;padding:12px 14px}
+  .sv .k{font-size:12px;opacity:.9;font-weight:600}
+  .sv .v{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  .banner{margin-top:14px;border-radius:12px;padding:12px 14px;font-weight:600;font-size:15px;border:1px solid var(--line);background:#12303A;color:var(--muted);min-height:48px;display:flex;align-items:center;gap:10px}
+  .banner.on{background:#3a2412;border-color:var(--orange);color:#FFE3C7}
+  .dot{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}
+  .banner.on .dot{background:var(--orange);box-shadow:0 0 0 6px rgba(224,118,26,.25)}
+  .chart h3{margin:0 0 6px;font-size:14px;font-weight:600;color:var(--muted)}
+  .chart + .chart{margin-top:14px}
+  .chart svg{width:100%;height:auto;display:block;touch-action:none;cursor:crosshair}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:4px}
+  .legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+  .log{margin-top:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.6;background:#0B1F26;border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:92px;max-height:150px;overflow:auto;color:#CFE3E8}
+  .log .warn{color:#FFC48C}
+  .log .ok{color:var(--cyanL)}
+  .tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--deep);font-size:13px;font-weight:600;padding:6px 9px;border-radius:8px;opacity:0;transition:opacity .1s;white-space:nowrap;z-index:5}
+  footer{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.5}
+
+  #gate{position:fixed;inset:0;z-index:20;background:var(--deep);display:flex;align-items:center;justify-content:center;padding:24px}
+  #gate form{background:var(--deep2);border:1px solid var(--line);border-radius:18px;padding:32px;width:min(420px,100%);display:flex;flex-direction:column;gap:14px;text-align:center}
+  #gate h2{margin:6px 0 0;font-family:'Space Grotesk',sans-serif;font-size:28px}
+  #gate p{margin:0;color:var(--muted);font-size:14px}
+  #gate input{font:500 17px Inter,sans-serif;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0B1F26;color:var(--ink);min-height:48px}
+  #gate .err{color:#FFC48C;min-height:20px;font-size:14px}
+  body.locked .wrap{filter:blur(6px);pointer-events:none;user-select:none}
+</style>
+</head>
+<body class="locked">
+<div id="gate">
+  <form id="gateForm" autocomplete="off">
+    <svg role="img" aria-label="Isotipo de Carbolin" width="64" height="64" viewBox="0 0 160 160" style="margin:0 auto"><rect width="160" height="160" rx="36" fill="#1A8FA6"/><path d="M22,112 C52,112 56,48 80,48 C104,48 108,112 138,112" fill="none" stroke="#F5F7F4" stroke-width="10" stroke-linecap="round"/><circle cx="22" cy="112" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/><circle cx="80" cy="48" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/><circle cx="138" cy="112" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/></svg>
+    <h2>Carbolin · acceso</h2>
+    <p>Simulador privado del equipo. Ingresa la contraseña.</p>
+    <label for="gatePw" class="sub" style="text-align:left">Contraseña</label>
+    <input id="gatePw" type="password" required>
+    <button class="primary" type="submit">Ingresar</button>
+    <div class="err" id="gateErr" role="alert"></div>
+  </form>
+</div>
+<script>
+(function(){
+  const HASH='32e3c7ca52d78291963c32906e8b298863ea19a5f23aaf11d853efe1f326c6e9';
+  const gate=document.getElementById('gate');
+  function open(){gate.remove();document.body.classList.remove('locked');}
+  try{if(sessionStorage.getItem('carbolin_ok')==='1'){open();return;}}catch(e){}
+  async function sha(t){
+    if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+    return null;
+  }
+  document.getElementById('gateForm').addEventListener('submit',async e=>{
+    e.preventDefault();const v=document.getElementById('gatePw').value.trim();
+    const hv=await sha(v);
+    if(hv===HASH){try{sessionStorage.setItem('carbolin_ok','1');}catch(_){}open();}
+    else{document.getElementById('gateErr').textContent='Contraseña incorrecta.';}
+  });
+  document.getElementById('gatePw').focus();
+})();
+</script>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg role="img" aria-label="Isotipo de Carbolin" width="54" height="54" viewBox="0 0 160 160"><rect width="160" height="160" rx="36" fill="#1A8FA6"/><path d="M22,112 C52,112 56,48 80,48 C104,48 108,112 138,112" fill="none" stroke="#F5F7F4" stroke-width="10" stroke-linecap="round"/><circle cx="22" cy="112" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/><circle cx="80" cy="48" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/><circle cx="138" cy="112" r="11" fill="#0F2A33" stroke="#F5F7F4" stroke-width="5"/></svg>
+      <div><h1>Carbo<span>lin</span> · simulador en vivo</h1><p>Centro de datos EcoData, Mérida · un día de operación, de 06:00 a 24:00</p></div>
+    </div>
+    <div class="clock" aria-live="off"><span id="clock">06:00</span><small id="minLabel">minuto 0 de 1080</small></div>
+  </header>
+
+  <div class="controls">
+    <button id="play" class="primary" type="button">▶ Iniciar día</button>
+    <button id="reset" type="button">Reiniciar</button>
+    <div class="seg" role="radiogroup" aria-label="Velocidad de la simulación">
+      <input type="radio" name="spd" id="s1" value="15"><label for="s1">Lento</label>
+      <input type="radio" name="spd" id="s2" value="30" checked><label for="s2">Normal</label>
+      <input type="radio" name="spd" id="s3" value="60"><label for="s3">Rápido</label>
+    </div>
+    <label class="toggle"><input type="checkbox" id="fc"> Pronóstico del clima</label>
+    <div class="scrub"><label for="scr" class="sub">Hora</label><input type="range" id="scr" min="0" max="1080" step="1" value="0"></div>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-label="Ventiladores y ahorro">
+      <div class="fans">
+        <div class="fan cur">
+          <h2>Sistema actual</h2><div class="tag">Todo/Nada: 30 % o 100 %</div>
+          <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#0B1F26" stroke="#5a3a24" stroke-width="4"/><g id="rotA"><path d="M100 100 C 92 60, 108 22, 128 26 C 140 50, 120 80, 100 100Z" fill="#E0761A"/><path d="M100 100 C 140 92, 178 108, 174 128 C 150 140, 120 120, 100 100Z" fill="#E0761A"/><path d="M100 100 C 108 140, 92 178, 72 174 C 60 150, 80 120, 100 100Z" fill="#E0761A"/><path d="M100 100 C 60 108, 22 92, 26 72 C 50 60, 80 80, 100 100Z" fill="#E0761A"/></g><circle cx="100" cy="100" r="14" fill="#F5F7F4"/></svg>
+          <div class="pct" id="pA">30 %</div>
+          <div class="sub" id="kA">7 kW · 0 kWh hoy</div>
+        </div>
+        <div class="fan cb">
+          <h2>Carbolin</h2><div class="tag">Velocidad continua, se anticipa</div>
+          <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#0B1F26" stroke="#1f5866" stroke-width="4"/><g id="rotB"><path d="M100 100 C 92 60, 108 22, 128 26 C 140 50, 120 80, 100 100Z" fill="#1A8FA6"/><path d="M100 100 C 140 92, 178 108, 174 128 C 150 140, 120 120, 100 100Z" fill="#1A8FA6"/><path d="M100 100 C 108 140, 92 178, 72 174 C 60 150, 80 120, 100 100Z" fill="#1A8FA6"/><path d="M100 100 C 60 108, 22 92, 26 72 C 50 60, 80 80, 100 100Z" fill="#1A8FA6"/></g><circle cx="100" cy="100" r="14" fill="#F5F7F4"/></svg>
+          <div class="pct" id="pB">30 %</div>
+          <div class="sub" id="kB">7 kW · 0 kWh hoy</div>
+        </div>
+      </div>
+
+      <div class="readouts">
+        <div class="ro" id="roT"><div class="k">Temperatura del pasillo</div><div class="v" id="vT">22.0 °C</div></div>
+        <div class="ro" id="roR"><div class="k">¿Qué tan rápido sube?</div><div class="v" id="vR">+1.2 °C/h</div></div>
+      </div>
+
+      <div class="banner" id="banner" role="status"><span class="dot"></span><span id="bannerTxt">Sin alertas: la temperatura sube despacio.</span></div>
+
+      <div class="savings" aria-label="Ahorro acumulado del día">
+        <div class="sv"><div class="k">Energía ahorrada hoy</div><div class="v" id="sE">0 kWh</div></div>
+        <div class="sv"><div class="k">Dinero ahorrado hoy</div><div class="v" id="sM">USD 0</div></div>
+        <div class="sv"><div class="k">Ahorro frente al actual</div><div class="v" id="sP">0 %</div></div>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Gráficas en vivo">
+      <div class="chart"><h3>Temperatura del pasillo (°C)</h3><svg id="cT" viewBox="0 0 1000 250" role="img" aria-label="Temperatura del pasillo durante el día"></svg>
+        <div class="legend"><span><i style="background:#5CC8DA"></i>Carbolin: un valor por minuto</span><span><i style="background:#F5F7F4;height:8px;width:8px;border-radius:50%"></i>10 mediciones reales</span><span id="lgF" hidden><i style="background:#F4A261"></i>Con pronóstico del clima</span></div></div>
+      <div class="chart"><h3>¿Qué tan rápido sube? (°C por hora) · alerta sobre 1.5 °C/h</h3><svg id="cR" viewBox="0 0 1000 170" role="img" aria-label="Velocidad de subida de la temperatura"></svg></div>
+      <div class="chart"><h3>Velocidad de los ventiladores (%)</h3><svg id="cU" viewBox="0 0 1000 170" role="img" aria-label="Velocidad de los ventiladores de cada sistema"></svg>
+        <div class="legend"><span><i style="background:#F4A261"></i>Sistema actual (Todo/Nada)</span><span><i style="background:#5CC8DA"></i>Carbolin</span></div></div>
+      <div class="log" id="log" aria-live="polite"><div>&gt; Consola del detector de eventos. Presiona “Iniciar día”.</div></div>
+    </section>
+  </div>
+
+  <footer>Modelo del caso: spline cúbico natural sobre 10 mediciones cada 2 h; alerta temprana cuando la temperatura sube más de 0.025 °C/min (1.5 °C/h). Supuestos: 200 kW de ventiladores, potencia ∝ velocidad³, 0.12 USD/kWh. El pronóstico del clima suma hasta 2.5 °C con pico a las 14:00.</footer>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(function(){
+  // ---------- Datos y spline cúbico natural ----------
+  const X=[6,8,10,12,14,16,18,20,22,24], Y=[22.0,24.5,27.0,30.2,31.5,31.0,29.8,27.5,25.0,23.2];
+  const n=X.length-1, H=2;
+  const M=new Array(n+1).fill(0);
+  (function(){ // Thomas: M[i-1]+4M[i]+M[i+1] = 6(y[i+1]-2y[i]+y[i-1])/h^2
+    const a=[],b=[],c=[],d=[];
+    for(let i=1;i<n;i++){a.push(1);b.push(4);c.push(1);d.push(6*(Y[i+1]-2*Y[i]+Y[i-1])/(H*H));}
+    const m=b.length;
+    for(let i=1;i<m;i++){const w=a[i]/b[i-1];b[i]-=w*c[i-1];d[i]-=w*d[i-1];}
+    const s=new Array(m);s[m-1]=d[m-1]/b[m-1];
+    for(let i=m-2;i>=0;i--)s[i]=(d[i]-c[i]*s[i+1])/b[i];
+    for(let i=1;i<n;i++)M[i]=s[i-1];
+  })();
+  function S(t){let i=Math.min(n-1,Math.max(0,Math.floor((t-6)/H)));const A=(X[i+1]-t)/H,B=(t-X[i])/H;
+    return A*Y[i]+B*Y[i+1]+((A*A*A-A)*M[i]+(B*B*B-B)*M[i+1])*H*H/6;}
+  function dS(t){let i=Math.min(n-1,Math.max(0,Math.floor((t-6)/H)));const A=(X[i+1]-t)/H,B=(t-X[i])/H;
+    return (Y[i+1]-Y[i])/H-(3*A*A-1)/6*H*M[i]+(3*B*B-1)/6*H*M[i+1];}
+
+  const N=1081, P_MAX=200, TARIFA=0.12, U_MIN=0.30;
+  const t=[],T0=[],R0=[],T1=[],R1=[];
+  for(let k=0;k<N;k++){const h=6+k/60;t.push(h);const T=S(h),R=dS(h);T0.push(T);R0.push(R);
+    const f=2*Math.PI*(h-8)/24;T1.push(T+2.5*(1+Math.sin(f))/2);R1.push(R+2.5*0.5*(2*Math.PI/24)*Math.cos(f));}
+  const uA=T=>T>26?1:U_MIN;
+  const uB=(T,R)=>Math.min(1,Math.max(U_MIN,U_MIN+(1-U_MIN)*(T-24)/8+0.05*R));
+  function build(T,R){const a=[],b=[],EA=[0],EB=[0];
+    for(let k=0;k<N;k++){a.push(uA(T[k]));b.push(uB(T[k],R[k]));}
+    for(let k=1;k<N;k++){const dt=1/60;
+      EA.push(EA[k-1]+dt*P_MAX*(a[k]**3+a[k-1]**3)/2);EB.push(EB[k-1]+dt*P_MAX*(b[k]**3+b[k-1]**3)/2);}
+    const first=f=>{for(let k=0;k<N;k++)if(f(k))return k;return -1;};
+    const ev=[];
+    const kAl=first(k=>R[k]>1.5), k30=first(k=>T[k]>30), kB80=first(k=>b[k]>=0.8), kA=first(k=>a[k]>=1), kPk=T.indexOf(Math.max(...T));
+    const reac=first(k=>uB(T[k],0)>=0.8);
+    if(kAl>=0)ev.push([kAl,'warn',`Alerta temprana: calentamiento rápido > 0.025 °C/min (1.5 °C/h) detectado en t = ${hhmm(kAl)} h`]);
+    if(kB80>=0)ev.push([kB80,'ok',`Carbolin lleva los ventiladores al 80 % a las ${hhmm(kB80)} h`+(reac>kB80?` (${reac-kB80} min antes que un control reactivo)`:'')]);
+    if(kA>=0)ev.push([kA,'warn',`Sistema actual: T > 26 °C, ventiladores al 100 % a las ${hhmm(kA)} h`]);
+    if(k30>=0)ev.push([k30,'warn',`Registro: T(t) > 30.0 °C desde las ${hhmm(k30)} h`]);
+    ev.push([kPk,'',`Pico de temperatura: ${T[kPk].toFixed(1)} °C a las ${hhmm(kPk)} h`]);
+    ev.push([N-1,'ok',`Fin del día: Carbolin ahorró ${Math.round(EA[N-1]-EB[N-1]).toLocaleString('es-CO')} kWh (${(100*(1-EB[N-1]/EA[N-1])).toFixed(1)} %) frente al sistema actual`]);
+    ev.sort((x,y)=>x[0]-y[0]);
+    return {T,R,a,b,EA,EB,ev,kAl};
+  }
+  const SC=[build(T0,R0),build(T1,R1)];
+  function hhmm(k){const m=Math.round(k)+360;return String(Math.floor(m/60)%25).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+
+  // ---------- Gráficas ----------
+  const NS='http://www.w3.org/2000/svg';
+  const el=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;};
+  const L=46,Rr=990;
+  const xs=k=>L+(Rr-L)*k/(N-1);
+  function frame(svg,H,top,bot,ymin,ymax,ticks,fmt){
+    svg.innerHTML='';
+    const y=v=>bot-(bot-top)*(v-ymin)/(ymax-ymin);
+    ticks.forEach(v=>{el('line',{x1:L,x2:Rr,y1:y(v),y2:y(v),stroke:'#2C4A54','stroke-width':1},svg);
+      const tx=el('text',{x:L-8,y:y(v)+4,'text-anchor':'end',fill:'#A9C3CA','font-size':13,'font-family':'Inter'},svg);tx.textContent=fmt(v);});
+    [6,9,12,15,18,21,24].forEach(h=>{const tx=el('text',{x:xs((h-6)*60),y:H-4,'text-anchor':h===24?'end':(h===6?'start':'middle'),fill:'#A9C3CA','font-size':13,'font-family':'Inter'},svg);tx.textContent=h+'h';});
+    return y;
+  }
+  const pathOf=(arr,y,step=3)=>{let d='';for(let k=0;k<N;k+=step)d+=(d?'L':'M')+xs(k).toFixed(1)+','+y(arr[k]).toFixed(1);return d+'L'+xs(N-1).toFixed(1)+','+y(arr[N-1]).toFixed(1);};
+  const stepPath=(arr,y)=>{let d='M'+xs(0)+','+y(arr[0]);for(let k=1;k<N;k++){if(arr[k]!==arr[k-1])d+='L'+xs(k).toFixed(1)+','+y(arr[k-1]).toFixed(1)+'L'+xs(k).toFixed(1)+','+y(arr[k]).toFixed(1);}return d+'L'+xs(N-1)+','+y(arr[N-1]);};
+  const cT=document.getElementById('cT'),cR=document.getElementById('cR'),cU=document.getElementById('cU');
+  let cur={};
+  function drawCharts(){
+    const s=SC[fc.checked?1:0];
+    // Temperatura
+    let y=frame(cT,250,14,222,20,36,[22,26,30,34],v=>v+'°');
+    el('line',{x1:L,x2:Rr,y1:y(30),y2:y(30),stroke:'#A9C3CA','stroke-dasharray':'6 6','stroke-width':1.5},cT);
+    if(fc.checked){el('path',{d:pathOf(T0,y),fill:'none',stroke:'#5CC8DA','stroke-width':2,opacity:.35},cT);
+      el('path',{d:pathOf(T1,y),fill:'none',stroke:'#F4A261','stroke-width':3.5,'stroke-linejoin':'round'},cT);}
+    else el('path',{d:pathOf(T0,y),fill:'none',stroke:'#5CC8DA','stroke-width':3.5,'stroke-linejoin':'round'},cT);
+    X.forEach((h,i)=>el('circle',{cx:xs((h-6)*60),cy:y(Y[i]),r:6,fill:'#F5F7F4',stroke:'#0F2A33','stroke-width':2.5},cT));
+    cur.T={line:el('line',{y1:10,y2:224,stroke:'#F5F7F4','stroke-width':1.5,opacity:.8},cT),dot:el('circle',{r:8,fill:fc.checked?'#F4A261':'#5CC8DA',stroke:'#F5F7F4','stroke-width':3},cT),y};
+    // Velocidad de subida
+    y=frame(cR,170,10,142,-2,3,[-1.5,0,1.5,3],v=>v.toFixed(1));
+    let k=0;while(k<N){if(s.R[k]>1.5){let j=k;while(j<N&&s.R[j]>1.5)j++;el('rect',{x:xs(k),y:10,width:Math.max(2,xs(j-1)-xs(k)),height:132,fill:'#E0761A',opacity:.18},cR);k=j;}else k++;}
+    el('line',{x1:L,x2:Rr,y1:y(1.5),y2:y(1.5),stroke:'#F4A261','stroke-dasharray':'6 6','stroke-width':1.5},cR);
+    el('path',{d:pathOf(s.R,y),fill:'none',stroke:fc.checked?'#F4A261':'#5CC8DA','stroke-width':3,'stroke-linejoin':'round'},cR);
+    cur.R={line:el('line',{y1:8,y2:144,stroke:'#F5F7F4','stroke-width':1.5,opacity:.8},cR),dot:el('circle',{r:7,fill:'#F5F7F4'},cR),y};
+    // Velocidad ventiladores
+    y=frame(cU,170,10,142,0.2,1.05,[0.3,0.65,1.0],v=>Math.round(v*100)+'%');
+    el('path',{d:stepPath(s.a,y),fill:'none',stroke:'#F4A261','stroke-width':3},cU);
+    el('path',{d:pathOf(s.b,y),fill:'none',stroke:'#5CC8DA','stroke-width':3.5,'stroke-linejoin':'round'},cU);
+    cur.U={line:el('line',{y1:8,y2:144,stroke:'#F5F7F4','stroke-width':1.5,opacity:.8},cU),y};
+  }
+
+  // ---------- Estado y UI ----------
+  const $=id=>document.getElementById(id);
+  const fc=$('fc'),scr=$('scr'),play=$('play'),logBox=$('log');
+  let idx=0,playing=false,last=null,angA=0,angB=0,shown=0;
+  const speed=()=>+document.querySelector('input[name=spd]:checked').value;
+  const fmt=v=>Math.round(v).toLocaleString('es-CO');
+  function resetLog(){logBox.innerHTML='<div>&gt; Consola del detector de eventos'+(fc.checked?' (con pronóstico del clima)':'')+'.</div>';shown=0;}
+  function syncLog(){const s=SC[fc.checked?1:0];const k=Math.floor(idx);
+    if(shown>0&&s.ev[shown-1][0]>k){resetLog();}
+    while(shown<s.ev.length&&s.ev[shown][0]<=k){const [_,cls,txt]=s.ev[shown];const d=document.createElement('div');if(cls)d.className=cls;d.textContent='> '+txt;logBox.appendChild(d);logBox.scrollTop=logBox.scrollHeight;shown++;}}
+  function render(){
+    const s=SC[fc.checked?1:0];const k=Math.round(idx);
+    $('clock').textContent=hhmm(k);$('minLabel').textContent=`minuto ${k} de 1080`;scr.value=k;
+    const a=s.a[k],b=s.b[k];
+    $('pA').textContent=Math.round(a*100)+' %';$('pB').textContent=Math.round(b*100)+' %';
+    $('kA').textContent=`${Math.round(P_MAX*a**3)} kW · ${fmt(s.EA[k])} kWh hoy`;
+    $('kB').textContent=`${Math.round(P_MAX*b**3)} kW · ${fmt(s.EB[k])} kWh hoy`;
+    $('vT').textContent=s.T[k].toFixed(1)+' °C';
+    const r=s.R[k];$('vR').textContent=(r>=0?'+':'')+r.toFixed(2)+' °C/h';
+    $('roR').classList.toggle('hot',r>1.5);$('roT').classList.toggle('hot',s.T[k]>30);
+    const ban=$('banner');
+    if(r>1.5){ban.classList.add('on');$('bannerTxt').textContent=`Alerta temprana: la temperatura sube ${r.toFixed(2)} °C/h (${(r/60).toFixed(3)} °C/min). Carbolin acelera los ventiladores antes del calor.`;}
+    else{ban.classList.remove('on');$('bannerTxt').textContent=s.kAl>=0&&k>s.kAl?'Calentamiento rápido superado: Carbolin ajusta la velocidad a lo justo.':'Sin alertas: la temperatura sube despacio.';}
+    const sav=s.EA[k]-s.EB[k];
+    $('sE').textContent=fmt(sav)+' kWh';$('sM').textContent='USD '+fmt(sav*TARIFA);
+    $('sP').textContent=(s.EA[k]>0?(100*sav/s.EA[k]):0).toFixed(0)+' %';
+    const x=xs(k);
+    for(const c of [cur.T,cur.R,cur.U]){c.line.setAttribute('x1',x);c.line.setAttribute('x2',x);}
+    cur.T.dot.setAttribute('cx',x);cur.T.dot.setAttribute('cy',cur.T.y(s.T[k]));
+    cur.R.dot.setAttribute('cx',x);cur.R.dot.setAttribute('cy',cur.R.y(s.R[k]));
+    syncLog();
+  }
+  function frameLoop(ts){
+    const s=SC[fc.checked?1:0];
+    if(last===null)last=ts;const dt=Math.min(0.1,(ts-last)/1000);last=ts;
+    if(playing){idx+=speed()*dt;if(idx>=N-1){idx=N-1;setPlaying(false);}render();}
+    const k=Math.round(idx);
+    angA=(angA+dt*1100*s.a[k])%360;angB=(angB+dt*1100*s.b[k])%360;
+    $('rotA').setAttribute('transform',`rotate(${angA.toFixed(1)} 100 100)`);
+    $('rotB').setAttribute('transform',`rotate(${angB.toFixed(1)} 100 100)`);
+    requestAnimationFrame(frameLoop);
+  }
+  function setPlaying(p){playing=p;play.textContent=p?'❚❚ Pausar':(idx>=N-1?'▶ Repetir día':(idx>0?'▶ Continuar':'▶ Iniciar día'));}
+  play.addEventListener('click',()=>{if(idx>=N-1){idx=0;resetLog();}setPlaying(!playing);});
+  $('reset').addEventListener('click',()=>{idx=0;resetLog();setPlaying(false);render();});
+  scr.addEventListener('input',()=>{idx=+scr.value;render();});
+  fc.addEventListener('change',()=>{$('lgF').hidden=!fc.checked;drawCharts();resetLog();render();});
+  // Buscar y tooltip en las gráficas
+  const tip=$('tip');
+  function hover(svg,ev,click){const r=svg.getBoundingClientRect();const vx=(ev.clientX-r.left)/r.width*1000;
+    const k=Math.max(0,Math.min(N-1,Math.round((vx-L)/(Rr-L)*(N-1))));const s=SC[fc.checked?1:0];
+    tip.textContent=`${hhmm(k)} · ${s.T[k].toFixed(1)} °C · sube ${s.R[k].toFixed(2)} °C/h · actual ${Math.round(s.a[k]*100)} % · Carbolin ${Math.round(s.b[k]*100)} %`;
+    tip.style.left=Math.min(ev.clientX+14,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=(ev.clientY-38)+'px';tip.style.opacity=1;
+    if(click){idx=k;render();}}
+  [cT,cR,cU].forEach(svg=>{svg.addEventListener('pointermove',e=>hover(svg,e,e.buttons===1));svg.addEventListener('pointerdown',e=>hover(svg,e,true));svg.addEventListener('pointerleave',()=>tip.style.opacity=0);});
+  document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body){e.preventDefault();play.click();}});
+  drawCharts();resetLog();render();requestAnimationFrame(frameLoop);
+})();
+</script>
+</body>
+</html>
